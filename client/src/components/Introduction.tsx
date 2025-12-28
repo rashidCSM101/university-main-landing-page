@@ -88,7 +88,7 @@ const Introduction = () => {
           <div ref={imageRef} className="relative">
             <div className="relative overflow-hidden rounded-2xl">
               <img
-                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                src="../../assets/images/introduction.jpg"
                 alt="Students studying"
                 className="w-full h-[500px] object-cover"
               />
