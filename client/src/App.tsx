@@ -27,6 +27,9 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Faculty from './components/Faculty';
 import EventsPage from './components/EventsPage';
+import NoticeBoard from './components/NoticeBoard';
+import Timetable from './components/Timetable';
+import Admissions from './components/Admissions';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,8 +92,11 @@ function AppContent() {
         <Route path="/course/:id" element={<CourseDetail />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-          <Route path="/faculty" element={<Faculty />} />
-          <Route path="/events" element={<EventsPage />} />
+        <Route path="/faculty" element={<Faculty />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/noticeboard" element={<NoticeBoard />} />
+        <Route path="/timetable" element={<Timetable />} />
+        <Route path="/admissions" element={<Admissions />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>

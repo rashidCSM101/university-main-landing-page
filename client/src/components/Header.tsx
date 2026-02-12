@@ -19,8 +19,21 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Faculty', href: '/faculty' },
-    { name: 'Courses', href: '/courses', hasDropdown: true },
-    { name: 'Blog', href: '/blog', hasDropdown: true },
+    {
+      name: 'Courses', href: '/course/zoology', hasDropdown: true,
+      dropdownItems: [
+        { name: 'BS Zoology', href: '/course/zoology' },
+        { name: 'Timetable', href: '/timetable' },
+      ],
+    },
+    {
+      name: 'Pages', href: '#', hasDropdown: true,
+      dropdownItems: [
+        { name: 'Notice Board', href: '/noticeboard' },
+        { name: 'Admissions', href: '/admissions' },
+        { name: 'Events', href: '/events' },
+      ],
+    },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -60,24 +73,15 @@ const Header = () => {
                 {link.hasDropdown && (
                   <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                     <div className="bg-white rounded-lg shadow-xl py-2 min-w-[200px]">
-                      <Link
-                        to={`${link.href}/option1`}
-                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary transition-colors"
-                      >
-                        Option 1
-                      </Link>
-                      <Link
-                        to={`${link.href}/option2`}
-                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary transition-colors"
-                      >
-                        Option 2
-                      </Link>
-                      <Link
-                        to={`${link.href}/option3`}
-                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary transition-colors"
-                      >
-                        Option 3
-                      </Link>
+                      {link.dropdownItems?.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary transition-colors"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -118,14 +122,29 @@ const Header = () => {
           <div className="lg:hidden mt-4 bg-white rounded-lg shadow-xl p-4">
             <nav className="flex flex-col space-y-4">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className="text-gray-700 font-medium hover:text-primary transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
+                <div key={link.name}>
+                  <Link
+                    to={link.href}
+                    className="text-gray-700 font-medium hover:text-primary transition-colors"
+                    onClick={() => !link.hasDropdown && setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                  {link.hasDropdown && link.dropdownItems && (
+                    <div className="ml-4 mt-2 flex flex-col space-y-2">
+                      {link.dropdownItems.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className="text-gray-500 text-sm hover:text-primary transition-colors"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
               <div className="pt-4 border-t border-gray-200 flex flex-col space-y-2">
                 <Link
