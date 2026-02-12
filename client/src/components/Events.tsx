@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
@@ -14,10 +15,10 @@ const Events = () => {
     const ctx = gsap.context(() => {
       // Content animation
       gsap.from(contentRef.current?.children || [], {
-        x: -80,
-        opacity: 0,
+        x: -50,
         duration: 0.8,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -27,13 +28,14 @@ const Events = () => {
 
       // Images animation with parallax
       gsap.from('.event-image', {
-        y: 100,
-        opacity: 0,
+        y: 50,
+        scale: 0.95,
         duration: 0.8,
         stagger: 0.2,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: imagesRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -135,10 +137,10 @@ const Events = () => {
               ))}
             </div>
 
-            <button className="btn-primary group">
+            <Link to="/events" className="btn-primary group">
               <Calendar className="w-5 h-5 mr-2" />
               <span>View All Events</span>
-            </button>
+            </Link>
           </div>
 
           {/* Images Grid */}

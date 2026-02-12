@@ -26,11 +26,11 @@ const Hero = () => {
 
       // Content animation
       gsap.from(contentRef.current?.children || [], {
-        y: 100,
-        opacity: 0,
+        y: 50,
         duration: 1,
         stagger: 0.2,
         ease: 'power3.out',
+        delay: 0.3,
       });
     }, heroRef);
 
@@ -59,7 +59,7 @@ const Hero = () => {
           <div className="flex items-center space-x-2 text-white/80 mb-6">
             <span className="w-8 h-px bg-white/60"></span>
             <span className="text-sm font-medium uppercase tracking-wider">
-              Welcome to Academix University
+              Welcome to Government Degree College Larkana
             </span>
           </div>
 
@@ -81,7 +81,7 @@ const Hero = () => {
                 />
               </svg>
             </span>{' '}
-            at Academix
+            at GDC Larkana
           </h1>
 
           {/* Description */}

@@ -66,12 +66,12 @@ const Stats = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.stats-container', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 1,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });

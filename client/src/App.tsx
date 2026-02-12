@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -16,14 +16,26 @@ import Departments from './components/Departments';
 import VideoTour from './components/VideoTour';
 import Instructors from './components/Instructors';
 import Testimonials from './components/Testimonials';
-import Pricing from './components/Pricing';
+// import Pricing from './components/Pricing';
 import Admission from './components/Admission';
 import Blog from './components/Blog';
 import Footer from './components/Footer';
+import CourseDetail from './components/CourseDetail';
+import About from './components/About';
+import Contact from './components/Contact';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import Faculty from './components/Faculty';
+import EventsPage from './components/EventsPage';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function App() {
+const authRoutes = ['/login', '/signup'];
+
+function AppContent() {
+  const location = useLocation();
+  const isAuthPage = authRoutes.includes(location.pathname);
+
   useEffect(() => {
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
@@ -54,26 +66,43 @@ function App() {
   }, []);
 
   return (
+    <div className="app">
+      {!isAuthPage && <Header />}
+      <Routes>
+        <Route path="/" element={
+          <main>
+            <Hero />
+            <Introduction />
+            <Stats />
+            <Reasons />
+            <Courses />
+            <Events />
+            <Departments />
+            <VideoTour />
+            <Instructors />
+            <Testimonials />
+            {/* <Pricing /> */}
+            <Admission />
+            <Blog />
+          </main>
+        } />
+        <Route path="/course/:id" element={<CourseDetail />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+          <Route path="/faculty" element={<Faculty />} />
+          <Route path="/events" element={<EventsPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+      {!isAuthPage && <Footer />}
+    </div>
+  );
+}
+
+function App() {
+  return (
     <Router>
-      <div className="app">
-        <Header />
-        <main>
-          <Hero />
-          <Introduction />
-          <Stats />
-          <Reasons />
-          <Courses />
-          <Events />
-          <Departments />
-          <VideoTour />
-          <Instructors />
-          <Testimonials />
-          <Pricing />
-          <Admission />
-          <Blog />
-        </main>
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   );
 }

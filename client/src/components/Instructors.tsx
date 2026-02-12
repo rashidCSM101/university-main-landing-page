@@ -25,13 +25,14 @@ const Instructors = () => {
 
       // Cards animation
       gsap.from('.instructor-card', {
-        y: 80,
-        opacity: 0,
+        y: 50,
+        scale: 0.95,
         duration: 0.8,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });

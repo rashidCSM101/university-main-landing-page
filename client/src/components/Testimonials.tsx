@@ -15,7 +15,7 @@ const Testimonials = () => {
       name: 'John Smith',
       role: 'Computer Science Graduate',
       content:
-        'Academix provided me with the perfect environment to grow and learn. The faculty is exceptional, and the resources available are world-class. I couldn\'t have asked for a better educational experience.',
+        'GDC Larkana provided me with the perfect environment to grow and learn. The faculty is exceptional, and the resources available are world-class. I couldn\'t have asked for a better educational experience.',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
       rating: 5,
     },
@@ -33,7 +33,7 @@ const Testimonials = () => {
       name: 'David Brown',
       role: 'Engineering Student',
       content:
-        'The hands-on experience and practical projects at Academix prepared me for the real world. The internship opportunities through the university were invaluable.',
+        'The hands-on experience and practical projects at GDC Larkana prepared me for the real world. The internship opportunities through the college were invaluable.',
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
       rating: 5,
     },
@@ -42,9 +42,9 @@ const Testimonials = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.testimonial-content', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 0.8,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',

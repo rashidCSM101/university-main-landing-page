@@ -17,8 +17,8 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'About', href: '/about', hasDropdown: true },
-    { name: 'Pages', href: '/pages', hasDropdown: true },
+    { name: 'About', href: '/about' },
+    { name: 'Faculty', href: '/faculty' },
     { name: 'Courses', href: '/courses', hasDropdown: true },
     { name: 'Blog', href: '/blog', hasDropdown: true },
     { name: 'Contact', href: '/contact' },
@@ -39,8 +39,8 @@ const Header = () => {
             <div className={`p-2 rounded-lg ${isScrolled ? 'bg-primary' : 'bg-white'}`}>
               <GraduationCap className={`w-8 h-8 ${isScrolled ? 'text-white' : 'text-primary'}`} />
             </div>
-            <span className={`text-2xl font-heading font-bold ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
-              Academix
+            <span className={`text-xl font-heading font-bold ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
+              GDC Larkana
             </span>
           </Link>
 

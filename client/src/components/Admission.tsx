@@ -24,9 +24,9 @@ const Admission = () => {
 
       // Content animation
       gsap.from('.admission-content', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 0.8,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -36,13 +36,14 @@ const Admission = () => {
 
       // Steps animation
       gsap.from('.admission-step', {
-        y: 30,
-        opacity: 0,
+        y: 20,
+        scale: 0.95,
         duration: 0.6,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: '.admission-steps',
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -77,7 +78,7 @@ const Admission = () => {
             Admission <span className="text-accent-gold">Now</span>
           </h2>
           <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-            Start your journey with Academix today. Our streamlined admission process
+            Start your journey with GDC Larkana today. Our streamlined admission process
             makes it easy to join thousands of successful students.
           </p>
           <button className="btn-primary bg-white text-primary hover:bg-gray-100 group">

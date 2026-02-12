@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Clock, Users, Star, ArrowRight } from 'lucide-react';
@@ -23,15 +24,16 @@ const Courses = () => {
         },
       });
 
-      // Cards animation
+      // Cards animation - without hiding initially
       gsap.from('.course-card', {
-        y: 100,
-        opacity: 0,
+        y: 50,
+        scale: 0.95,
         duration: 0.8,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -43,42 +45,42 @@ const Courses = () => {
   const courses = [
     {
       id: 1,
-      title: 'Science, Education, Physical & Math',
-      category: 'Science',
-      price: 59.99,
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '3 Years',
-      students: 150,
+      title: 'Cell Biology & Genetics',
+      category: 'Zoology',
+      price: 15000,
+      image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      duration: '2 Years',
+      students: 120,
       rating: 4.8,
     },
     {
       id: 2,
-      title: 'Pre-Medical, Learn English & Math',
-      category: 'Medical',
-      price: 79.99,
-      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '4 Years',
-      students: 200,
+      title: 'Animal Physiology & Anatomy',
+      category: 'Zoology',
+      price: 15000,
+      image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      duration: '2 Years',
+      students: 100,
       rating: 4.9,
     },
     {
       id: 3,
-      title: 'Learn Psychology in just 3 Years',
-      category: 'Psychology',
-      price: 49.99,
-      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '3 Years',
-      students: 120,
+      title: 'Ecology & Wildlife Conservation',
+      category: 'Zoology',
+      price: 15000,
+      image: 'https://images.unsplash.com/photo-1474511320723-9a56873571b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      duration: '2 Years',
+      students: 90,
       rating: 4.7,
     },
     {
       id: 4,
-      title: 'Sport Coaching, National Gym Skills',
-      category: 'Sports',
-      price: 39.99,
-      image: 'https://images.unsplash.com/photo-1461896836934- voices-of-a-revolution?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Entomology & Parasitology',
+      category: 'Zoology',
+      price: 15000,
+      image: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       duration: '2 Years',
-      students: 80,
+      students: 75,
       rating: 4.6,
     },
   ];
@@ -96,24 +98,25 @@ const Courses = () => {
               </span>
             </div>
             <h2 className="section-title">
-              Academic <span className="text-primary">Courses</span>
+              Zoology <span className="text-primary">Courses</span>
             </h2>
             <p className="section-subtitle mt-4">
-              Explore our diverse range of programs designed to prepare you for success
+              Explore our Zoology programs at Government Degree College Larkana
             </p>
           </div>
-          <button className="btn-primary mt-6 md:mt-0 group">
+          <Link to="/course/zoology" className="btn-primary mt-6 md:mt-0 group">
             <span>View All Courses</span>
             <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
 
         {/* Courses Grid */}
         <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {courses.map((course) => (
-            <div
+            <Link
+              to="/course/zoology"
               key={course.id}
-              className="course-card card group cursor-pointer"
+              className="course-card card group cursor-pointer block"
             >
               {/* Image */}
               <div className="relative overflow-hidden h-48">
@@ -156,18 +159,15 @@ const Courses = () => {
                   </div>
                 </div>
 
-                {/* Price & CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="text-xl font-bold text-primary">
-                    ${course.price}
-                  </div>
-                  <button className="text-sm font-medium text-gray-600 hover:text-primary transition-colors flex items-center">
-                    Enroll Now
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </button>
+                {/* CTA */}
+                <div className="flex items-center justify-end pt-4 border-t border-gray-100">
+                  <span className="text-sm font-medium text-primary flex items-center">
+                    View Details
+                    <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
