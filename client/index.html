@@ -12,8 +12,6 @@
     <meta name="keywords" content="GDC Larkana, Government Degree College Larkana, BS Zoology Larkana, college admissions Sindh, Larkana college, degree college Sindh, Zoology department, GDC Sindh, Larkana university, BS programs Larkana" />
     <meta name="author" content="Government Degree College Larkana" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://gdclarkana.edu.pk" />
-
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://gdclarkana.edu.pk" />
@@ -41,7 +39,7 @@
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://www.google.com https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
 
     <!-- Theme -->
     <meta name="theme-color" content="#A91D3A" />
@@ -74,10 +72,11 @@
     }
     </script>
 
-    <!-- Fonts -->
+    <!-- Fonts (non-render-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"></noscript>
   </head>
   <body>
     <div id="root"></div>

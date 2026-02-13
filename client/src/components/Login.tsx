@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import {
   GraduationCap,
@@ -14,6 +15,8 @@ import {
 const Login = () => {
   const pageRef = useRef<HTMLDivElement>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -41,7 +44,13 @@ const Login = () => {
   };
 
   return (
-    <div ref={pageRef} className="min-h-screen flex">
+    <>
+      <Helmet>
+        <title>Login | GDC Larkana - Student Portal</title>
+        <meta name="description" content="Login to your GDC Larkana student portal. Access courses, results, and campus resources." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/login" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen flex">
       {/* Left Panel — Branding */}
       <div className="login-left hidden lg:flex lg:w-[45%] relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark items-center justify-center overflow-hidden">
         {/* Decorative blobs */}
@@ -114,6 +123,8 @@ const Login = () => {
                   type="email"
                   placeholder="you@gdclarkana.edu.pk"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
@@ -131,11 +142,15 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
                   className="w-full pl-10 pr-11 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -184,6 +199,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

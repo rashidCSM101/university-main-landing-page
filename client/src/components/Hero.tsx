@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,8 +46,13 @@ const Hero = () => {
       {/* Background Image with Parallax */}
       <div ref={imageRef} className="absolute inset-0 w-full h-[120%] -top-[10%]">
         <img
-          src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+          src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=50"
+          srcSet="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?ixlib=rb-4.0.3&auto=format&fit=crop&w=640&q=50 640w, https://images.unsplash.com/photo-1592280771190-3e2e4d571952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1024&q=50 1024w, https://images.unsplash.com/photo-1592280771190-3e2e4d571952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=50 2000w"
+          sizes="100vw"
           alt="University Campus"
+          width={2000}
+          height={1333}
+          fetchPriority="high"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 hero-gradient"></div>
@@ -92,10 +98,10 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap items-center gap-4">
-            <button className="btn-primary bg-white text-primary hover:bg-gray-100 group">
+            <Link to="/course/zoology" className="btn-primary bg-white text-primary hover:bg-gray-100 group">
               <span>Explore Courses</span>
               <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
             <button className="btn-outline group flex items-center">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3 group-hover:bg-primary transition-colors">
                 <Play className="w-4 h-4 text-white fill-white" />

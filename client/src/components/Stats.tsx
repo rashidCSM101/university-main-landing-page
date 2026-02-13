@@ -81,10 +81,10 @@ const Stats = () => {
   }, []);
 
   const stats = [
-    { end: 10, suffix: 'K+', label: 'Happy Students', icon: Users },
-    { end: 300, suffix: '+', label: 'Quality Courses', icon: BookOpen },
-    { end: 48, suffix: 'K+', label: 'Global Learners', icon: Globe },
-    { end: 2, suffix: 'K+', label: 'Expert Faculty', icon: GraduationCap },
+    { end: 2500, suffix: '+', label: 'Students Enrolled', icon: Users },
+    { end: 15, suffix: '+', label: 'Academic Programs', icon: BookOpen },
+    { end: 80, suffix: '+', label: 'Faculty Members', icon: Globe },
+    { end: 30, suffix: '+', label: 'Courses Offered', icon: GraduationCap },
   ];
 
   return (

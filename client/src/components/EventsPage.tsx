@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -191,8 +192,14 @@ const EventsPage = () => {
   });
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero */}
+    <>
+      <Helmet>
+        <title>Events | GDC Larkana - Campus Events & Activities</title>
+        <meta name="description" content="Explore upcoming events, seminars, workshops, and campus activities at Government Degree College Larkana." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/events" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero */}
       <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
@@ -323,8 +330,7 @@ const EventsPage = () => {
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt={event.title}                  loading="lazy"                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
@@ -403,6 +409,7 @@ const EventsPage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

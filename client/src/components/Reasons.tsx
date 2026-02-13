@@ -154,10 +154,10 @@ const Reasons = () => {
           <p className="text-gray-500 mb-5 text-sm">
             Ready to start your journey with us?
           </p>
-          <button className="btn-primary group">
+          <Link to="/admissions" className="btn-primary group">
             <span>Apply Now</span>
             <ArrowUpRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </button>
+          </Link>
         </div>
       </div>
     </section>

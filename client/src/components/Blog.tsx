@@ -5,6 +5,36 @@ import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const blogs = [
+    {
+      id: 1,
+      title: 'The Future of Education Technology',
+      excerpt: 'Discover how technology is reshaping the educational landscape and what it means for students and educators.',
+      date: 'Dec 20, 2025',
+      author: 'Admin',
+      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'Technology',
+    },
+    {
+      id: 2,
+      title: 'Tips for Academic Success in University',
+      excerpt: 'Essential strategies for excelling in your academic journey and making the most of your university experience.',
+      date: 'Dec 18, 2025',
+      author: 'Admin',
+      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'Education',
+    },
+    {
+      id: 3,
+      title: 'Career Opportunities After Graduation',
+      excerpt: 'Explore the vast career opportunities available to our graduates and how to prepare for the job market.',
+      date: 'Dec 15, 2025',
+      author: 'Admin',
+      image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      category: 'Career',
+    },
+  ];
+
 const Blog = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -41,36 +71,6 @@ const Blog = () => {
     return () => ctx.revert();
   }, []);
 
-  const blogs = [
-    {
-      id: 1,
-      title: 'The Future of Education Technology',
-      excerpt: 'Discover how technology is reshaping the educational landscape and what it means for students and educators.',
-      date: 'Dec 20, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Technology',
-    },
-    {
-      id: 2,
-      title: 'Tips for Academic Success in University',
-      excerpt: 'Essential strategies for excelling in your academic journey and making the most of your university experience.',
-      date: 'Dec 18, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Education',
-    },
-    {
-      id: 3,
-      title: 'Career Opportunities After Graduation',
-      excerpt: 'Explore the vast career opportunities available to our graduates and how to prepare for the job market.',
-      date: 'Dec 15, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Career',
-    },
-  ];
-
   return (
     <section ref={sectionRef} className="section-padding bg-white">
       <div className="container-custom">
@@ -106,6 +106,9 @@ const Blog = () => {
                 <img
                   src={blog.image}
                   alt={blog.title}
+                  loading="lazy"
+                  width={800}
+                  height={533}
                   className="blog-image w-full h-full object-cover"
                 />
                 <div className="absolute top-4 left-4">

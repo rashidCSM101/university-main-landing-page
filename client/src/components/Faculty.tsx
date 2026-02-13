@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -238,8 +239,14 @@ const Faculty = () => {
   });
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero */}
+    <>
+      <Helmet>
+        <title>Faculty | GDC Larkana - Our Teaching Staff</title>
+        <meta name="description" content="Meet the experienced faculty members of Government Degree College Larkana's Zoology department and other disciplines." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/faculty" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero */}
       <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
@@ -436,6 +443,7 @@ const Faculty = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

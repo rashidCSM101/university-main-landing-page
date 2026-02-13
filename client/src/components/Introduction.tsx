@@ -6,6 +6,29 @@ import { BookOpen, Users, Award, Clock } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const features = [
+    {
+      icon: BookOpen,
+      title: 'Quality Education',
+      description: 'World-class curriculum designed by experts',
+    },
+    {
+      icon: Users,
+      title: 'Expert Faculty',
+      description: 'Learn from industry professionals',
+    },
+    {
+      icon: Award,
+      title: 'Certified Courses',
+      description: 'Globally recognized certifications',
+    },
+    {
+      icon: Clock,
+      title: 'Flexible Learning',
+      description: 'Study at your own pace',
+    },
+  ];
+
 const Introduction = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -58,29 +81,6 @@ const Introduction = () => {
     return () => ctx.revert();
   }, []);
 
-  const features = [
-    {
-      icon: BookOpen,
-      title: 'Quality Education',
-      description: 'World-class curriculum designed by experts',
-    },
-    {
-      icon: Users,
-      title: 'Expert Faculty',
-      description: 'Learn from industry professionals',
-    },
-    {
-      icon: Award,
-      title: 'Certified Courses',
-      description: 'Globally recognized certifications',
-    },
-    {
-      icon: Clock,
-      title: 'Flexible Learning',
-      description: 'Study at your own pace',
-    },
-  ];
-
   return (
     <section ref={sectionRef} className="section-padding bg-white overflow-hidden">
       <div className="container-custom">
@@ -90,7 +90,9 @@ const Introduction = () => {
             <div className="relative overflow-hidden rounded-2xl">
               <img
                 src="../../assets/images/introduction.jpg"
-                alt="Students studying"
+                alt="Students studying"              loading="lazy"
+                width={800}
+                height={500}
                 className="w-full h-[500px] object-cover"
               />
             </div>

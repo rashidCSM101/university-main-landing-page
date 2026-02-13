@@ -32,10 +32,10 @@ const Footer = () => {
                 Take the first step towards your future. Apply now and join our community.
               </p>
             </div>
-            <button className="btn-primary bg-white text-primary hover:bg-gray-100 group">
+            <Link to="/admissions" className="btn-primary bg-white text-primary hover:bg-gray-100 group">
               <span>Apply Now</span>
               <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -60,24 +60,32 @@ const Footer = () => {
               <div className="flex space-x-3">
                 <a
                   href="#"
+                  aria-label="Facebook"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="Twitter"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Twitter className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="Instagram"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="LinkedIn"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Linkedin className="w-5 h-5" />

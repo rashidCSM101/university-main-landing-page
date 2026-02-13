@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -162,16 +163,22 @@ const Timetable = () => {
   const currentSchedule = timetableData[selectedYear]?.find(d => d.day === selectedDay);
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
-        </div>
-        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="container-custom relative z-10">
-          <div className="tt-hero-content">
+    <>
+      <Helmet>
+        <title>Timetable | GDC Larkana - Lecture Schedule</title>
+        <meta name="description" content="View the weekly lecture timetable for BS Zoology program at Government Degree College Larkana. Plan your classes." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/timetable" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero */}
+        <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+          </div>
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+          <div className="container-custom relative z-10">
+            <div className="tt-hero-content">
             <Link to="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group">
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Back to Home</span>
@@ -293,6 +300,7 @@ const Timetable = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

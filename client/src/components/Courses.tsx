@@ -6,43 +6,7 @@ import { Clock, Users, Star, ArrowRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Courses = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title animation
-      gsap.from('.courses-header', {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      // Cards animation - without hiding initially
-      gsap.from('.course-card', {
-        y: 50,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 90%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const courses = [
+const courses = [
     {
       id: 1,
       title: 'Cell Biology & Genetics',
@@ -85,6 +49,42 @@ const Courses = () => {
     },
   ];
 
+const Courses = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.from('.courses-header', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Cards animation - without hiding initially
+      gsap.from('.course-card', {
+        y: 50,
+        scale: 0.95,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section ref={sectionRef} className="section-padding bg-gray-50">
       <div className="container-custom">
@@ -123,6 +123,9 @@ const Courses = () => {
                 <img
                   src={course.image}
                   alt={course.title}
+                  loading="lazy"
+                  width={800}
+                  height={533}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute top-4 left-4">

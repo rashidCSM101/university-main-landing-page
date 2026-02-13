@@ -1,0 +1,8 @@
+# robots.txt for GDC Larkana
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+
+# Sitemap
+Sitemap: https://gdclarkana.edu.pk/sitemap.xml

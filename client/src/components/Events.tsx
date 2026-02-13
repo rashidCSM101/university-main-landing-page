@@ -6,6 +6,33 @@ import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const events = [
+    {
+      id: 1,
+      title: 'Building Future Through Technology',
+      date: 'Jan 15, 2025',
+      location: 'Main Auditorium',
+      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      size: 'large',
+    },
+    {
+      id: 2,
+      title: 'The World Trip Our Dream Come True',
+      date: 'Feb 20, 2025',
+      location: 'Campus Ground',
+      image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      size: 'medium',
+    },
+    {
+      id: 3,
+      title: 'Annual Sports Championship',
+      date: 'Mar 10, 2025',
+      location: 'Sports Complex',
+      image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      size: 'medium',
+    },
+  ];
+
 const Events = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -57,33 +84,6 @@ const Events = () => {
 
     return () => ctx.revert();
   }, []);
-
-  const events = [
-    {
-      id: 1,
-      title: 'Building Future Through Technology',
-      date: 'Jan 15, 2025',
-      location: 'Main Auditorium',
-      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      size: 'large',
-    },
-    {
-      id: 2,
-      title: 'The World Trip Our Dream Come True',
-      date: 'Feb 20, 2025',
-      location: 'Campus Ground',
-      image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      size: 'medium',
-    },
-    {
-      id: 3,
-      title: 'Annual Sports Championship',
-      date: 'Mar 10, 2025',
-      location: 'Sports Complex',
-      image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      size: 'medium',
-    },
-  ];
 
   return (
     <section ref={sectionRef} className="section-padding bg-white overflow-hidden">
@@ -149,7 +149,9 @@ const Events = () => {
             <div className="event-image col-span-2 relative overflow-hidden rounded-2xl h-64">
               <img
                 src={events[0].image}
-                alt={events[0].title}
+                alt={events[0].title}              loading="lazy"
+                width={800}
+                height={533}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -167,7 +169,9 @@ const Events = () => {
               >
                 <img
                   src={event.image}
-                  alt={event.title}
+                  alt={event.title}                loading="lazy"
+                  width={800}
+                  height={533}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>

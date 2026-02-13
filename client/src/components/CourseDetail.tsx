@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -209,8 +210,14 @@ const CourseDetail = () => {
   };
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
+    <>
+      <Helmet>
+        <title>BS Zoology Program | GDC Larkana</title>
+        <meta name="description" content="Explore the BS Zoology program at Government Degree College Larkana. Complete curriculum, learning objectives, and career prospects." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/course/zoology" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-20 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -430,6 +437,7 @@ const CourseDetail = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

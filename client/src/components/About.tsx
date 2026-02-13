@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -21,6 +22,56 @@ import {
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const milestones = [
+    { year: '1960', title: 'College Founded', desc: 'Government Degree College Larkana was established to provide quality education in Sindh.' },
+    { year: '1985', title: 'Science Faculty Added', desc: 'Introduction of BSc programs including Zoology, Botany, and Chemistry departments.' },
+    { year: '2005', title: 'Modern Labs Built', desc: 'State-of-the-art science laboratories were constructed for practical learning.' },
+    { year: '2015', title: '4-Year BS Programs', desc: 'HEC-affiliated 4-year BS degree programs launched across departments.' },
+    { year: '2024', title: 'Digital Campus', desc: 'Smart classrooms and digital learning resources introduced campus-wide.' },
+  ];
+
+const values = [
+    {
+      icon: Target,
+      title: 'Our Mission',
+      description: 'To provide accessible, quality education that empowers students from Larkana and beyond to become knowledgeable, skilled, and responsible citizens contributing to national development.',
+      gradient: 'from-blue-500 to-indigo-600',
+      bg: 'bg-blue-50',
+    },
+    {
+      icon: Eye,
+      title: 'Our Vision',
+      description: 'To be a leading public sector educational institution in Sindh, recognized for academic excellence, research contributions, and producing graduates who make a positive impact in society.',
+      gradient: 'from-emerald-500 to-teal-600',
+      bg: 'bg-emerald-50',
+    },
+    {
+      icon: Heart,
+      title: 'Our Values',
+      description: 'We uphold integrity, inclusivity, and innovation. We believe in equal opportunity for all students regardless of background, fostering a supportive and progressive learning environment.',
+      gradient: 'from-primary to-rose-600',
+      bg: 'bg-red-50',
+    },
+  ];
+
+const stats = [
+    { value: '60+', label: 'Years of Excellence', icon: Award },
+    { value: '5000+', label: 'Alumni Network', icon: Users },
+    { value: '50+', label: 'Expert Faculty', icon: GraduationCap },
+    { value: '15+', label: 'Departments', icon: BookOpen },
+  ];
+
+const facilities = [
+    'Well-equipped Zoology Laboratory',
+    'Digital Library & Reading Room',
+    'Computer Lab with Internet Access',
+    'Botanical Garden & Specimen Museum',
+    'Sports Ground & Indoor Games',
+    'Seminar Hall & Auditorium',
+    'Student Common Room',
+    'Cafeteria & Canteen',
+  ];
 
 const About = () => {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -52,59 +103,15 @@ const About = () => {
     return () => ctx.revert();
   }, []);
 
-  const milestones = [
-    { year: '1960', title: 'College Founded', desc: 'Government Degree College Larkana was established to provide quality education in Sindh.' },
-    { year: '1985', title: 'Science Faculty Added', desc: 'Introduction of BSc programs including Zoology, Botany, and Chemistry departments.' },
-    { year: '2005', title: 'Modern Labs Built', desc: 'State-of-the-art science laboratories were constructed for practical learning.' },
-    { year: '2015', title: '4-Year BS Programs', desc: 'HEC-affiliated 4-year BS degree programs launched across departments.' },
-    { year: '2024', title: 'Digital Campus', desc: 'Smart classrooms and digital learning resources introduced campus-wide.' },
-  ];
-
-  const values = [
-    {
-      icon: Target,
-      title: 'Our Mission',
-      description: 'To provide accessible, quality education that empowers students from Larkana and beyond to become knowledgeable, skilled, and responsible citizens contributing to national development.',
-      gradient: 'from-blue-500 to-indigo-600',
-      bg: 'bg-blue-50',
-    },
-    {
-      icon: Eye,
-      title: 'Our Vision',
-      description: 'To be a leading public sector educational institution in Sindh, recognized for academic excellence, research contributions, and producing graduates who make a positive impact in society.',
-      gradient: 'from-emerald-500 to-teal-600',
-      bg: 'bg-emerald-50',
-    },
-    {
-      icon: Heart,
-      title: 'Our Values',
-      description: 'We uphold integrity, inclusivity, and innovation. We believe in equal opportunity for all students regardless of background, fostering a supportive and progressive learning environment.',
-      gradient: 'from-primary to-rose-600',
-      bg: 'bg-red-50',
-    },
-  ];
-
-  const stats = [
-    { value: '60+', label: 'Years of Excellence', icon: Award },
-    { value: '5000+', label: 'Alumni Network', icon: Users },
-    { value: '50+', label: 'Expert Faculty', icon: GraduationCap },
-    { value: '15+', label: 'Departments', icon: BookOpen },
-  ];
-
-  const facilities = [
-    'Well-equipped Zoology Laboratory',
-    'Digital Library & Reading Room',
-    'Computer Lab with Internet Access',
-    'Botanical Garden & Specimen Museum',
-    'Sports Ground & Indoor Games',
-    'Seminar Hall & Auditorium',
-    'Student Common Room',
-    'Cafeteria & Canteen',
-  ];
-
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
+    <>
+      <Helmet>
+        <title>About Us | GDC Larkana - History & Mission</title>
+        <meta name="description" content="Learn about Government Degree College Larkana's rich history, mission, vision, and commitment to quality education in Sindh." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/about" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 opacity-10">
@@ -198,6 +205,9 @@ const About = () => {
                 <img
                   src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                   alt="GDC Larkana Campus"
+                  loading="lazy"
+                  width={800}
+                  height={533}
                   className="w-full h-[400px] object-cover"
                 />
               </div>
@@ -289,6 +299,9 @@ const About = () => {
                   <img
                     src="https://images.unsplash.com/photo-1523050854058-8df90110c476?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                     alt="College Facilities"
+                    loading="lazy"
+                    width={800}
+                    height={533}
                     className="w-full h-[400px] object-cover"
                   />
                 </div>
@@ -359,6 +372,7 @@ const About = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

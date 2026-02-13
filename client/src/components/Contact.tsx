@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -25,6 +26,11 @@ gsap.registerPlugin(ScrollTrigger);
 const Contact = () => {
   const pageRef = useRef<HTMLDivElement>(null);
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [contactForm, setContactForm] = useState({
+    name: '', email: '', phone: '', subject: '', message: '',
+  });
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setContactForm({ ...contactForm, [e.target.name]: e.target.value });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -98,8 +104,14 @@ const Contact = () => {
   ];
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
+    <>
+      <Helmet>
+        <title>Contact Us | GDC Larkana - Get in Touch</title>
+        <meta name="description" content="Contact Government Degree College Larkana. Find our address, phone, email, and office hours. We're here to help." />
+        <link rel="canonical" href="https://gdclarkana.edu.pk/contact" />
+      </Helmet>
+      <div ref={pageRef} className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
@@ -181,8 +193,11 @@ const Contact = () => {
                       <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
+                        name="name"
                         placeholder="Your name"
                         required
+                        value={contactForm.name}
+                        onChange={handleContactChange}
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
@@ -193,8 +208,11 @@ const Contact = () => {
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="email"
+                        name="email"
                         placeholder="your@email.com"
                         required
+                        value={contactForm.email}
+                        onChange={handleContactChange}
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
@@ -208,7 +226,12 @@ const Contact = () => {
                       <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="tel"
+                        name="phone"
                         placeholder="+92 300 1234567"
+                        value={contactForm.phone}
+                        onChange={handleContactChange}
+                        pattern="(\+92|0)\d{10}"
+                        title="Enter a valid Pakistani phone number"
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
@@ -218,7 +241,10 @@ const Contact = () => {
                     <div className="relative">
                       <BookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <select
+                        name="subject"
                         required
+                        value={contactForm.subject}
+                        onChange={handleContactChange}
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
                       >
                         <option value="">Select subject</option>
@@ -236,8 +262,11 @@ const Contact = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Message</label>
                   <textarea
                     rows={5}
+                    name="message"
                     placeholder="Write your message here..."
                     required
+                    value={contactForm.message}
+                    onChange={handleContactChange}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
                   ></textarea>
                 </div>
@@ -312,6 +341,8 @@ const Contact = () => {
                     <a
                       key={i}
                       href="#"
+                      aria-label={social.label}
+                      rel="noopener noreferrer"
                       className={`flex items-center gap-3 ${social.bg} rounded-xl p-3 group transition-all duration-300 ${social.color} hover:text-white`}
                     >
                       <social.icon className={`w-5 h-5 ${social.text} group-hover:text-white transition-colors`} />
@@ -345,6 +376,7 @@ const Contact = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -66,6 +66,7 @@ const Header = () => {
                   className={`flex items-center space-x-1 font-medium transition-colors duration-300 ${
                     isScrolled ? 'text-gray-700 hover:text-primary' : 'text-white hover:text-primary-100'
                   }`}
+                  {...(link.hasDropdown ? { 'aria-haspopup': 'true' } : {})}
                 >
                   <span>{link.name}</span>
                   {link.hasDropdown && <ChevronDown className="w-4 h-4" />}
@@ -108,6 +109,8 @@ const Header = () => {
           <button
             className="lg:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
