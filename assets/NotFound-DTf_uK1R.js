@@ -1,0 +1,11 @@
+import{c as a,j as e,H as t,L as s}from"./index-Djmc17UQ.js";import{A as r}from"./arrow-left-BRRptfOl.js";/**
+ * @license lucide-react v0.303.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const n=a("Home",[["path",{d:"m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",key:"y5dka4"}],["polyline",{points:"9 22 9 12 15 12 15 22",key:"e2us08"}]]);/**
+ * @license lucide-react v0.303.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const o=a("SearchX",[["path",{d:"m13.5 8.5-5 5",key:"1cs55j"}],["path",{d:"m8.5 8.5 5 5",key:"a8mexj"}],["circle",{cx:"11",cy:"11",r:"8",key:"4ej97u"}],["path",{d:"m21 21-4.3-4.3",key:"1qie3q"}]]),m=()=>e.jsxs(e.Fragment,{children:[e.jsxs(t,{children:[e.jsx("title",{children:"404 - Page Not Found | GDC Larkana"}),e.jsx("meta",{name:"description",content:"The page you are looking for does not exist."}),e.jsx("meta",{name:"robots",content:"noindex, nofollow"})]}),e.jsx("div",{className:"min-h-screen flex items-center justify-center bg-gray-50 px-4",children:e.jsxs("div",{className:"text-center max-w-lg",children:[e.jsx("div",{className:"w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8",children:e.jsx(o,{className:"w-12 h-12 text-primary"})}),e.jsxs("h1",{className:"text-7xl font-heading font-bold text-gray-900 mb-4",children:["4",e.jsx("span",{className:"text-primary",children:"0"}),"4"]}),e.jsx("h2",{className:"text-2xl font-heading font-bold text-gray-800 mb-3",children:"Page Not Found"}),e.jsx("p",{className:"text-gray-500 mb-8",children:"The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."}),e.jsxs("div",{className:"flex items-center justify-center gap-4",children:[e.jsxs("button",{onClick:()=>window.history.back(),className:"inline-flex items-center gap-2 px-5 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors",children:[e.jsx(r,{className:"w-4 h-4"}),"Go Back"]}),e.jsxs(s,{to:"/",className:"btn-primary",children:[e.jsx(n,{className:"w-4 h-4 mr-2"}),"Home Page"]})]})]})})]});export{m as default};
