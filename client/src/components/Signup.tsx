@@ -67,7 +67,7 @@ const Signup = () => {
       <Helmet>
         <title>Sign Up | GDC Larkana - Create Account</title>
         <meta name="description" content="Create your student account at Government Degree College Larkana. Register for BS Zoology and other programs." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/signup" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div ref={pageRef} className="h-screen flex overflow-hidden">
       {/* Left Panel — Branding */}
@@ -340,9 +340,9 @@ const Signup = () => {
                   <input type="checkbox" id="terms" required className="w-4 h-4 mt-0.5 accent-primary rounded" />
                   <label htmlFor="terms" className="text-sm text-gray-600">
                     I agree to the{' '}
-                    <Link to="#" className="text-primary font-medium hover:underline">Terms & Conditions</Link>{' '}
+                    <Link to="/terms" className="text-primary font-medium hover:underline">Terms & Conditions</Link>{' '}
                     and{' '}
-                    <Link to="#" className="text-primary font-medium hover:underline">Privacy Policy</Link>
+                    <Link to="/privacy" className="text-primary font-medium hover:underline">Privacy Policy</Link>
                   </label>
                 </div>
 

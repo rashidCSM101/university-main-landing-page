@@ -58,38 +58,30 @@ const Footer = () => {
               </p>
               {/* Social Links */}
               <div className="flex space-x-3">
-                <a
-                  href="#"
+                <span
                   aria-label="Facebook"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
                 >
                   <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
+                </span>
+                <span
                   aria-label="Twitter"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
                 >
                   <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
+                </span>
+                <span
                   aria-label="Instagram"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
                 >
                   <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
+                </span>
+                <span
                   aria-label="LinkedIn"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
                 >
                   <Linkedin className="w-5 h-5" />
-                </a>
+                </span>
               </div>
             </div>
 

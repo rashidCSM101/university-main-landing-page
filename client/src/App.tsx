@@ -30,6 +30,10 @@ const EventsPage = lazy(() => import('./components/EventsPage'));
 const NoticeBoard = lazy(() => import('./components/NoticeBoard'));
 const Timetable = lazy(() => import('./components/Timetable'));
 const Admissions = lazy(() => import('./components/Admissions'));
+const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./components/TermsOfService'));
+const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
+const GradingPolicy = lazy(() => import('./components/GradingPolicy'));
 const NotFound = lazy(() => import('./components/NotFound'));
 
 const authRoutes = ['/login', '/signup'];
@@ -114,6 +118,10 @@ function AppContent() {
           <Route path="/noticeboard" element={<main><NoticeBoard /></main>} />
           <Route path="/timetable" element={<main><Timetable /></main>} />
           <Route path="/admissions" element={<main><Admissions /></main>} />
+          <Route path="/privacy" element={<main><PrivacyPolicy /></main>} />
+          <Route path="/terms" element={<main><TermsOfService /></main>} />
+          <Route path="/cookies" element={<main><CookiePolicy /></main>} />
+          <Route path="/grading-policy" element={<main><GradingPolicy /></main>} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />

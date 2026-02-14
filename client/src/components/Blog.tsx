@@ -144,13 +144,12 @@ const Blog = () => {
                 </p>
 
                 {/* Read More */}
-                <a
-                  href="#"
-                  className="inline-flex items-center text-primary font-medium group-hover:gap-2 transition-all"
+                <span
+                  className="inline-flex items-center text-primary font-medium cursor-pointer group-hover:gap-2 transition-all"
                 >
                   <span>Read More</span>
                   <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-                </a>
+                </span>
               </div>
             </article>
           ))}

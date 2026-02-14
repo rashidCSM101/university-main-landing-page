@@ -320,6 +320,7 @@ const Contact = () => {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
+                    sandbox="allow-scripts"
                     title="GDC Larkana Location"
                   ></iframe>
                 </div>
@@ -338,18 +339,16 @@ const Contact = () => {
                     { icon: Instagram, label: 'Instagram', color: 'hover:bg-pink-500', bg: 'bg-pink-50', text: 'text-pink-600' },
                     { icon: Linkedin, label: 'LinkedIn', color: 'hover:bg-blue-700', bg: 'bg-indigo-50', text: 'text-indigo-600' },
                   ].map((social, i) => (
-                    <a
+                    <span
                       key={i}
-                      href="#"
                       aria-label={social.label}
-                      rel="noopener noreferrer"
-                      className={`flex items-center gap-3 ${social.bg} rounded-xl p-3 group transition-all duration-300 ${social.color} hover:text-white`}
+                      className={`flex items-center gap-3 ${social.bg} rounded-xl p-3 group transition-all duration-300 ${social.color} hover:text-white cursor-pointer`}
                     >
                       <social.icon className={`w-5 h-5 ${social.text} group-hover:text-white transition-colors`} />
                       <span className={`text-sm font-medium ${social.text} group-hover:text-white transition-colors`}>
                         {social.label}
                       </span>
-                    </a>
+                    </span>
                   ))}
                 </div>
               </div>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BookOpen, Users, Award, Clock } from 'lucide-react';
+import introImage from '../../assets/images/introduction.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,8 +90,9 @@ const Introduction = () => {
           <div ref={imageRef} className="relative">
             <div className="relative overflow-hidden rounded-2xl">
               <img
-                src="../../assets/images/introduction.jpg"
-                alt="Students studying"              loading="lazy"
+                src={introImage}
+                alt="Students studying"
+                loading="lazy"
                 width={800}
                 height={500}
                 className="w-full h-[500px] object-cover"

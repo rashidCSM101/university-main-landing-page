@@ -48,7 +48,7 @@ const Login = () => {
       <Helmet>
         <title>Login | GDC Larkana - Student Portal</title>
         <meta name="description" content="Login to your GDC Larkana student portal. Access courses, results, and campus resources." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/login" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div ref={pageRef} className="min-h-screen flex">
       {/* Left Panel — Branding */}
@@ -134,7 +134,7 @@ const Login = () => {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-sm font-semibold text-gray-700">Password</label>
-                <Link to="#" className="text-xs text-primary font-medium hover:underline">Forgot password?</Link>
+                <span className="text-xs text-gray-400 cursor-default">Forgot password?</span>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

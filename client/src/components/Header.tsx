@@ -27,11 +27,12 @@ const Header = () => {
       ],
     },
     {
-      name: 'Pages', href: '#', hasDropdown: true,
+      name: 'Pages', href: '/noticeboard', hasDropdown: true,
       dropdownItems: [
         { name: 'Notice Board', href: '/noticeboard' },
         { name: 'Admissions', href: '/admissions' },
         { name: 'Events', href: '/events' },
+        { name: 'Grading Policy', href: '/grading-policy' },
       ],
     },
     { name: 'Contact', href: '/contact' },

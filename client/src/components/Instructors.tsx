@@ -114,42 +114,30 @@ const Instructors = () => {
                 {/* Overlay with Social Links */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
                   <div className="flex space-x-3">
-                    <a
-                      href={instructor.social.facebook}
+                    <span
                       aria-label={`${instructor.name} on Facebook`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
                     >
                       <Facebook className="w-5 h-5" />
-                    </a>
-                    <a
-                      href={instructor.social.twitter}
+                    </span>
+                    <span
                       aria-label={`${instructor.name} on Twitter`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
                     >
                       <Twitter className="w-5 h-5" />
-                    </a>
-                    <a
-                      href={instructor.social.linkedin}
+                    </span>
+                    <span
                       aria-label={`${instructor.name} on LinkedIn`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
                     >
                       <Linkedin className="w-5 h-5" />
-                    </a>
-                    <a
-                      href={instructor.social.instagram}
+                    </span>
+                    <span
                       aria-label={`${instructor.name} on Instagram`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
                     >
                       <Instagram className="w-5 h-5" />
-                    </a>
+                    </span>
                   </div>
                 </div>
               </div>
