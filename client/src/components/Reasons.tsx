@@ -1,14 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { GraduationCap, Building2, Users, Sparkles, ArrowUpRight } from 'lucide-react';
+import { GraduationCap, Building2, Users, Sparkles, MapPin, Calendar, Zap, Heart, TrendingUp, Award, BookOpen } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Reasons = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const [favorites, setFavorites] = useState<number[]>([]);
+
+  const toggleFavorite = (index: number) => {
+    setFavorites(prev => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -45,34 +52,46 @@ const Reasons = () => {
   const reasons = [
     {
       icon: GraduationCap,
-      title: 'Expert Faculty',
-      description:
-        'Learn from distinguished professors and industry experts who bring real-world experience to the classroom.',
-      gradient: 'from-blue-500 to-indigo-600',
-      lightBg: 'bg-blue-50',
-      accent: 'text-blue-600',
+      title: 'Expert Faculty Members',
+      description: 'Learn from distinguished professors and industry experts',
+      category: 'Academic',
+      badge: 'Excellence',
+      bgGradient: 'from-blue-400 via-blue-500 to-blue-600',
+      badgeColor: 'bg-primary',
+      categoryColor: 'bg-blue-600',
+      location: 'Faculty of Sciences',
+      stats: { value: '150+', label: 'Professors', icon: Users },
+      stats2: { value: '25+', label: 'Years Exp.', icon: Award },
       number: '01',
       link: '/faculty',
     },
     {
       icon: Building2,
-      title: 'Modern Facilities',
-      description:
-        'State-of-the-art laboratories, libraries, and learning spaces equipped with the latest technology.',
-      gradient: 'from-primary to-rose-700',
-      lightBg: 'bg-red-50',
-      accent: 'text-primary',
+      title: 'Modern Infrastructure',
+      description: 'State-of-the-art laboratories and learning facilities',
+      category: 'Facilities',
+      badge: 'Premium',
+      bgGradient: 'from-rose-400 via-primary to-rose-700',
+      badgeColor: 'bg-orange-500',
+      categoryColor: 'bg-gray-700',
+      location: 'Main Campus',
+      stats: { value: '50+', label: 'Labs', icon: Building2 },
+      stats2: { value: '100%', label: 'Equipped', icon: TrendingUp },
       number: '02',
       link: '/about',
     },
     {
       icon: Users,
-      title: 'Industry Connections',
-      description:
-        'Strong partnerships with leading companies ensuring excellent internship and job placement opportunities.',
-      gradient: 'from-emerald-500 to-teal-600',
-      lightBg: 'bg-emerald-50',
-      accent: 'text-emerald-600',
+      title: 'Career Opportunities',
+      description: 'Strong industry partnerships and placement support',
+      category: 'Career',
+      badge: 'Top Rated',
+      bgGradient: 'from-emerald-400 via-teal-500 to-cyan-600',
+      badgeColor: 'bg-red-500',
+      categoryColor: 'bg-teal-700',
+      location: 'Career Services',
+      stats: { value: '90%', label: 'Placements', icon: TrendingUp },
+      stats2: { value: '200+', label: 'Companies', icon: BookOpen },
       number: '03',
       link: '/about',
     },
@@ -101,52 +120,121 @@ const Reasons = () => {
 
         {/* Reasons Cards */}
         <div ref={cardsRef} className="grid md:grid-cols-3 gap-8">
-          {reasons.map((reason, index) => (
-            <div
-              key={index}
-              className="reason-card group relative bg-white rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]"
-            >
-              {/* Top Gradient Bar */}
-              <div className={`h-1.5 bg-gradient-to-r ${reason.gradient}`}></div>
+          {reasons.map((reason, index) => {
+            const StatIcon1 = reason.stats.icon;
+            const StatIcon2 = reason.stats2.icon;
+            const isFavorite = favorites.includes(index);
+            
+            return (
+              <Link
+                key={index}
+                to={reason.link}
+                className="reason-card group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              >
+                {/* Image/Gradient Section */}
+                <div className={`relative h-64 bg-gradient-to-br ${reason.bgGradient} overflow-hidden`}>
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl"></div>
+                    <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+                  </div>
+                  
+                  {/* Icon in Center */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <reason.icon className="w-24 h-24 text-white/90 group-hover:scale-110 transition-transform duration-500" />
+                  </div>
 
-              <div className="p-8 pt-7">
-                {/* Top Row - Number & Arrow */}
-                <div className="flex items-center justify-between mb-8">
-                  <span className="text-5xl font-bold text-gray-100 font-heading select-none">
-                    {reason.number}
-                  </span>
-                  <div className={`w-10 h-10 rounded-full ${reason.lightBg} flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:rotate-45`}>
-                    <ArrowUpRight className={`w-5 h-5 ${reason.accent}`} />
+                  {/* Top Badges */}
+                  <div className="absolute top-4 left-4 flex items-center gap-2">
+                    <span className={`${reason.badgeColor} text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg`}>
+                      {reason.badge}
+                    </span>
+                    <span className="bg-gray-800/80 backdrop-blur-sm text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
+                      <Zap className="w-4 h-4" fill="currentColor" />
+                    </span>
+                  </div>
+
+                  <div className="absolute top-4 right-4">
+                    <span className={`${reason.categoryColor} text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg`}>
+                      {reason.category}
+                    </span>
+                  </div>
+
+                  {/* Bottom Price Badge & Heart */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                    <span className="bg-teal-600 text-white font-bold text-lg px-5 py-2.5 rounded-xl shadow-lg">
+                      #{reason.number}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleFavorite(index);
+                      }}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+                        isFavorite 
+                          ? 'bg-red-500 text-white scale-110' 
+                          : 'bg-white text-gray-600 hover:bg-red-50 hover:text-red-500'
+                      }`}
+                    >
+                      <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-current' : ''}`} />
+                    </button>
                   </div>
                 </div>
 
-                {/* Icon */}
-                <div className={`w-14 h-14 bg-gradient-to-br ${reason.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                  <reason.icon className="w-7 h-7 text-white" />
+                {/* Content Section */}
+                <div className="p-6">
+                  {/* Location */}
+                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
+                    <MapPin className="w-4 h-4" />
+                    <span>{reason.location}</span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                    {reason.title}
+                  </h3>
+
+                  {/* Publisher Info */}
+                  <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-rose-600 flex items-center justify-center">
+                      <GraduationCap className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-sm text-gray-600 font-medium">GDC Larkana</span>
+                    <div className="flex items-center gap-1 text-xs text-gray-400 ml-auto">
+                      <Calendar className="w-3 h-3" />
+                      <span>Est. 1935</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm leading-relaxed mb-5">{reason.description}</p>
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-6 text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <StatIcon1 className="w-4 h-4 text-gray-700" />
+                      </div>
+                      <div className="text-xs">
+                        <div className="font-bold text-gray-900">{reason.stats.value}</div>
+                        <div className="text-gray-500">{reason.stats.label}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <StatIcon2 className="w-4 h-4 text-gray-700" />
+                      </div>
+                      <div className="text-xs">
+                        <div className="font-bold text-gray-900">{reason.stats2.value}</div>
+                        <div className="text-gray-500">{reason.stats2.label}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Content */}
-                <h3 className={`text-xl font-bold text-gray-900 mb-3 group-hover:${reason.accent} transition-colors`}>
-                  {reason.title}
-                </h3>
-                <p className="text-gray-500 leading-relaxed text-[15px]">{reason.description}</p>
-
-                {/* Bottom Link */}
-                <div className="mt-7 pt-5 border-t border-gray-100/80">
-                  <Link
-                    to={reason.link}
-                    className={`inline-flex items-center ${reason.accent} font-semibold text-sm tracking-wide hover:gap-3 transition-all duration-300`}
-                  >
-                    <span>Learn More</span>
-                    <ArrowUpRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Background Glow on Hover */}
-              <div className={`absolute -bottom-20 -right-20 w-40 h-40 bg-gradient-to-br ${reason.gradient} rounded-full opacity-0 group-hover:opacity-[0.04] blur-2xl transition-opacity duration-500`}></div>
-            </div>
-          ))}
+              </Link>
+            );
+          })}
+        </div>
         </div>
 
         {/* Bottom CTA */}
