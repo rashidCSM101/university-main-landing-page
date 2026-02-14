@@ -380,10 +380,10 @@ const Admissions = () => {
               <p className="text-white/60 text-sm">Download the admission form or visit the college admission office.</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <a href="#" className="inline-flex items-center gap-2 bg-white text-gray-900 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors text-sm">
+              <span className="inline-flex items-center gap-2 bg-white/20 text-white font-semibold px-6 py-3 rounded-xl cursor-not-allowed text-sm" title="Coming soon">
                 <Download className="w-4 h-4" />
                 <span>Download Form</span>
-              </a>
+              </span>
               <Link to="/contact" className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-xl hover:bg-primary-dark transition-colors text-sm">
                 <span>Contact Us</span>
                 <ArrowRight className="w-4 h-4" />

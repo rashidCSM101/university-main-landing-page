@@ -113,7 +113,7 @@ const VideoTour = () => {
               src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
               title="GDC Larkana Campus Tour"
               className="w-full h-full rounded-lg"
-              sandbox="allow-scripts allow-same-origin allow-presentation"
+              sandbox="allow-scripts allow-presentation"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>

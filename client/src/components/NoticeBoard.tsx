@@ -261,11 +261,11 @@ const NoticeBoard = () => {
                         <div className="mt-3 pt-3 border-t border-gray-100">
                           <p className="text-sm text-gray-600 leading-relaxed">{notice.content}</p>
                           {notice.attachment && (
-                            <a href="#" className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:underline"
-                              onClick={e => e.stopPropagation()}>
+                            <span className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-gray-400 cursor-not-allowed"
+                              title="Attachment not yet available">
                               <Download className="w-4 h-4" />
                               <span>{notice.attachment}</span>
-                            </a>
+                            </span>
                           )}
                         </div>
                       )}
