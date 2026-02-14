@@ -36,3 +36,6 @@ Thumbs.db
 # Build cache
 .vite
 .cache
+
+# Lock file - use npm (package-lock.json will stay, yarn.lock removed)
+yarn.lock
