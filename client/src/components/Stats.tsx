@@ -66,12 +66,12 @@ const Stats = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.stats-container', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 1,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -81,10 +81,10 @@ const Stats = () => {
   }, []);
 
   const stats = [
-    { end: 10, suffix: 'K+', label: 'Happy Students', icon: Users },
-    { end: 300, suffix: '+', label: 'Quality Courses', icon: BookOpen },
-    { end: 48, suffix: 'K+', label: 'Global Learners', icon: Globe },
-    { end: 2, suffix: 'K+', label: 'Expert Faculty', icon: GraduationCap },
+    { end: 2500, suffix: '+', label: 'Students Enrolled', icon: Users },
+    { end: 15, suffix: '+', label: 'Academic Programs', icon: BookOpen },
+    { end: 80, suffix: '+', label: 'Faculty Members', icon: Globe },
+    { end: 30, suffix: '+', label: 'Courses Offered', icon: GraduationCap },
   ];
 
   return (

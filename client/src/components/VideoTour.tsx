@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Play, X } from 'lucide-react';
@@ -8,6 +8,24 @@ gsap.registerPlugin(ScrollTrigger);
 const VideoTour = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // ESC key handler for modal
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') setIsPlaying(false);
+  }, []);
+
+  useEffect(() => {
+    if (isPlaying) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isPlaying, handleKeyDown]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,9 +43,9 @@ const VideoTour = () => {
 
       // Content fade in
       gsap.from('.video-content', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 1,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -44,8 +62,11 @@ const VideoTour = () => {
       {/* Background Image with Parallax */}
       <div className="video-bg absolute inset-0 w-full h-[140%] -top-[20%]">
         <img
-          src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-          alt="Campus Tour"
+          src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=50"
+          alt="GDC Larkana Campus Tour"
+          loading="lazy"
+          width={2000}
+          height={1333}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/60"></div>
@@ -56,6 +77,7 @@ const VideoTour = () => {
         {/* Play Button */}
         <button
           onClick={() => setIsPlaying(true)}
+          aria-label="Play campus tour video"
           className="group mb-8"
         >
           <div className="play-button relative">
@@ -78,9 +100,10 @@ const VideoTour = () => {
 
       {/* Video Modal */}
       {isPlaying && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" role="dialog" aria-modal="true" aria-label="Campus tour video">
           <button
             onClick={() => setIsPlaying(false)}
+            aria-label="Close video"
             className="absolute top-4 right-4 text-white hover:text-primary transition-colors"
           >
             <X className="w-8 h-8" />
@@ -88,8 +111,9 @@ const VideoTour = () => {
           <div className="w-full max-w-4xl aspect-video">
             <iframe
               src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-              title="Campus Tour"
+              title="GDC Larkana Campus Tour"
               className="w-full h-full rounded-lg"
+              sandbox="allow-scripts allow-same-origin allow-presentation"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>

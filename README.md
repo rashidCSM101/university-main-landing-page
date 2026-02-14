@@ -1,4 +1,4 @@
-# Academix LMS Website
+# GDC Larkana LMS Website
 
 A modern, responsive university/education website built with React, TypeScript, Express.js, Tailwind CSS, GSAP animations, and Lenis smooth scrolling.
 
@@ -14,7 +14,7 @@ A modern, responsive university/education website built with React, TypeScript, 
 ## 📦 Project Structure
 
 ```
-academix-lms/
+gdc-larkana-lms/
 ├── client/                 # React frontend
 │   ├── public/            # Static assets
 │   ├── src/

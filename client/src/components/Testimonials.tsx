@@ -5,46 +5,46 @@ import { Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Testimonials = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const testimonials = [
+const testimonials = [
     {
       id: 1,
-      name: 'John Smith',
-      role: 'Computer Science Graduate',
+      name: 'Ahmed Ali Shaikh',
+      role: 'BS Zoology Graduate',
       content:
-        'Academix provided me with the perfect environment to grow and learn. The faculty is exceptional, and the resources available are world-class. I couldn\'t have asked for a better educational experience.',
+        'GDC Larkana provided me with the perfect environment to grow and learn. The faculty is exceptional, and the resources available are world-class. I couldn\'t have asked for a better educational experience.',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
       rating: 5,
     },
     {
       id: 2,
-      name: 'Emma Williams',
-      role: 'Business Administration',
+      name: 'Fatima Naz Parveen',
+      role: 'BS Zoology Student',
       content:
-        'The courses here are world-class. I learned so much and made lifelong connections. The professors are always available to help, and the career services helped me land my dream job.',
+        'The courses here are world-class. I learned so much and made lifelong connections. The professors are always available to help, and the career guidance helped me plan my future goals.',
       image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
       rating: 5,
     },
     {
       id: 3,
-      name: 'David Brown',
-      role: 'Engineering Student',
+      name: 'Muhammad Bilal Memon',
+      role: 'Intermediate Science Student',
       content:
-        'The hands-on experience and practical projects at Academix prepared me for the real world. The internship opportunities through the university were invaluable.',
+        'The hands-on experience and practical lab work at GDC Larkana prepared me for higher studies. The campus life and extracurricular activities were invaluable.',
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
       rating: 5,
     },
   ];
 
+const Testimonials = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.testimonial-content', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 0.8,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -106,6 +106,9 @@ const Testimonials = () => {
                 <img
                   src={testimonials[currentIndex].image}
                   alt={testimonials[currentIndex].name}
+                  loading="lazy"
+                  width={300}
+                  height={300}
                   className="w-14 h-14 rounded-full object-cover"
                 />
                 <div>
@@ -122,12 +125,14 @@ const Testimonials = () => {
               <div className="flex items-center space-x-3 mt-6">
                 <button
                   onClick={prevTestimonial}
+                  aria-label="Previous testimonial"
                   className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={nextTestimonial}
+                  aria-label="Next testimonial"
                   className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -144,7 +149,9 @@ const Testimonials = () => {
             <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Happy Students"
+                alt="Happy Students"              loading="lazy"
+                width={800}
+                height={533}
                 className="rounded-2xl w-full h-[500px] object-cover"
               />
               {/* Floating Stats Card */}
@@ -155,7 +162,10 @@ const Testimonials = () => {
                       <img
                         key={i}
                         src={t.image}
-                        alt=""
+                        alt={t.name}
+                        loading="lazy"
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full border-2 border-white object-cover"
                       />
                     ))}

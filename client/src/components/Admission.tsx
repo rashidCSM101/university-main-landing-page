@@ -2,8 +2,16 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, FileText, Calendar, UserCheck, CreditCard } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const steps = [
+    { icon: FileText, title: 'Fill Application', desc: 'Complete the online form' },
+    { icon: Calendar, title: 'Book Interview', desc: 'Schedule your interview' },
+    { icon: UserCheck, title: 'Get Accepted', desc: 'Receive admission decision' },
+    { icon: CreditCard, title: 'Pay & Enroll', desc: 'Complete enrollment' },
+  ];
 
 const Admission = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -24,9 +32,9 @@ const Admission = () => {
 
       // Content animation
       gsap.from('.admission-content', {
-        y: 50,
-        opacity: 0,
+        y: 30,
         duration: 0.8,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -36,13 +44,14 @@ const Admission = () => {
 
       // Steps animation
       gsap.from('.admission-step', {
-        y: 30,
-        opacity: 0,
+        y: 20,
+        scale: 0.95,
         duration: 0.6,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: '.admission-steps',
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -51,20 +60,16 @@ const Admission = () => {
     return () => ctx.revert();
   }, []);
 
-  const steps = [
-    { icon: FileText, title: 'Fill Application', desc: 'Complete the online form' },
-    { icon: Calendar, title: 'Book Interview', desc: 'Schedule your interview' },
-    { icon: UserCheck, title: 'Get Accepted', desc: 'Receive admission decision' },
-    { icon: CreditCard, title: 'Pay & Enroll', desc: 'Complete enrollment' },
-  ];
-
   return (
     <section ref={sectionRef} className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="admission-bg absolute inset-0 w-full h-[120%] -top-[10%]">
         <img
-          src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-          alt="Campus"
+          src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=50"
+          alt="Government Degree College Larkana campus aerial view"
+          loading="lazy"
+          width={2000}
+          height={1333}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/95 to-primary-dark/90"></div>
@@ -77,13 +82,13 @@ const Admission = () => {
             Admission <span className="text-accent-gold">Now</span>
           </h2>
           <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-            Start your journey with Academix today. Our streamlined admission process
+            Start your journey with GDC Larkana today. Our streamlined admission process
             makes it easy to join thousands of successful students.
           </p>
-          <button className="btn-primary bg-white text-primary hover:bg-gray-100 group">
+          <Link to="/admissions" className="btn-primary bg-white text-primary hover:bg-gray-100 group">
             <span>Admission Form</span>
             <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
 
         {/* Admission Steps */}

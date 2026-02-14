@@ -5,42 +5,7 @@ import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Blog = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title animation
-      gsap.from('.blog-header', {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      // Cards animation
-      gsap.from('.blog-card', {
-        y: 80,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const blogs = [
+const blogs = [
     {
       id: 1,
       title: 'The Future of Education Technology',
@@ -69,6 +34,42 @@ const Blog = () => {
       category: 'Career',
     },
   ];
+
+const Blog = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.from('.blog-header', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Cards animation
+      gsap.from('.blog-card', {
+        y: 50,
+        scale: 0.95,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={sectionRef} className="section-padding bg-white">
@@ -105,6 +106,9 @@ const Blog = () => {
                 <img
                   src={blog.image}
                   alt={blog.title}
+                  loading="lazy"
+                  width={800}
+                  height={533}
                   className="blog-image w-full h-full object-cover"
                 />
                 <div className="absolute top-4 left-4">

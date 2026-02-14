@@ -32,16 +32,17 @@ const Departments = () => {
 
       // Cards animation with stagger
       gsap.from('.department-card', {
-        y: 60,
-        opacity: 0,
+        y: 40,
+        scale: 0.95,
         duration: 0.6,
         stagger: {
           amount: 0.8,
           from: 'start',
         },
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 80%',
+          start: 'top 90%',
           toggleActions: 'play none none reverse',
         },
       });

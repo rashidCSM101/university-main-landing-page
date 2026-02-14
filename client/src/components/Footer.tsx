@@ -4,18 +4,18 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   const quickLinks = [
     { name: 'About Us', href: '/about' },
-    { name: 'Our Courses', href: '/courses' },
-    { name: 'Our Teachers', href: '/teachers' },
+    { name: 'Our Courses', href: '/course/zoology' },
+    { name: 'Our Faculty', href: '/faculty' },
     { name: 'Our Events', href: '/events' },
     { name: 'Contact Us', href: '/contact' },
   ];
 
   const courses = [
-    { name: 'Computer Science', href: '/courses/cs' },
-    { name: 'Business Administration', href: '/courses/business' },
-    { name: 'Engineering', href: '/courses/engineering' },
-    { name: 'Psychology', href: '/courses/psychology' },
-    { name: 'Medical Sciences', href: '/courses/medical' },
+    { name: 'Cell Biology & Genetics', href: '/course/zoology' },
+    { name: 'Animal Physiology', href: '/course/zoology' },
+    { name: 'Ecology & Wildlife', href: '/course/zoology' },
+    { name: 'Entomology', href: '/course/zoology' },
+    { name: 'Microbiology', href: '/course/zoology' },
   ];
 
   return (
@@ -32,10 +32,10 @@ const Footer = () => {
                 Take the first step towards your future. Apply now and join our community.
               </p>
             </div>
-            <button className="btn-primary bg-white text-primary hover:bg-gray-100 group">
+            <Link to="/admissions" className="btn-primary bg-white text-primary hover:bg-gray-100 group">
               <span>Apply Now</span>
               <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -50,34 +50,42 @@ const Footer = () => {
                 <div className="p-2 bg-primary rounded-lg">
                   <GraduationCap className="w-8 h-8 text-white" />
                 </div>
-                <span className="text-2xl font-heading font-bold">Academix</span>
+                <span className="text-xl font-heading font-bold">GDC Larkana</span>
               </Link>
               <p className="text-gray-400 mb-6">
-                Academix is a premier educational institution committed to nurturing
+                Government Degree College Larkana is a premier educational institution committed to nurturing
                 minds and building futures through quality education and innovation.
               </p>
               {/* Social Links */}
               <div className="flex space-x-3">
                 <a
                   href="#"
+                  aria-label="Facebook"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="Twitter"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Twitter className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="Instagram"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
+                  aria-label="LinkedIn"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 >
                   <Linkedin className="w-5 h-5" />
@@ -128,16 +136,16 @@ const Footer = () => {
                 <li className="flex items-start space-x-3">
                   <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
                   <span className="text-gray-400">
-                    123 University Ave, Education City, EC 12345
+                    Government Degree College, Larkana, Sindh, Pakistan
                   </span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-gray-400">+1 (234) 567-8900</span>
+                  <span className="text-gray-400">+92 (74) 123-4567</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-gray-400">info@academix.edu</span>
+                  <span className="text-gray-400">info@gdclarkana.edu.pk</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <Clock className="w-5 h-5 text-primary flex-shrink-0" />
@@ -154,7 +162,7 @@ const Footer = () => {
         <div className="container-custom">
           <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <p className="text-gray-400 text-sm">
-              © 2025 Academix. All rights reserved.
+              © 2026 Government Degree College Larkana. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/privacy" className="text-gray-400 text-sm hover:text-white transition-colors">

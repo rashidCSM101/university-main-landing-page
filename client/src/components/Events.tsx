@@ -1,62 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Events = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const imagesRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Content animation
-      gsap.from(contentRef.current?.children || [], {
-        x: -80,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      // Images animation with parallax
-      gsap.from('.event-image', {
-        y: 100,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: imagesRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-
-      // Parallax effect on images
-      gsap.utils.toArray('.event-image').forEach((img: any) => {
-        gsap.to(img.querySelector('img'), {
-          yPercent: -10,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: img,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        });
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const events = [
+const events = [
     {
       id: 1,
       title: 'Building Future Through Technology',
@@ -82,6 +32,58 @@ const Events = () => {
       size: 'medium',
     },
   ];
+
+const Events = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const imagesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Content animation
+      gsap.from(contentRef.current?.children || [], {
+        x: -50,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Images animation with parallax
+      gsap.from('.event-image', {
+        y: 50,
+        scale: 0.95,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: imagesRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Parallax effect on images
+      gsap.utils.toArray('.event-image').forEach((img: any) => {
+        gsap.to(img.querySelector('img'), {
+          yPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={sectionRef} className="section-padding bg-white overflow-hidden">
@@ -135,10 +137,10 @@ const Events = () => {
               ))}
             </div>
 
-            <button className="btn-primary group">
+            <Link to="/events" className="btn-primary group">
               <Calendar className="w-5 h-5 mr-2" />
               <span>View All Events</span>
-            </button>
+            </Link>
           </div>
 
           {/* Images Grid */}
@@ -147,7 +149,9 @@ const Events = () => {
             <div className="event-image col-span-2 relative overflow-hidden rounded-2xl h-64">
               <img
                 src={events[0].image}
-                alt={events[0].title}
+                alt={events[0].title}              loading="lazy"
+                width={800}
+                height={533}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -165,7 +169,9 @@ const Events = () => {
               >
                 <img
                   src={event.image}
-                  alt={event.title}
+                  alt={event.title}                loading="lazy"
+                  width={800}
+                  height={533}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>

@@ -1,9 +1,33 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BookOpen, Users, Award, Clock } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const features = [
+    {
+      icon: BookOpen,
+      title: 'Quality Education',
+      description: 'World-class curriculum designed by experts',
+    },
+    {
+      icon: Users,
+      title: 'Expert Faculty',
+      description: 'Learn from industry professionals',
+    },
+    {
+      icon: Award,
+      title: 'Certified Courses',
+      description: 'Globally recognized certifications',
+    },
+    {
+      icon: Clock,
+      title: 'Flexible Learning',
+      description: 'Study at your own pace',
+    },
+  ];
 
 const Introduction = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -14,9 +38,9 @@ const Introduction = () => {
     const ctx = gsap.context(() => {
       // Image animation
       gsap.from(imageRef.current, {
-        x: -100,
-        opacity: 0,
+        x: -50,
         duration: 1,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 80%',
@@ -42,10 +66,10 @@ const Introduction = () => {
 
       // Content animation
       gsap.from(contentRef.current?.children || [], {
-        x: 100,
-        opacity: 0,
+        x: 50,
         duration: 0.8,
         stagger: 0.15,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 70%',
@@ -57,29 +81,6 @@ const Introduction = () => {
     return () => ctx.revert();
   }, []);
 
-  const features = [
-    {
-      icon: BookOpen,
-      title: 'Quality Education',
-      description: 'World-class curriculum designed by experts',
-    },
-    {
-      icon: Users,
-      title: 'Expert Faculty',
-      description: 'Learn from industry professionals',
-    },
-    {
-      icon: Award,
-      title: 'Certified Courses',
-      description: 'Globally recognized certifications',
-    },
-    {
-      icon: Clock,
-      title: 'Flexible Learning',
-      description: 'Study at your own pace',
-    },
-  ];
-
   return (
     <section ref={sectionRef} className="section-padding bg-white overflow-hidden">
       <div className="container-custom">
@@ -89,7 +90,9 @@ const Introduction = () => {
             <div className="relative overflow-hidden rounded-2xl">
               <img
                 src="../../assets/images/introduction.jpg"
-                alt="Students studying"
+                alt="Students studying"              loading="lazy"
+                width={800}
+                height={500}
                 className="w-full h-[500px] object-cover"
               />
             </div>
@@ -128,7 +131,7 @@ const Introduction = () => {
 
             {/* Description */}
             <p className="text-gray-600 text-lg mb-8">
-              At Academix, we believe in nurturing minds and building futures. Our institution
+              At Government Degree College Larkana, we believe in nurturing minds and building futures. Our institution
               has been at the forefront of educational excellence, providing students with
               the tools, knowledge, and experiences they need to succeed in an ever-changing world.
             </p>
@@ -149,7 +152,7 @@ const Introduction = () => {
             </div>
 
             {/* CTA */}
-            <button className="btn-primary group">
+            <Link to="/about" className="btn-primary group inline-flex">
               <span>Learn More About Us</span>
               <svg
                 className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1"
@@ -164,7 +167,7 @@ const Introduction = () => {
                   d="M17 8l4 4m0 0l-4 4m4-4H3"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
