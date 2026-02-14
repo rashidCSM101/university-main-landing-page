@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { GraduationCap, Building2, Users, Sparkles, MapPin, Calendar, Zap, Heart, TrendingUp, Award, BookOpen } from 'lucide-react';
+import { GraduationCap, Building2, Users, Sparkles, MapPin, Calendar, Zap, Heart, TrendingUp, Award, BookOpen, ArrowUpRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -234,7 +234,6 @@ const Reasons = () => {
               </Link>
             );
           })}
-        </div>
         </div>
 
         {/* Bottom CTA */}
