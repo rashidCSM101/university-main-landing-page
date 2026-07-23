@@ -39,3 +39,4 @@ Thumbs.db
 
 # Lock file - use npm (package-lock.json will stay, yarn.lock removed)
 yarn.lock
+db.sql
