@@ -1,3 +1,5 @@
+* [ ] 
+
 # GDC Larkana LMS Website
 
 A modern, responsive university/education website built with React, TypeScript, Express.js, Tailwind CSS, GSAP animations, and Lenis smooth scrolling.
@@ -52,37 +54,44 @@ gdc-larkana-lms/
 
 ## 🛠️ Installation
 
-1. **Clone and navigate to the project:**
-   ```bash
-   cd "c:\Users\Rashid\OneDrive - Quaid-i-Azam University\LMS"
-   ```
+1. [ ] **Clone and navigate to the project:**
 
-2. **Install all dependencies:**
-   ```bash
-   npm run install-all
-   ```
 
-   Or install separately:
-   ```bash
-   npm install
-   cd client && npm install
-   cd ../server && npm install
-   ```
+    ```bash
+    cd "c:\Users\Rashid\OneDrive - Quaid-i-Azam University\LMS"
+    ```
+2. [ ] **Install all dependencies:**
+
+
+    ```bash
+    npm run install-all
+    ```
+
+    Or install separately:
+
+    ```bash
+    npm install
+    cd client && npm install
+    cd ../server && npm install
+    ```
 
 ## 🚀 Running the Project
 
 ### Development Mode (Both frontend & backend)
+
 ```bash
 npm run dev
 ```
 
 ### Frontend Only
+
 ```bash
 cd client
 npm run dev
 ```
 
 ### Backend Only
+
 ```bash
 cd server
 npm run dev
@@ -95,24 +104,26 @@ npm run dev
 
 ## 📡 API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/health` | GET | Health check |
-| `/api/courses` | GET | Get all courses |
-| `/api/events` | GET | Get all events |
-| `/api/instructors` | GET | Get all instructors |
-| `/api/testimonials` | GET | Get testimonials |
-| `/api/blogs` | GET | Get blog posts |
+| Endpoint              | Method | Description         |
+| --------------------- | ------ | ------------------- |
+| `/api/health`       | GET    | Health check        |
+| `/api/courses`      | GET    | Get all courses     |
+| `/api/events`       | GET    | Get all events      |
+| `/api/instructors`  | GET    | Get all instructors |
+| `/api/testimonials` | GET    | Get testimonials    |
+| `/api/blogs`        | GET    | Get blog posts      |
 
 ## 🎨 Customization
 
 ### Colors (tailwind.config.js)
+
 - Primary: `#A91D3A` (Maroon/Red)
 - Primary Light: `#C73659`
 - Primary Dark: `#8B1830`
 - Accent Gold: `#D4AF37`
 
 ### Fonts
+
 - Headings: Playfair Display
 - Body: Inter
 
@@ -142,8 +153,6 @@ npm run build
 ## 📄 License
 
 MIT License - Feel free to use this for your projects!
-
-
 
 cd client && yarn dev    # Frontend: localhost:3001
 cd server && npm run dev # Backend: localhost:5000
