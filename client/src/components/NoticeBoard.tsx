@@ -33,70 +33,45 @@ interface Notice {
 const notices: Notice[] = [
   {
     id: 1,
-    title: 'Date Sheet: BS Zoology 3rd Semester Final Exams 2026',
-    date: 'February 12, 2026',
-    category: 'Date Sheet',
+    title: 'Severe Convective Storm & Microburst Advisory: Sector North',
+    date: 'July 28, 2026',
+    category: 'Circular',
     priority: 'urgent',
-    content: 'The date sheet for BS Zoology 3rd Semester Final Examinations has been released. Exams will commence from March 10, 2026. Students are advised to collect their admit cards from the examination branch before March 5, 2026.',
-    attachment: 'datesheet-bsz-3rd-sem.pdf',
+    content: 'Doppler Radar Station 4 has detected convective cell development with wind gusts up to 75 km/h and localized hail. Outdoor maritime and aviation activities should be suspended immediately.',
+    attachment: 'radar-bulletin-sector-north.pdf',
   },
   {
     id: 2,
-    title: 'Important: Fee Submission Deadline Extended',
-    date: 'February 10, 2026',
-    category: 'Circular',
+    title: 'Heatwave & High UV Index Alert (Category 4)',
+    date: 'July 27, 2026',
+    category: 'Exam',
     priority: 'important',
-    content: 'The last date for fee submission for Spring 2026 semester has been extended to February 28, 2026. Students who fail to deposit fees by the due date will be charged a late fee of Rs. 500. Fee can be deposited at HBL or through online banking.',
+    content: 'Extreme solar radiation advisory issued for the southern plains. Peak temperatures expected to reach 44.5°C between 12:00 PM and 4:00 PM. Hydration advisories active for agricultural workers.',
   },
   {
     id: 3,
-    title: 'Kashmir Day Holiday - February 5, 2026',
-    date: 'February 3, 2026',
-    category: 'Holiday',
-    priority: 'normal',
-    content: 'The college will remain closed on February 5, 2026 (Thursday) on account of Kashmir Day. Regular classes will resume on February 6, 2026.',
+    title: 'Monsoon Rainfall & Urban Flood Early Warning',
+    date: 'July 25, 2026',
+    category: 'Date Sheet',
+    priority: 'urgent',
+    content: 'Precipitation model forecasts heavy rainfall accumulation exceeding 120mm over 24 hours. Low-lying river basins are on high alert for flash runoff.',
+    attachment: 'flood-advisory-map-2026.pdf',
   },
   {
     id: 4,
-    title: 'Announcement: Annual Science Exhibition Participation',
-    date: 'February 1, 2026',
+    title: 'Agricultural Soil Moisture & Crop Irrigation Bulletin',
+    date: 'July 22, 2026',
     category: 'General',
     priority: 'normal',
-    content: 'All students of Science departments are encouraged to participate in the Annual Science Exhibition 2026 scheduled for March 15, 2026. Registration forms are available at respective department offices. Last date for registration: February 20, 2026.',
+    content: 'Soil telemetry indicates optimal moisture levels for cotton and rice sowing in District West. Supplemental irrigation can be deferred by 3 days.',
   },
   {
     id: 5,
-    title: 'Exam Schedule: Mid-Term Examinations Spring 2026',
-    date: 'January 28, 2026',
-    category: 'Exam',
-    priority: 'important',
-    content: 'Mid-term examinations for all departments will be held from April 1-10, 2026. Detailed date sheets will be issued department-wise. Students with attendance below 75% will not be allowed to appear in exams.',
-  },
-  {
-    id: 6,
-    title: 'Circular: Updated Lab Safety Guidelines',
-    date: 'January 25, 2026',
-    category: 'Circular',
-    priority: 'normal',
-    content: 'All students registered in laboratory courses must adhere to the updated safety guidelines effective from February 1, 2026. Lab coats and safety goggles are mandatory. Detailed guidelines are available at the department notice boards.',
-  },
-  {
-    id: 7,
-    title: 'Result Announcement: BS Zoology 2nd Semester',
-    date: 'January 20, 2026',
+    title: 'Aviation Turbulence & Crosswind Schedule Update',
+    date: 'July 20, 2026',
     category: 'Result',
     priority: 'important',
-    content: 'Results for BS Zoology 2nd Semester examinations have been declared. Students can check their results on the college website or visit the examination branch. Last date for recheck application: February 5, 2026.',
-    attachment: 'result-bsz-2nd-sem.pdf',
-  },
-  {
-    id: 8,
-    title: 'Date Sheet: Intermediate Annual Exams 2026',
-    date: 'January 15, 2026',
-    category: 'Date Sheet',
-    priority: 'urgent',
-    content: 'The date sheet for Intermediate (Part I & II) Annual Examinations 2026 has been released by BISE Larkana. Exams start from March 20, 2026.',
-    attachment: 'datesheet-inter-2026.pdf',
+    content: 'Low-level wind shear telemetry reported near Airport Runway 18L. Pilots are advised to monitor real-time wind shear alerts.',
   },
 ];
 
@@ -144,33 +119,33 @@ const NoticeBoard = () => {
   return (
     <>
       <Helmet>
-        <title>Notice Board | GDC Larkana - Notices & Circulars</title>
-        <meta name="description" content="View latest notices, circulars, date sheets, exam schedules and important announcements from Government Degree College Larkana." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/noticeboard" />
+        <title>Weather Bulletins & Severe Alerts | WCS Portal</title>
+        <meta name="description" content="View live Doppler weather bulletins, storm warnings, heatwave alerts, and climate advisories from Weather & Climate Services." />
+        <link rel="canonical" href="https://wcs-weather.org/noticeboard" />
       </Helmet>
-      <div ref={pageRef} className="min-h-screen bg-gray-50">
+      <div ref={pageRef} className="min-h-screen bg-slate-50">
         {/* Hero */}
-        <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-primary via-primary-light to-secondary pt-32 pb-24 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+            <div className="absolute top-10 left-10 w-72 h-72 bg-sky rounded-full blur-3xl" />
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal rounded-full blur-3xl" />
           </div>
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
           <div className="container-custom relative z-10">
             <div className="notice-hero-content">
-            <Link to="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group">
+            <Link to="/" className="inline-flex items-center gap-2 text-sky-200 hover:text-white transition-colors mb-8 group">
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Back to Home</span>
             </Link>
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">Important Updates</span>
+              <Sparkles className="w-4 h-4 text-amber" />
+              <span className="text-white/90 font-medium text-sm">Emergency & Advisory Desk</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Notice <span className="text-primary-light">Board</span>
+              Weather <span className="text-sky">Bulletins & Alerts</span>
             </h1>
-            <p className="text-lg text-white/70 max-w-2xl">
-              Stay updated with the latest notices, circulars, date sheets, exam schedules, and important announcements from GDC Larkana.
+            <p className="text-lg text-slate-200 max-w-2xl">
+              Stay updated with live meteorological notifications, severe convective warnings, heatwave alerts, and monsoon early advisories.
             </p>
           </div>
         </div>

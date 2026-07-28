@@ -31,135 +31,69 @@ interface FacultyMember {
 
 const facultyData: FacultyMember[] = [
   {
-    name: 'Prof. Dr. Abdul Sattar Soomro',
-    designation: 'Professor & Chairman',
-    qualification: 'Ph.D. Zoology (University of Sindh)',
-    specialization: 'Entomology & Parasitology',
-    experience: '25+ Years',
-    email: 'a.sattar@gdclarkana.edu.pk',
-    phone: '+92 300 3456789',
-    department: 'Zoology',
-    image: '',
-  },
-  {
-    name: 'Dr. Nazia Parveen',
-    designation: 'Associate Professor',
-    qualification: 'Ph.D. Zoology (QAU Islamabad)',
-    specialization: 'Cell Biology & Genetics',
+    name: 'Dr. Sarah Johnson',
+    designation: 'Chief Meteorologist & Radar Lead',
+    qualification: 'Ph.D. Atmospheric Physics (MIT)',
+    specialization: 'Doppler Radar & Storm Tracking',
     experience: '18+ Years',
-    email: 'n.parveen@gdclarkana.edu.pk',
-    phone: '+92 301 2345678',
-    department: 'Zoology',
+    email: 's.johnson@wcs-weather.org',
+    phone: '+1 (555) 234-5678',
+    department: 'Meteorology',
     image: '',
   },
   {
-    name: 'Dr. Muhammad Akram Bhutto',
-    designation: 'Associate Professor',
-    qualification: 'Ph.D. Zoology (Shah Abdul Latif University)',
-    specialization: 'Wildlife Conservation & Ecology',
+    name: 'Dr. Michael Chen',
+    designation: 'Director of Atmospheric Modeling',
+    qualification: 'Ph.D. Climatology (Stanford University)',
+    specialization: 'Numerical Weather Prediction & AI',
     experience: '15+ Years',
-    email: 'm.akram@gdclarkana.edu.pk',
-    phone: '+92 302 9876543',
-    department: 'Zoology',
+    email: 'm.chen@wcs-weather.org',
+    phone: '+1 (555) 345-6789',
+    department: 'Climatology',
     image: '',
   },
   {
-    name: 'Dr. Rukhsana Kazi',
-    designation: 'Assistant Professor',
-    qualification: 'Ph.D. Zoology (University of Karachi)',
-    specialization: 'Animal Physiology & Anatomy',
-    experience: '12+ Years',
-    email: 'r.kazi@gdclarkana.edu.pk',
-    phone: '+92 303 1122334',
-    department: 'Zoology',
-    image: '',
-  },
-  {
-    name: 'Mr. Ghulam Mustafa Laghari',
-    designation: 'Lecturer',
-    qualification: 'M.Phil Zoology (University of Sindh)',
-    specialization: 'Marine Biology',
-    experience: '8+ Years',
-    email: 'g.mustafa@gdclarkana.edu.pk',
-    phone: '+92 304 5566778',
-    department: 'Zoology',
-    image: '',
-  },
-  {
-    name: 'Ms. Sadia Shah',
-    designation: 'Lecturer',
-    qualification: 'M.Phil Zoology (MUET Jamshoro)',
-    specialization: 'Molecular Biology & Biotechnology',
-    experience: '6+ Years',
-    email: 's.shah@gdclarkana.edu.pk',
-    phone: '+92 305 9988776',
-    department: 'Zoology',
-    image: '',
-  },
-  {
-    name: 'Prof. Dr. Aijaz Ali Khooharo',
-    designation: 'Professor',
-    qualification: 'Ph.D. Botany (University of Sindh)',
-    specialization: 'Plant Taxonomy & Ecology',
-    experience: '22+ Years',
-    email: 'a.khooharo@gdclarkana.edu.pk',
-    phone: '+92 306 1234567',
-    department: 'Botany',
-    image: '',
-  },
-  {
-    name: 'Dr. Saima Memon',
-    designation: 'Assistant Professor',
-    qualification: 'Ph.D. Chemistry (QAU Islamabad)',
-    specialization: 'Organic Chemistry',
-    experience: '10+ Years',
-    email: 's.memon@gdclarkana.edu.pk',
-    phone: '+92 307 7654321',
-    department: 'Chemistry',
-    image: '',
-  },
-  {
-    name: 'Dr. Irfan Ali Chandio',
-    designation: 'Associate Professor',
-    qualification: 'Ph.D. Physics (University of Sindh)',
-    specialization: 'Material Science & Nanotechnology',
-    experience: '16+ Years',
-    email: 'i.chandio@gdclarkana.edu.pk',
-    phone: '+92 308 1112233',
-    department: 'Physics',
-    image: '',
-  },
-  {
-    name: 'Prof. Dr. Zahid Hussain Abro',
-    designation: 'Professor',
-    qualification: 'Ph.D. Mathematics (University of Karachi)',
-    specialization: 'Applied Mathematics & Statistics',
+    name: 'Prof. Emily Davis',
+    designation: 'Head of Satellite Remote Sensing',
+    qualification: 'Ph.D. Geosciences (Oxford)',
+    specialization: 'Satellite Imagery & Clouds Telemetry',
     experience: '20+ Years',
-    email: 'z.abro@gdclarkana.edu.pk',
-    phone: '+92 309 4455667',
-    department: 'Mathematics',
+    email: 'e.davis@wcs-weather.org',
+    phone: '+1 (555) 456-7890',
+    department: 'Remote Sensing',
     image: '',
   },
   {
-    name: 'Dr. Farzana Baloch',
-    designation: 'Assistant Professor',
-    qualification: 'Ph.D. English Literature (University of Sindh)',
-    specialization: 'Postcolonial Literature',
+    name: 'Dr. James Wilson',
+    designation: 'Climate Impact & Hydrology Analyst',
+    qualification: 'Ph.D. Hydrology (UC Berkeley)',
+    specialization: 'Monsoon Flood Prediction & River Basins',
+    experience: '12+ Years',
+    email: 'j.wilson@wcs-weather.org',
+    phone: '+1 (555) 567-8901',
+    department: 'Hydrology',
+    image: '',
+  },
+  {
+    name: 'Dr. Robert Vance',
+    designation: 'Senior Aviation Meteorologist',
+    qualification: 'M.Sc. Meteorological Engineering',
+    specialization: 'Microbursts & Turbulence Hazards',
+    experience: '14+ Years',
+    email: 'r.vance@wcs-weather.org',
+    phone: '+1 (555) 678-9012',
+    department: 'Aviation Weather',
+    image: '',
+  },
+  {
+    name: 'Ms. Elena Rostova',
+    designation: 'Agricultural Climate Specialist',
+    qualification: 'M.Sc. Agro-Meteorology',
+    specialization: 'Crop Yield Weather Risk & Soil Moisture',
     experience: '9+ Years',
-    email: 'f.baloch@gdclarkana.edu.pk',
-    phone: '+92 310 8899001',
-    department: 'English',
-    image: '',
-  },
-  {
-    name: 'Mr. Ali Hassan Junejo',
-    designation: 'Lecturer',
-    qualification: 'M.Phil Computer Science (MUET)',
-    specialization: 'Data Science & AI',
-    experience: '5+ Years',
-    email: 'a.junejo@gdclarkana.edu.pk',
-    phone: '+92 311 2233445',
-    department: 'Computer Science',
+    email: 'e.rostova@wcs-weather.org',
+    phone: '+1 (555) 789-0123',
+    department: 'Agri-Climate',
     image: '',
   },
 ];
@@ -167,11 +101,11 @@ const facultyData: FacultyMember[] = [
 const departments = ['All', ...Array.from(new Set(facultyData.map(f => f.department)))];
 
 const designationColors: Record<string, string> = {
-  'Professor & Chairman': 'from-primary to-rose-600',
-  'Professor': 'from-indigo-500 to-blue-600',
-  'Associate Professor': 'from-emerald-500 to-teal-600',
-  'Assistant Professor': 'from-amber-500 to-orange-600',
-  'Lecturer': 'from-violet-500 to-purple-600',
+  'Chief Meteorologist & Radar Lead': 'from-sky to-blue-700',
+  'Director of Atmospheric Modeling': 'from-indigo-600 to-blue-700',
+  'Head of Satellite Remote Sensing': 'from-teal to-emerald-700',
+  'Climate Impact & Hydrology Analyst': 'from-amber to-orange-600',
+  'Senior Aviation Meteorologist': 'from-sky-500 to-indigo-600',
 };
 
 const getInitials = (name: string) => {
@@ -241,16 +175,16 @@ const Faculty = () => {
   return (
     <>
       <Helmet>
-        <title>Faculty | GDC Larkana - Our Teaching Staff</title>
-        <meta name="description" content="Meet the experienced faculty members of Government Degree College Larkana's Zoology department and other disciplines." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/faculty" />
+        <title>Our Team | WCS Weather & Climate Specialists</title>
+        <meta name="description" content="Meet the expert meteorologists, atmospheric scientists, satellite remote sensing engineers, and climate analysts of Weather & Climate Services (WCS)." />
+        <link rel="canonical" href="https://wcs-weather.org/our-team" />
       </Helmet>
-      <div ref={pageRef} className="min-h-screen bg-gray-50">
+      <div ref={pageRef} className="min-h-screen bg-slate-50">
         {/* Hero */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-primary via-primary-light to-secondary pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-72 h-72 bg-sky rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal rounded-full blur-3xl" />
         </div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
@@ -261,22 +195,22 @@ const Faculty = () => {
           <div className="faculty-hero-content">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group"
+              className="inline-flex items-center gap-2 text-sky-200 hover:text-white transition-colors mb-8 group"
             >
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Back to Home</span>
             </Link>
 
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">Our Faculty</span>
+              <Sparkles className="w-4 h-4 text-amber" />
+              <span className="text-white/90 font-medium text-sm">Our Team</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Meet Our <span className="text-primary-light">Faculty</span>
+              Meet <span className="text-sky">Our Team</span>
             </h1>
-            <p className="text-lg text-white/70 max-w-2xl">
-              Our dedicated faculty members bring years of academic excellence and research expertise to provide quality education at GDC Larkana.
+            <p className="text-lg text-slate-200 max-w-2xl">
+              Our world-class team of meteorologists, atmospheric physicists, satellite engineers, and hydrologists dedicated to precision weather forecasting.
             </p>
           </div>
         </div>

@@ -24,54 +24,54 @@ import {
 gsap.registerPlugin(ScrollTrigger);
 
 const milestones = [
-    { year: '1960', title: 'College Founded', desc: 'Government Degree College Larkana was established to provide quality education in Sindh.' },
-    { year: '1985', title: 'Science Faculty Added', desc: 'Introduction of BSc programs including Zoology, Botany, and Chemistry departments.' },
-    { year: '2005', title: 'Modern Labs Built', desc: 'State-of-the-art science laboratories were constructed for practical learning.' },
-    { year: '2015', title: '4-Year BS Programs', desc: 'HEC-affiliated 4-year BS degree programs launched across departments.' },
-    { year: '2024', title: 'Digital Campus', desc: 'Smart classrooms and digital learning resources introduced campus-wide.' },
-  ];
+  { year: '1995', title: 'Telemetry Station Established', desc: 'First doppler meteorological observation network deployed for atmospheric tracking.' },
+  { year: '2008', title: 'Satellite Grid Integration', desc: 'Real-time geostationary cloud imagery and sea surface temperature telemetry enabled.' },
+  { year: '2016', title: 'High-Resolution Doppler Radar', desc: 'Commissioned S-band Doppler radars for convective microburst early warnings.' },
+  { year: '2022', title: 'AI Climate Prediction Models', desc: 'Integrated deep learning neural weather models for 10-day hyper-local forecasts.' },
+  { year: '2026', title: 'Global Climate Network', desc: 'Operating 120+ active radar nodes serving aviation, marine, and agricultural sectors.' },
+];
 
 const values = [
-    {
-      icon: Target,
-      title: 'Our Mission',
-      description: 'To provide accessible, quality education that empowers students from Larkana and beyond to become knowledgeable, skilled, and responsible citizens contributing to national development.',
-      gradient: 'from-blue-500 to-indigo-600',
-      bg: 'bg-blue-50',
-    },
-    {
-      icon: Eye,
-      title: 'Our Vision',
-      description: 'To be a leading public sector educational institution in Sindh, recognized for academic excellence, research contributions, and producing graduates who make a positive impact in society.',
-      gradient: 'from-emerald-500 to-teal-600',
-      bg: 'bg-emerald-50',
-    },
-    {
-      icon: Heart,
-      title: 'Our Values',
-      description: 'We uphold integrity, inclusivity, and innovation. We believe in equal opportunity for all students regardless of background, fostering a supportive and progressive learning environment.',
-      gradient: 'from-primary to-rose-600',
-      bg: 'bg-red-50',
-    },
-  ];
+  {
+    icon: Target,
+    title: 'Our Mission',
+    description: 'To provide high-precision, life-saving weather forecasts, severe storm early warnings, and agricultural climate advisories powered by satellite remote sensing.',
+    gradient: 'from-sky to-blue-700',
+    bg: 'bg-sky-50',
+  },
+  {
+    icon: Eye,
+    title: 'Our Vision',
+    description: 'To lead global atmospheric telemetry innovation, empowering communities, aviation networks, and farmers to build climate resilience.',
+    gradient: 'from-teal to-emerald-700',
+    bg: 'bg-teal-50',
+  },
+  {
+    icon: Heart,
+    title: 'Our Values',
+    description: 'We uphold scientific precision, transparency, rapid warning dissemination, and commitment to environmental safety and disaster preparedness.',
+    gradient: 'from-amber to-orange-600',
+    bg: 'bg-amber-50',
+  },
+];
 
 const stats = [
-    { value: '60+', label: 'Years of Excellence', icon: Award },
-    { value: '5000+', label: 'Alumni Network', icon: Users },
-    { value: '50+', label: 'Expert Faculty', icon: GraduationCap },
-    { value: '15+', label: 'Departments', icon: BookOpen },
-  ];
+  { value: '120+', label: 'Radar Stations', icon: Award },
+  { value: '99.8%', label: 'Warning Accuracy', icon: Users },
+  { value: '24/7', label: 'Telemetry Stream', icon: GraduationCap },
+  { value: '500K+', label: 'Daily Data Telemetries', icon: BookOpen },
+];
 
 const facilities = [
-    'Well-equipped Zoology Laboratory',
-    'Digital Library & Reading Room',
-    'Computer Lab with Internet Access',
-    'Botanical Garden & Specimen Museum',
-    'Sports Ground & Indoor Games',
-    'Seminar Hall & Auditorium',
-    'Student Common Room',
-    'Cafeteria & Canteen',
-  ];
+  'Dual-Polarization S-Band Doppler Radar',
+  'Geostationary Weather Satellite Downlink',
+  'High-Performance Supercomputing Forecast Center',
+  'Automated Weather Observation Stations (AWOS)',
+  'Hydrology & River Basin Soil Sensors',
+  'Aviation Wind Shear Telemetry Grid',
+  '24/7 Emergency Warning Dissemination Desk',
+  'Climate Research & AI Analytics Lab',
+];
 
 const About = () => {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -106,17 +106,17 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>About Us | GDC Larkana - History & Mission</title>
-        <meta name="description" content="Learn about Government Degree College Larkana's rich history, mission, vision, and commitment to quality education in Sindh." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/about" />
+        <title>About WCS | Weather & Climate Services Portal</title>
+        <meta name="description" content="Learn about Weather & Climate Services (WCS), our mission, Doppler radar infrastructure, and atmospheric modeling history." />
+        <link rel="canonical" href="https://wcs-weather.org/about" />
       </Helmet>
-      <div ref={pageRef} className="min-h-screen bg-gray-50">
+      <div ref={pageRef} className="min-h-screen bg-slate-50">
         {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-primary via-primary-light to-secondary pt-32 pb-24 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-10 w-72 h-72 bg-sky rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal rounded-full blur-3xl"></div>
         </div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
@@ -127,24 +127,22 @@ const About = () => {
           <div className="about-hero-content">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group"
+              className="inline-flex items-center gap-2 text-sky-200 hover:text-white transition-colors mb-8 group"
             >
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Back to Home</span>
             </Link>
 
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">About Us</span>
+              <Sparkles className="w-4 h-4 text-amber" />
+              <span className="text-white/90 font-medium text-sm">About WCS</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Government Degree College{' '}
-              <span className="text-primary-light">Larkana</span>
+              Weather & Climate <span className="text-sky">Services</span>
             </h1>
-            <p className="text-lg text-white/70 max-w-2xl mb-10">
-              A premier public sector educational institution in Sindh, dedicated to
-              academic excellence and holistic development of students since 1960.
+            <p className="text-lg text-slate-200 max-w-2xl mb-10">
+              A premier meteorological center dedicated to Doppler live radar telemetry, severe storm alerts, and climate intelligence since 1995.
             </p>
 
             {/* Stats Row */}
@@ -152,11 +150,11 @@ const About = () => {
               {stats.map((stat, i) => (
                 <div key={i} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3">
                   <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-primary-light" />
+                    <stat.icon className="w-5 h-5 text-sky" />
                   </div>
                   <div>
                     <div className="text-xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-white/50">{stat.label}</div>
+                    <div className="text-xs text-slate-300">{stat.label}</div>
                   </div>
                 </div>
               ))}

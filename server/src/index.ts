@@ -12,128 +12,129 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+// Routes
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'OK', message: 'Academix API is running' });
+  res.json({ status: 'OK', message: 'WCS Weather & Climate API is running' });
 });
 
-// Courses API
+// Weather Services & Forecasts API
 app.get('/api/courses', (req: Request, res: Response) => {
-  const courses = [
+  const services = [
     {
       id: 1,
-      title: 'Science, Education, Physical & Math',
-      category: 'Science',
-      price: 59.99,
+      title: 'High-Resolution Doppler Live Radar',
+      category: 'Meteorology',
+      price: 0.00,
       image: '/images/course-1.jpg',
-      duration: '3 Years',
-      students: 150
+      duration: '24/7 Live Stream',
+      students: 45000
     },
     {
       id: 2,
-      title: 'Pre-Medical, Learn English, Math',
-      category: 'Medical',
-      price: 79.99,
+      title: 'Agricultural Weather & Soil Analytics',
+      category: 'Agri-Climate',
+      price: 29.99,
       image: '/images/course-2.jpg',
-      duration: '4 Years',
-      students: 200
+      duration: 'Seasonal Advisory',
+      students: 18200
     },
     {
       id: 3,
-      title: 'Learn Psychology in just 3 Years',
-      category: 'Psychology',
+      title: 'Marine Weather & Offshore Wave Tracking',
+      category: 'Oceanography',
       price: 49.99,
       image: '/images/course-3.jpg',
-      duration: '3 Years',
-      students: 120
+      duration: 'Real-time Feed',
+      students: 9500
     },
     {
       id: 4,
-      title: 'Sport Coaching, National Gym Skills',
-      category: 'Sports',
-      price: 39.99,
+      title: 'Aviation Meteorology & Turbulence Alert',
+      category: 'Aviation',
+      price: 89.99,
       image: '/images/course-4.jpg',
-      duration: '2 Years',
-      students: 80
+      duration: 'Continuous Telemetry',
+      students: 6200
     }
   ];
-  res.json(courses);
+  res.json(services);
 });
 
-// Events API
+// Climate Events & Bulletins API
 app.get('/api/events', (req: Request, res: Response) => {
   const events = [
     {
       id: 1,
-      title: 'Building Future Through Technology',
-      date: '2025-01-15',
-      location: 'Main Auditorium',
+      title: 'Global Climate Resilience Summit 2026',
+      date: '2026-08-15',
+      location: 'Atmospheric Research Center',
       image: '/images/event-1.jpg'
     },
     {
       id: 2,
-      title: 'The World Trip Our Dream Come True',
-      date: '2025-02-20',
-      location: 'Campus Ground',
+      title: 'Monsoon Patterns & Flood Preparedness Workshop',
+      date: '2026-09-02',
+      location: 'National Weather Station',
       image: '/images/event-2.jpg'
     },
     {
       id: 3,
-      title: 'Annual Sports Championship',
-      date: '2025-03-10',
-      location: 'Sports Complex',
+      title: 'Renewable Energy Weather Intelligence Seminar',
+      date: '2026-09-25',
+      location: 'Innovation Climate Lab',
       image: '/images/event-3.jpg'
     }
   ];
   res.json(events);
 });
 
-// Instructors API
+// Our Team / Specialists API
 app.get('/api/instructors', (req: Request, res: Response) => {
-  const instructors = [
+  const team = [
     {
       id: 1,
       name: 'Dr. Sarah Johnson',
-      role: 'Professor of Computer Science',
+      role: 'Chief Meteorologist & Doppler Lead',
       image: '/images/instructor-1.jpg'
     },
     {
       id: 2,
       name: 'Dr. Michael Chen',
-      role: 'Dean of Engineering',
+      role: 'Director of Atmospheric Modeling',
       image: '/images/instructor-2.jpg'
     },
     {
       id: 3,
       name: 'Prof. Emily Davis',
-      role: 'Head of Mathematics',
+      role: 'Head of Satellite Remote Sensing',
       image: '/images/instructor-3.jpg'
     },
     {
       id: 4,
       name: 'Dr. James Wilson',
-      role: 'Psychology Department',
+      role: 'Climate Impact & Hydrology Analyst',
       image: '/images/instructor-4.jpg'
     }
   ];
-  res.json(instructors);
+  res.json(team);
 });
 
-// Testimonials API
+// Testimonials & Partner Feedback API
 app.get('/api/testimonials', (req: Request, res: Response) => {
   const testimonials = [
     {
       id: 1,
-      name: 'John Smith',
-      role: 'Computer Science Graduate',
-      content: 'Academix provided me with the perfect environment to grow and learn. The faculty is exceptional!',
+      name: 'Capt. Robert Vance',
+      role: 'Aviation Safety Officer',
+      content: 'WCS Doppler telemetry provides ultra-precise severe turbulence alerts. Crucial for our flight navigation safety.',
       image: '/images/student-1.jpg',
       rating: 5
     },
     {
       id: 2,
-      name: 'Emma Williams',
-      role: 'Business Administration',
-      content: 'The courses here are world-class. I learned so much and made lifelong connections.',
+      name: 'Tariq Mahmood',
+      role: 'Agri-Business Alliance Director',
+      content: 'The localized rain prediction and soil moisture advisories helped our farmers optimize harvest yields by 30%.',
       image: '/images/student-2.jpg',
       rating: 5
     }
@@ -141,35 +142,35 @@ app.get('/api/testimonials', (req: Request, res: Response) => {
   res.json(testimonials);
 });
 
-// Blog API
+// Climate Articles & Weather Bulletins API
 app.get('/api/blogs', (req: Request, res: Response) => {
   const blogs = [
     {
       id: 1,
-      title: 'The Future of Education Technology',
-      excerpt: 'Discover how technology is reshaping the educational landscape...',
-      date: '2025-12-20',
-      author: 'Admin',
+      title: 'Understanding El Niño & La Niña Dynamics in 2026',
+      excerpt: 'An in-depth analysis of sea surface temperature anomalies and global climate patterns...',
+      date: '2026-07-20',
+      author: 'WCS Climate Cell',
       image: '/images/blog-1.jpg',
-      category: 'Technology'
+      category: 'Climatology'
     },
     {
       id: 2,
-      title: 'Tips for Academic Success',
-      excerpt: 'Essential strategies for excelling in your academic journey...',
-      date: '2025-12-18',
-      author: 'Admin',
+      title: 'How High-Resolution Doppler Radar Saves Lives',
+      excerpt: 'Exploring early microburst detection and convective storm warnings in urban centers...',
+      date: '2026-07-15',
+      author: 'Meteorology Department',
       image: '/images/blog-2.jpg',
-      category: 'Education'
+      category: 'Technology'
     },
     {
       id: 3,
-      title: 'Career Opportunities After Graduation',
-      excerpt: 'Explore the vast career opportunities available to our graduates...',
-      date: '2025-12-15',
-      author: 'Admin',
+      title: 'Solar & Wind Energy Forecasting for Smart Grids',
+      excerpt: 'Precision weather analytics enabling seamless integration of clean renewable power...',
+      date: '2026-07-10',
+      author: 'Green Energy Analytics',
       image: '/images/blog-3.jpg',
-      category: 'Career'
+      category: 'Energy'
     }
   ];
   res.json(blogs);

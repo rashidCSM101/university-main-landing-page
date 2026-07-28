@@ -7,35 +7,35 @@ import { Link } from 'react-router-dom';
 gsap.registerPlugin(ScrollTrigger);
 
 const instructors = [
-    {
-      id: 1,
-      name: 'Prof. Farhan Ahmed Shaikh',
-      role: 'Head of Zoology Department',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 2,
-      name: 'Dr. Nazia Parveen Bhutto',
-      role: 'Associate Professor, Zoology',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 3,
-      name: 'Dr. Abdul Rashid Memon',
-      role: 'Assistant Professor, Zoology',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 4,
-      name: 'Prof. Saima Khatoon Soomro',
-      role: 'Lecturer, Zoology',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-  ];
+  {
+    id: 1,
+    name: 'Dr. Sarah Johnson',
+    role: 'Chief Meteorologist & Radar Lead',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
+  },
+  {
+    id: 2,
+    name: 'Dr. Michael Chen',
+    role: 'Director of Atmospheric Modeling',
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
+  },
+  {
+    id: 3,
+    name: 'Prof. Emily Davis',
+    role: 'Head of Satellite Remote Sensing',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
+  },
+  {
+    id: 4,
+    name: 'Dr. James Wilson',
+    role: 'Climate Impact & Hydrology Analyst',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
+  },
+];
 
 const Instructors = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -73,24 +73,22 @@ const Instructors = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section-padding bg-gray-900 text-white">
+    <section ref={sectionRef} className="section-padding bg-slate-900 text-white">
       <div className="container-custom">
         {/* Section Header */}
         <div className="instructors-header text-center max-w-3xl mx-auto mb-16">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-12 h-px bg-primary"></div>
-            <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-              Expert Team
+            <div className="w-12 h-px bg-sky-400"></div>
+            <span className="text-sky-400 font-semibold uppercase tracking-wider text-sm">
+              Meteorology Specialists
             </span>
-            <div className="w-12 h-px bg-primary"></div>
+            <div className="w-12 h-px bg-sky-400"></div>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-6">
-            Learn from Experienced{' '}
-            <span className="text-primary">Instructor</span>
+            Meet <span className="text-sky-400">Our Team</span>
           </h2>
-          <p className="text-gray-400 text-lg">
-            Our instructors are industry experts and academic leaders who are
-            passionate about teaching and mentoring the next generation.
+          <p className="text-slate-300 text-lg">
+            Our team consists of leading atmospheric scientists, Doppler radar engineers, and climate analysts dedicated to delivering precision weather intelligence.
           </p>
         </div>
 
@@ -99,7 +97,7 @@ const Instructors = () => {
           {instructors.map((instructor) => (
             <div
               key={instructor.id}
-              className="instructor-card group bg-gray-800 rounded-2xl overflow-hidden hover:bg-gray-700 transition-colors"
+              className="instructor-card group bg-slate-800 rounded-2xl overflow-hidden hover:bg-slate-750 transition-colors border border-slate-700"
             >
               {/* Image */}
               <div className="relative overflow-hidden aspect-[4/5]">
@@ -112,29 +110,29 @@ const Instructors = () => {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 {/* Overlay with Social Links */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
+                <div className="absolute inset-0 bg-gradient-to-t from-sky-950/90 via-sky-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
                   <div className="flex space-x-3">
                     <span
                       aria-label={`${instructor.name} on Facebook`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:bg-sky-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <Facebook className="w-5 h-5" />
                     </span>
                     <span
                       aria-label={`${instructor.name} on Twitter`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:bg-sky-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <Twitter className="w-5 h-5" />
                     </span>
                     <span
                       aria-label={`${instructor.name} on LinkedIn`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:bg-sky-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <Linkedin className="w-5 h-5" />
                     </span>
                     <span
                       aria-label={`${instructor.name} on Instagram`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:bg-sky-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <Instagram className="w-5 h-5" />
                     </span>
@@ -144,10 +142,10 @@ const Instructors = () => {
 
               {/* Content */}
               <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-sky-300 transition-colors">
                   {instructor.name}
                 </h3>
-                <p className="text-gray-400">{instructor.role}</p>
+                <p className="text-slate-400 text-sm">{instructor.role}</p>
               </div>
             </div>
           ))}
@@ -155,8 +153,8 @@ const Instructors = () => {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <Link to="/faculty" className="btn-primary">
-            View All Instructors
+          <Link to="/faculty" className="px-6 py-3.5 bg-sky hover:bg-sky-dark text-white font-semibold rounded-xl transition-all shadow-md">
+            View All Team Specialists
           </Link>
         </div>
       </div>

@@ -71,51 +71,51 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: 'Our Address',
-      lines: ['Government Degree College', 'Larkana, Sindh, Pakistan'],
-      gradient: 'from-blue-500 to-indigo-600',
-      bg: 'bg-blue-50',
-      accent: 'text-blue-600',
+      title: 'Station Address',
+      lines: ['Atmospheric Telemetry Center', 'Station 101, National Climate Grid'],
+      gradient: 'from-sky to-blue-700',
+      bg: 'bg-sky-50',
+      accent: 'text-sky',
     },
     {
       icon: Phone,
-      title: 'Phone Number',
-      lines: ['+92 (74) 123-4567', '+92 (74) 765-4321'],
+      title: 'Emergency Weather Hotline',
+      lines: ['+1 (800) 555-WCS-RADAR', '+1 (800) 555-9277'],
       gradient: 'from-emerald-500 to-teal-600',
       bg: 'bg-emerald-50',
-      accent: 'text-emerald-600',
+      accent: 'text-teal',
     },
     {
       icon: Mail,
-      title: 'Email Address',
-      lines: ['info@gdclarkana.edu.pk', 'admissions@gdclarkana.edu.pk'],
-      gradient: 'from-primary to-rose-600',
-      bg: 'bg-red-50',
-      accent: 'text-primary',
+      title: 'Telemetry & Alerts Email',
+      lines: ['alerts@wcs-weather.org', 'data@wcs-weather.org'],
+      gradient: 'from-amber to-orange-600',
+      bg: 'bg-amber-50',
+      accent: 'text-amber',
     },
     {
       icon: Clock,
-      title: 'Office Hours',
-      lines: ['Mon - Fri: 8:00 AM - 3:00 PM', 'Sat: 8:00 AM - 1:00 PM'],
-      gradient: 'from-amber-500 to-orange-600',
-      bg: 'bg-amber-50',
-      accent: 'text-amber-600',
+      title: 'Operations Desk',
+      lines: ['Radar Operations: 24/7 Live', 'Public Inquiry: Mon - Fri 8AM - 6PM'],
+      gradient: 'from-indigo-600 to-blue-700',
+      bg: 'bg-indigo-50',
+      accent: 'text-indigo-600',
     },
   ];
 
   return (
     <>
       <Helmet>
-        <title>Contact Us | GDC Larkana - Get in Touch</title>
-        <meta name="description" content="Contact Government Degree College Larkana. Find our address, phone, email, and office hours. We're here to help." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/contact" />
+        <title>Contact Station | Weather & Climate Services (WCS)</title>
+        <meta name="description" content="Contact the Weather & Climate Services (WCS) telemetry center, emergency Doppler radar desk, and climate inquiry support." />
+        <link rel="canonical" href="https://wcs-weather.org/contact" />
       </Helmet>
-      <div ref={pageRef} className="min-h-screen bg-gray-50">
+      <div ref={pageRef} className="min-h-screen bg-slate-50">
         {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-primary via-primary-light to-secondary pt-32 pb-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-10 w-72 h-72 bg-sky rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal rounded-full blur-3xl"></div>
         </div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
@@ -126,23 +126,22 @@ const Contact = () => {
           <div className="contact-hero-content">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group"
+              className="inline-flex items-center gap-2 text-sky-200 hover:text-white transition-colors mb-8 group"
             >
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               <span className="text-sm font-medium">Back to Home</span>
             </Link>
 
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">Contact Us</span>
+              <Sparkles className="w-4 h-4 text-amber" />
+              <span className="text-white/90 font-medium text-sm">Station Desk</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Get in <span className="text-primary-light">Touch</span>
+              Weather Inquiry & <span className="text-sky">Support Desk</span>
             </h1>
-            <p className="text-lg text-white/70 max-w-2xl">
-              Have questions about admissions, programs, or campus life?
-              We'd love to hear from you. Reach out and we'll respond as soon as possible.
+            <p className="text-lg text-slate-200 max-w-2xl">
+              Have questions about radar telemetry, agricultural advisories, or disaster alert integrations? Contact our 24/7 weather operations team.
             </p>
           </div>
         </div>

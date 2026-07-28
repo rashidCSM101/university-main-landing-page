@@ -7,47 +7,47 @@ import { Clock, Users, Star, ArrowRight } from 'lucide-react';
 gsap.registerPlugin(ScrollTrigger);
 
 const courses = [
-    {
-      id: 1,
-      title: 'Cell Biology & Genetics',
-      category: 'Zoology',
-      price: 15000,
-      image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '2 Years',
-      students: 120,
-      rating: 4.8,
-    },
-    {
-      id: 2,
-      title: 'Animal Physiology & Anatomy',
-      category: 'Zoology',
-      price: 15000,
-      image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '2 Years',
-      students: 100,
-      rating: 4.9,
-    },
-    {
-      id: 3,
-      title: 'Ecology & Wildlife Conservation',
-      category: 'Zoology',
-      price: 15000,
-      image: 'https://images.unsplash.com/photo-1474511320723-9a56873571b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '2 Years',
-      students: 90,
-      rating: 4.7,
-    },
-    {
-      id: 4,
-      title: 'Entomology & Parasitology',
-      category: 'Zoology',
-      price: 15000,
-      image: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      duration: '2 Years',
-      students: 75,
-      rating: 4.6,
-    },
-  ];
+  {
+    id: 1,
+    title: 'High-Resolution Doppler Live Radar',
+    category: 'Meteorology',
+    price: 0,
+    image: 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    duration: '24/7 Telemetry',
+    students: 45000,
+    rating: 4.9,
+  },
+  {
+    id: 2,
+    title: 'Agricultural Soil & Rainfall Intelligence',
+    category: 'Agri-Climate',
+    price: 0,
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    duration: 'Seasonal Advisory',
+    students: 18200,
+    rating: 4.8,
+  },
+  {
+    id: 3,
+    title: 'Marine Weather & Offshore Wave Tracking',
+    category: 'Oceanography',
+    price: 0,
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    duration: 'Real-time Feed',
+    students: 9500,
+    rating: 4.9,
+  },
+  {
+    id: 4,
+    title: 'Aviation Turbulence & Crosswind Telemetry',
+    category: 'Aviation',
+    price: 0,
+    image: 'https://images.unsplash.com/photo-1519074069444-1ba4eff56024?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    duration: 'Continuous Stream',
+    students: 6200,
+    rating: 4.9,
+  },
+];
 
 const Courses = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ const Courses = () => {
         },
       });
 
-      // Cards animation - without hiding initially
+      // Cards animation
       gsap.from('.course-card', {
         y: 50,
         scale: 0.95,
@@ -86,27 +86,27 @@ const Courses = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section-padding bg-gray-50">
+    <section ref={sectionRef} className="section-padding bg-slate-50">
       <div className="container-custom">
         {/* Section Header */}
         <div className="courses-header flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="decorative-line"></div>
-              <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-                Our Courses
+              <div className="w-12 h-1 bg-sky"></div>
+              <span className="text-sky font-semibold uppercase tracking-wider text-sm">
+                Meteorological Telemetry
               </span>
             </div>
-            <h2 className="section-title">
-              Zoology <span className="text-primary">Courses</span>
+            <h2 className="section-title text-slate-900">
+              Weather & Climate <span className="text-sky">Services</span>
             </h2>
-            <p className="section-subtitle mt-4">
-              Explore our Zoology programs at Government Degree College Larkana
+            <p className="section-subtitle mt-4 text-slate-600">
+              High-precision radar imagery, agricultural drought monitoring, marine sea-state tracking, and aviation turbulence feeds.
             </p>
           </div>
-          <Link to="/course/zoology" className="btn-primary mt-6 md:mt-0 group">
-            <span>View All Courses</span>
-            <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+          <Link to="/noticeboard" className="px-6 py-3 bg-sky hover:bg-sky-dark text-white font-semibold rounded-xl shadow-md transition-all flex items-center space-x-2 mt-6 md:mt-0">
+            <span>Explore Weather Alerts</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -114,9 +114,9 @@ const Courses = () => {
         <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {courses.map((course) => (
             <Link
-              to="/course/zoology"
+              to="/course/doppler-radar"
               key={course.id}
-              className="course-card card group cursor-pointer block"
+              className="course-card card group cursor-pointer block border border-slate-100 hover:border-sky/30"
             >
               {/* Image */}
               <div className="relative overflow-hidden h-48">
@@ -129,7 +129,7 @@ const Courses = () => {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
                     {course.category}
                   </span>
                 </div>
@@ -140,32 +140,32 @@ const Courses = () => {
               <div className="p-6">
                 {/* Rating */}
                 <div className="flex items-center space-x-1 mb-3">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-sm font-medium text-gray-700">{course.rating}</span>
-                  <span className="text-sm text-gray-400">({course.students} students)</span>
+                  <Star className="w-4 h-4 text-amber fill-amber" />
+                  <span className="text-sm font-medium text-slate-800">{course.rating}</span>
+                  <span className="text-sm text-slate-500">({course.students.toLocaleString()} active users)</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                <h3 className="font-semibold text-slate-900 mb-3 group-hover:text-sky transition-colors line-clamp-2">
                   {course.title}
                 </h3>
 
                 {/* Meta */}
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
+                <div className="flex items-center space-x-4 text-sm text-slate-500 mb-4">
                   <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-4 h-4 text-sky" />
                     <span>{course.duration}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Users className="w-4 h-4" />
-                    <span>{course.students}</span>
+                    <Users className="w-4 h-4 text-sky" />
+                    <span>{course.students.toLocaleString()}</span>
                   </div>
                 </div>
 
                 {/* CTA */}
-                <div className="flex items-center justify-end pt-4 border-t border-gray-100">
-                  <span className="text-sm font-medium text-primary flex items-center">
-                    View Details
+                <div className="flex items-center justify-end pt-4 border-t border-slate-100">
+                  <span className="text-sm font-medium text-sky flex items-center">
+                    Access Telemetry
                     <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                   </span>
                 </div>

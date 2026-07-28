@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Users, BookOpen, Globe, GraduationCap } from 'lucide-react';
+import { Radio, ShieldAlert, Satellite, Zap } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -48,14 +48,14 @@ const Counter = ({ end, suffix, label, icon: Icon, duration = 2 }: CounterProps)
 
   return (
     <div ref={counterRef} className="counter-item flex-1 text-center px-6 py-4">
-      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Icon className="w-8 h-8 text-primary" />
+      <div className="w-16 h-16 bg-sky/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-sky/20">
+        <Icon className="w-8 h-8 text-sky" />
       </div>
-      <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+      <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
         {count}
-        <span className="text-primary">{suffix}</span>
+        <span className="text-sky">{suffix}</span>
       </div>
-      <div className="text-gray-500 font-medium">{label}</div>
+      <div className="text-slate-600 font-medium text-sm">{label}</div>
     </div>
   );
 };
@@ -81,16 +81,16 @@ const Stats = () => {
   }, []);
 
   const stats = [
-    { end: 2500, suffix: '+', label: 'Students Enrolled', icon: Users },
-    { end: 15, suffix: '+', label: 'Academic Programs', icon: BookOpen },
-    { end: 80, suffix: '+', label: 'Faculty Members', icon: Globe },
-    { end: 30, suffix: '+', label: 'Courses Offered', icon: GraduationCap },
+    { end: 120, suffix: '+', label: 'Doppler Radar Stations', icon: Radio },
+    { end: 99, suffix: '.8%', label: 'Early Warning Accuracy', icon: ShieldAlert },
+    { end: 24, suffix: '/7', label: 'Satellite Feeds Online', icon: Satellite },
+    { end: 500, suffix: 'K+', label: 'Daily Weather Telemetries', icon: Zap },
   ];
 
   return (
-    <section ref={sectionRef} className="py-16 bg-gray-50">
+    <section ref={sectionRef} className="py-16 bg-slate-50">
       <div className="container-custom">
-        <div className="stats-container bg-white rounded-3xl shadow-xl p-8 md:p-12">
+        <div className="stats-container bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100">
           <div className="flex flex-wrap justify-between items-center">
             {stats.map((stat, index) => (
               <Counter
