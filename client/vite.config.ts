@@ -1,62 +1,43 @@
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// export default defineConfig({
-//   plugins: [react()],
-//   // GitHub Pages - repo name as base path
-//   base: '/university-main-landing-page/',
-//   server: {
-//     port: 3000,
-//     headers: {
-//       'X-Content-Type-Options': 'nosniff',
-//       'X-Frame-Options': 'DENY',
-//       'X-XSS-Protection': '1; mode=block',
-//       'Referrer-Policy': 'strict-origin-when-cross-origin',
-//       'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-//       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-//     },
-//   },
-//   build: {
-//     // Source maps off in production for security
-//     sourcemap: false,
-//     rollupOptions: {
-//       output: {
-//         // Hashed filenames to prevent cache poisoning
-//         entryFileNames: 'assets/[name]-[hash].js',
-//         chunkFileNames: 'assets/[name]-[hash].js',
-//         assetFileNames: 'assets/[name]-[hash].[ext]',
-//       },
-//     },
-//   },
-// })
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
 
-  // GitHub Pages - repo name as base path
-  base: '/university-main-landing-page/',
+  // WenClims custom domain — root base path
+  // (old gh-pages base /university-main-landing-page/ removed)
+  base: '/',
 
   server: {
     host: '0.0.0.0',
     port: 3000,
-    allowedHosts: true, // <-- Add this
+    allowedHosts: true,
 
+    // Dev proxy: frontend calls /api/... → Express on :5000
+    // Prevents CORS issues in dev. In production, Nginx handles this.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+
+    // Security headers in dev (mirrors production Nginx config)
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
       'X-XSS-Protection': '1; mode=block',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
     },
   },
 
   build: {
+    // Security: source maps off in production (no code exposure)
     sourcemap: false,
     rollupOptions: {
       output: {
+        // Hashed filenames prevent cache poisoning
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',

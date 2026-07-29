@@ -1,39 +1,48 @@
-import { GraduationCap, MapPin, Phone, Mail, Clock, Facebook, Twitter, Instagram, Linkedin, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Twitter, Linkedin, ArrowRight, CloudSun, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// WenClims Footer — content from wenclims.org
+// Structure kept identical to the original footer for design continuity
 
 const Footer = () => {
   const quickLinks = [
-    { name: 'About Us', href: '/about' },
-    { name: 'Our Courses', href: '/course/zoology' },
-    { name: 'Our Faculty', href: '/faculty' },
-    { name: 'Our Events', href: '/events' },
+    { name: 'Tools', href: '/tools' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Publications', href: '/publications' },
+    { name: 'Our Team', href: '/team' },
     { name: 'Contact Us', href: '/contact' },
   ];
 
-  const courses = [
-    { name: 'Cell Biology & Genetics', href: '/course/zoology' },
-    { name: 'Animal Physiology', href: '/course/zoology' },
-    { name: 'Ecology & Wildlife', href: '/course/zoology' },
-    { name: 'Entomology', href: '/course/zoology' },
-    { name: 'Microbiology', href: '/course/zoology' },
+  const mediaLinks = [
+    { name: 'Blogs', href: '/media/blogs' },
+    { name: 'Documentaries', href: '/media/documentaries' },
+    { name: 'Podcasts & Radioshows', href: '/media/podcasts' },
+    { name: 'Talkshows', href: '/media/talkshows' },
+    { name: 'Print Media Excerpts', href: '/media/print' },
   ];
 
   return (
     <footer className="bg-gray-900 text-white">
-      {/* CTA Section */}
-      <div className="bg-primary py-16">
+
+      {/* CTA Section — WenClims contact/collaboration CTA */}
+      <div className="py-16" style={{ background: 'linear-gradient(135deg, #0B1E3D 0%, #1A3461 100%)' }}>
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-            <div className="mb-6 md:mb-0">
+          <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
+            <div>
               <h2 className="text-3xl md:text-4xl font-heading font-bold mb-2">
-                Let's Get Moving <span className="text-accent-gold">Today</span>
+                Science &amp; Policy{' '}
+                <span style={{ color: '#00C8C8' }}>Together</span>
               </h2>
-              <p className="text-white/80">
-                Take the first step towards your future. Apply now and join our community.
+              <p className="text-white/80 max-w-md">
+                Partner with WenClims for climate science, policy analysis, and capacity building across South Asia.
               </p>
             </div>
-            <Link to="/admissions" className="btn-primary bg-white text-primary hover:bg-gray-100 group">
-              <span>Apply Now</span>
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center px-7 py-3.5 font-semibold rounded-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group"
+              style={{ background: '#00C8C8', color: '#0B1E3D' }}
+            >
+              <span>Get in Touch</span>
               <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
@@ -44,58 +53,54 @@ const Footer = () => {
       <div className="py-16">
         <div className="container-custom">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-            {/* About */}
+
+            {/* Brand Column */}
             <div>
-              <Link to="/" className="flex items-center space-x-2 mb-6">
-                <div className="p-2 bg-primary rounded-lg">
-                  <GraduationCap className="w-8 h-8 text-white" />
+              <Link to="/" className="flex items-center space-x-3 mb-6" aria-label="WenClims Home">
+                <div className="p-2 rounded-lg" style={{ background: '#00C8C8' }}>
+                  <CloudSun className="w-7 h-7" style={{ color: '#0B1E3D' }} />
                 </div>
-                <span className="text-xl font-heading font-bold">GDC Larkana</span>
+                <div className="flex flex-col leading-none">
+                  <span className="text-lg font-heading font-bold text-white">WenClims</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest">Climate Services</span>
+                </div>
               </Link>
-              <p className="text-gray-400 mb-6">
-                Government Degree College Larkana is a premier educational institution committed to nurturing
-                minds and building futures through quality education and innovation.
+              <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+                Providing assistance and science-based guidance to decision-makers about climate change
+                and its biophysical and socioeconomic impacts across South Asia.
               </p>
-              {/* Social Links */}
+
+              {/* Social Links — X and LinkedIn only (matches wenclims.org) */}
               <div className="flex space-x-3">
-                <span
-                  aria-label="Facebook"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
+                <a
+                  href="https://x.com/wenclims"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WenClims on X (Twitter)"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-teal transition-colors"
                 >
-                  <Facebook className="w-5 h-5" />
-                </span>
-                <span
-                  aria-label="Twitter"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://pk.linkedin.com/company/wenclims"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WenClims on LinkedIn"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-teal transition-colors"
                 >
-                  <Twitter className="w-5 h-5" />
-                </span>
-                <span
-                  aria-label="Instagram"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
-                >
-                  <Instagram className="w-5 h-5" />
-                </span>
-                <span
-                  aria-label="LinkedIn"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </span>
+                  <Linkedin className="w-4 h-4" />
+                </a>
               </div>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
+              <h3 className="text-base font-semibold mb-6 text-white uppercase tracking-wider">Quick Links</h3>
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
-                    <Link
-                      to={link.href}
-                      className="footer-link flex items-center"
-                    >
-                      <ArrowRight className="w-4 h-4 mr-2 text-primary" />
+                    <Link to={link.href} className="footer-link flex items-center text-sm">
+                      <ArrowRight className="w-3.5 h-3.5 mr-2 flex-shrink-0" style={{ color: '#00C8C8' }} />
                       {link.name}
                     </Link>
                   </li>
@@ -103,45 +108,61 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Popular Courses */}
+            {/* Media Section Links */}
             <div>
-              <h3 className="text-xl font-semibold mb-6">Popular Courses</h3>
+              <h3 className="text-base font-semibold mb-6 text-white uppercase tracking-wider">Media</h3>
               <ul className="space-y-3">
-                {courses.map((course, index) => (
+                {mediaLinks.map((link, index) => (
                   <li key={index}>
-                    <Link
-                      to={course.href}
-                      className="footer-link flex items-center"
-                    >
-                      <ArrowRight className="w-4 h-4 mr-2 text-primary" />
-                      {course.name}
+                    <Link to={link.href} className="footer-link flex items-center text-sm">
+                      <ArrowRight className="w-3.5 h-3.5 mr-2 flex-shrink-0" style={{ color: '#00C8C8' }} />
+                      {link.name}
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Contact Info */}
+            {/* Contact Info — from wenclims.org sitemap export */}
             <div>
-              <h3 className="text-xl font-semibold mb-6">Contact Us</h3>
+              <h3 className="text-base font-semibold mb-6 text-white uppercase tracking-wider">Contact</h3>
               <ul className="space-y-4">
                 <li className="flex items-start space-x-3">
-                  <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                  <span className="text-gray-400">
-                    Government Degree College, Larkana, Sindh, Pakistan
+                  <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: '#00C8C8' }} />
+                  <span className="text-gray-400 text-sm">
+                    88, Lane 2, Lake View Lanes (LVL),<br />
+                    Korang Road, Bani Gala,<br />
+                    Islamabad, Pakistan
                   </span>
                 </li>
                 <li className="flex items-center space-x-3">
-                  <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-gray-400">+92 (74) 123-4567</span>
+                  <Phone className="w-4 h-4 flex-shrink-0" style={{ color: '#00C8C8' }} />
+                  <a
+                    href="tel:+923335672483"
+                    className="text-gray-400 text-sm hover:text-white transition-colors"
+                  >
+                    +92-333-5672483
+                  </a>
                 </li>
                 <li className="flex items-center space-x-3">
-                  <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-gray-400">info@gdclarkana.edu.pk</span>
+                  <Mail className="w-4 h-4 flex-shrink-0" style={{ color: '#00C8C8' }} />
+                  <a
+                    href="mailto:wenclims@gmail.com"
+                    className="text-gray-400 text-sm hover:text-white transition-colors"
+                  >
+                    wenclims@gmail.com
+                  </a>
                 </li>
-                <li className="flex items-center space-x-3">
-                  <Clock className="w-5 h-5 text-primary flex-shrink-0" />
-                  <span className="text-gray-400">Mon - Fri: 8:00 AM - 6:00 PM</span>
+                <li className="flex items-center space-x-3 pt-2">
+                  <ExternalLink className="w-4 h-4 flex-shrink-0" style={{ color: '#00C8C8' }} />
+                  <a
+                    href="https://pakclimtool.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 text-sm hover:text-white transition-colors"
+                  >
+                    pakclimtool.com
+                  </a>
                 </li>
               </ul>
             </div>
@@ -152,19 +173,16 @@ const Footer = () => {
       {/* Bottom Bar */}
       <div className="border-t border-gray-800 py-6">
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-            <p className="text-gray-400 text-sm">
-              © 2026 Government Degree College Larkana. All rights reserved.
+          <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+            <p className="text-gray-500 text-sm">
+              © {new Date().getFullYear()} Weather and Climate Services (WenClims). All rights reserved.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy" className="text-gray-400 text-sm hover:text-white transition-colors">
+            <div className="flex space-x-6">
+              <Link to="/privacy" className="text-gray-500 text-sm hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="text-gray-400 text-sm hover:text-white transition-colors">
+              <Link to="/terms" className="text-gray-500 text-sm hover:text-white transition-colors">
                 Terms of Service
-              </Link>
-              <Link to="/cookies" className="text-gray-400 text-sm hover:text-white transition-colors">
-                Cookie Policy
               </Link>
             </div>
           </div>
