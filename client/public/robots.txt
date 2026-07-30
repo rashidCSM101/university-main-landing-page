@@ -1,8 +1,10 @@
-# robots.txt for GDC Larkana
+# robots.txt for WenClims — Weather and Climate Services
+# https://wenclims.org
+
 User-agent: *
 Allow: /
 Disallow: /login
 Disallow: /signup
 
 # Sitemap
-Sitemap: https://gdclarkana.edu.pk/sitemap.xml
+Sitemap: https://wenclims.org/sitemap.xml

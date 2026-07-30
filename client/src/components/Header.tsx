@@ -10,13 +10,27 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+  // Throttle scroll handler with RAF to avoid unnecessary re-renders
   useEffect(() => {
+    let rafId: number;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 50);
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
 
   // Close mobile menu on route navigation
   const closeMenu = () => {

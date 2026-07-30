@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Users, BookOpen, Globe, GraduationCap } from 'lucide-react';
+import { Satellite, FileText, Globe, Users } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,10 +81,10 @@ const Stats = () => {
   }, []);
 
   const stats = [
-    { end: 2500, suffix: '+', label: 'Students Enrolled', icon: Users },
-    { end: 15, suffix: '+', label: 'Academic Programs', icon: BookOpen },
-    { end: 80, suffix: '+', label: 'Faculty Members', icon: Globe },
-    { end: 30, suffix: '+', label: 'Courses Offered', icon: GraduationCap },
+    { end: 15,  suffix: '+', label: 'Years in Climate Science', icon: Globe },
+    { end: 50,  suffix: '+', label: 'Research Publications',    icon: FileText },
+    { end: 30,  suffix: '+', label: 'Policy Briefs Delivered',  icon: Satellite },
+    { end: 12,  suffix: '+', label: 'Countries Engaged',        icon: Users },
   ];
 
   return (

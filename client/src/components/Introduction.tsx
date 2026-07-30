@@ -2,33 +2,33 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BookOpen, Users, Award, Clock } from 'lucide-react';
+import { CloudRain, BarChart2, FileText, Globe } from 'lucide-react';
 import introImage from '../../assets/images/introduction.avif';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const features = [
-    {
-      icon: BookOpen,
-      title: 'Quality Education',
-      description: 'World-class curriculum designed by experts',
-    },
-    {
-      icon: Users,
-      title: 'Expert Faculty',
-      description: 'Learn from industry professionals',
-    },
-    {
-      icon: Award,
-      title: 'Certified Courses',
-      description: 'Globally recognized certifications',
-    },
-    {
-      icon: Clock,
-      title: 'Flexible Learning',
-      description: 'Study at your own pace',
-    },
-  ];
+  {
+    icon: CloudRain,
+    title: 'Climate Research',
+    description: 'Peer-reviewed attribution science on extreme weather',
+  },
+  {
+    icon: BarChart2,
+    title: 'Policy Analysis',
+    description: 'Evidence-based climate policy for South Asian governments',
+  },
+  {
+    icon: FileText,
+    title: 'Data Services',
+    description: 'High-resolution climate datasets and technical reports',
+  },
+  {
+    icon: Globe,
+    title: 'Regional Expertise',
+    description: "Deep specialisation in South Asia's climate dynamics",
+  },
+];
 
 const Introduction = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -91,7 +91,7 @@ const Introduction = () => {
             <div className="relative overflow-hidden rounded-2xl">
               <img
                 src={introImage}
-                alt="Students studying"
+                alt="WenClims climate science team at work"
                 loading="lazy"
                 width={800}
                 height={500}
@@ -102,10 +102,10 @@ const Introduction = () => {
             <div className="absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-xl p-6 max-w-[200px] hidden md:block">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Award className="w-6 h-6 text-primary" />
+                  <Globe className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">25+</div>
+                  <div className="text-2xl font-bold text-gray-900">7+</div>
                   <div className="text-sm text-gray-500">Years Experience</div>
                 </div>
               </div>
@@ -121,21 +121,23 @@ const Introduction = () => {
             <div className="flex items-center space-x-3 mb-4">
               <div className="decorative-line"></div>
               <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-                About Our University
+                About WenClims
               </span>
             </div>
 
             {/* Heading */}
             <h2 className="section-title mb-6">
-              An Introduction To Our{' '}
-              <span className="text-primary">University</span>
+              Science-Based Climate Intelligence{' '}
+              <span className="text-primary">for South Asia</span>
             </h2>
 
             {/* Description */}
             <p className="text-gray-600 text-lg mb-8">
-              At Government Degree College Larkana, we believe in nurturing minds and building futures. Our institution
-              has been at the forefront of educational excellence, providing students with
-              the tools, knowledge, and experiences they need to succeed in an ever-changing world.
+              WenClims provides rigorous, peer-reviewed climate science and policy analysis
+              tailored to the complex weather and climate dynamics of South Asia. From extreme
+              heat attribution to monsoon variability and flood risk, we translate cutting-edge
+              research into actionable guidance for governments, development agencies, and
+              civil society.
             </p>
 
             {/* Features Grid */}
@@ -154,8 +156,8 @@ const Introduction = () => {
             </div>
 
             {/* CTA */}
-            <Link to="/about" className="btn-primary group inline-flex">
-              <span>Learn More About Us</span>
+            <Link to="/tools" className="btn-primary group inline-flex">
+              <span>Explore Our Tools</span>
               <svg
                 className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1"
                 fill="none"
