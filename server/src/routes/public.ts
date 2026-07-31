@@ -1,0 +1,123 @@
+import { Router, Request, Response } from 'express';
+import { query } from '../db/index';
+
+const router = Router();
+
+/**
+ * GET /api/v1/media
+ * Fetch Published Blogs & Media Items
+ */
+router.get('/media', async (req: Request, res: Response) => {
+  try {
+    const { type, limit = '20', offset = '0' } = req.query;
+    let text = 'SELECT id, type, title, slug, body, excerpt, external_url, embed_url, cover_image, author_name, tags, published_at FROM media_items WHERE status = $1';
+    const params: any[] = ['published'];
+
+    if (type) {
+      params.push(type);
+      text += ` AND type = $${params.length}`;
+    }
+
+    text += ` ORDER BY published_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
+
+    const result = await query(text, params);
+    return res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching public media:', error);
+    return res.status(500).json({ error: 'Failed to fetch media items.' });
+  }
+});
+
+/**
+ * GET /api/v1/media/:slug
+ * Fetch Single Media Item by Slug
+ */
+router.get('/media/:slug', async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    const result = await query(
+      'SELECT * FROM media_items WHERE slug = $1 AND status = $2',
+      [slug, 'published']
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Content not found.' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch content.' });
+  }
+});
+
+/**
+ * GET /api/v1/publications
+ * Fetch Published Publications & Reports
+ */
+router.get('/publications', async (req: Request, res: Response) => {
+  try {
+    const { type } = req.query;
+    let text = 'SELECT * FROM publications WHERE status = $1';
+    const params: any[] = ['published'];
+
+    if (type) {
+      params.push(type);
+      text += ` AND type = $${params.length}`;
+    }
+
+    text += ' ORDER BY published_date DESC';
+
+    const result = await query(text, params);
+    return res.json(result.rows);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch publications.' });
+  }
+});
+
+/**
+ * GET /api/v1/projects
+ * Fetch Climate Projects
+ */
+router.get('/projects', async (req: Request, res: Response) => {
+  try {
+    const result = await query(
+      'SELECT * FROM projects ORDER BY created_at DESC'
+    );
+    return res.json(result.rows);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch projects.' });
+  }
+});
+
+/**
+ * GET /api/v1/team
+ * Fetch Active Team Members
+ */
+router.get('/team', async (req: Request, res: Response) => {
+  try {
+    const result = await query(
+      'SELECT id, name, slug, role, team, photo, bio, social_links, sort_order FROM team_members WHERE is_active = TRUE ORDER BY sort_order ASC, name ASC'
+    );
+    return res.json(result.rows);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch team members.' });
+  }
+});
+
+/**
+ * GET /api/v1/tools
+ * Fetch Active Sector Tools
+ */
+router.get('/tools', async (req: Request, res: Response) => {
+  try {
+    const result = await query(
+      'SELECT * FROM tools WHERE is_active = TRUE ORDER BY sort_order ASC'
+    );
+    return res.json(result.rows);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch tools.' });
+  }
+});
+
+export default router;

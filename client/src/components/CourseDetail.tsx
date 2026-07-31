@@ -1,444 +1,375 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ArrowLeft,
-  BookOpen,
-  Clock,
-  GraduationCap,
-  ChevronDown,
-  FlaskConical,
-  Microscope,
-  Bug,
-  Dna,
+  Calendar,
+  User,
+  Tag,
+  ExternalLink,
+  Share2,
   Sparkles,
+  CheckCircle2,
+  ArrowRight,
+  Tv,
 } from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
-
-interface Subject {
-  name: string;
-  code: string;
-  credits: number;
-  type: 'Theory' | 'Practical' | 'Theory + Practical';
-}
-
-interface Semester {
-  semester: number;
-  subjects: Subject[];
-}
-
-interface YearData {
-  year: number;
-  title: string;
-  semesters: Semester[];
-}
-
-// Zoology Course Data - 4 Years (8 Semesters)
-const zoologyCourseData: YearData[] = [
-  {
-    year: 1,
-    title: 'First Year',
-    semesters: [
-      {
-        semester: 1,
-        subjects: [
-          { name: 'Cell Biology', code: 'ZOO-101', credits: 3, type: 'Theory + Practical' },
-          { name: 'Biodiversity (Invertebrates-I)', code: 'ZOO-102', credits: 3, type: 'Theory + Practical' },
-          { name: 'Biostatistics', code: 'ZOO-103', credits: 3, type: 'Theory' },
-          { name: 'Biochemistry-I', code: 'ZOO-104', credits: 3, type: 'Theory + Practical' },
-          { name: 'English-I (Functional English)', code: 'ENG-101', credits: 3, type: 'Theory' },
-          { name: 'Pakistan Studies', code: 'PST-101', credits: 2, type: 'Theory' },
-        ],
-      },
-      {
-        semester: 2,
-        subjects: [
-          { name: 'Genetics', code: 'ZOO-105', credits: 3, type: 'Theory + Practical' },
-          { name: 'Biodiversity (Invertebrates-II)', code: 'ZOO-106', credits: 3, type: 'Theory + Practical' },
-          { name: 'Biochemistry-II', code: 'ZOO-107', credits: 3, type: 'Theory + Practical' },
-          { name: 'Introduction to Ecology', code: 'ZOO-108', credits: 3, type: 'Theory' },
-          { name: 'English-II (Communication Skills)', code: 'ENG-102', credits: 3, type: 'Theory' },
-          { name: 'Islamic Studies / Ethics', code: 'ISL-101', credits: 2, type: 'Theory' },
-        ],
-      },
-    ],
-  },
-  {
-    year: 2,
-    title: 'Second Year',
-    semesters: [
-      {
-        semester: 3,
-        subjects: [
-          { name: 'Biodiversity (Vertebrates-I)', code: 'ZOO-201', credits: 3, type: 'Theory + Practical' },
-          { name: 'Animal Physiology-I', code: 'ZOO-202', credits: 3, type: 'Theory + Practical' },
-          { name: 'Developmental Biology', code: 'ZOO-203', credits: 3, type: 'Theory + Practical' },
-          { name: 'Molecular Biology', code: 'ZOO-204', credits: 3, type: 'Theory' },
-          { name: 'English-III (Technical Writing)', code: 'ENG-201', credits: 3, type: 'Theory' },
-          { name: 'Introduction to Computer', code: 'CSC-201', credits: 3, type: 'Theory + Practical' },
-        ],
-      },
-      {
-        semester: 4,
-        subjects: [
-          { name: 'Biodiversity (Vertebrates-II)', code: 'ZOO-205', credits: 3, type: 'Theory + Practical' },
-          { name: 'Animal Physiology-II', code: 'ZOO-206', credits: 3, type: 'Theory + Practical' },
-          { name: 'Histology', code: 'ZOO-207', credits: 3, type: 'Theory + Practical' },
-          { name: 'Evolution', code: 'ZOO-208', credits: 3, type: 'Theory' },
-          { name: 'Environmental Biology', code: 'ZOO-209', credits: 3, type: 'Theory' },
-          { name: 'Introduction to Psychology', code: 'PSY-201', credits: 2, type: 'Theory' },
-        ],
-      },
-    ],
-  },
-  {
-    year: 3,
-    title: 'Third Year',
-    semesters: [
-      {
-        semester: 5,
-        subjects: [
-          { name: 'Entomology', code: 'ZOO-301', credits: 3, type: 'Theory + Practical' },
-          { name: 'Parasitology', code: 'ZOO-302', credits: 3, type: 'Theory + Practical' },
-          { name: 'Animal Behaviour', code: 'ZOO-303', credits: 3, type: 'Theory' },
-          { name: 'Comparative Anatomy', code: 'ZOO-304', credits: 3, type: 'Theory + Practical' },
-          { name: 'Wildlife Conservation', code: 'ZOO-305', credits: 3, type: 'Theory' },
-          { name: 'Research Methodology', code: 'ZOO-306', credits: 3, type: 'Theory' },
-        ],
-      },
-      {
-        semester: 6,
-        subjects: [
-          { name: 'Microbiology', code: 'ZOO-307', credits: 3, type: 'Theory + Practical' },
-          { name: 'Immunology', code: 'ZOO-308', credits: 3, type: 'Theory + Practical' },
-          { name: 'Fish Biology & Fisheries', code: 'ZOO-309', credits: 3, type: 'Theory + Practical' },
-          { name: 'Biogeography', code: 'ZOO-310', credits: 3, type: 'Theory' },
-          { name: 'Bioinformatics', code: 'ZOO-311', credits: 3, type: 'Theory + Practical' },
-          { name: 'Seminar / Presentation', code: 'ZOO-312', credits: 1, type: 'Practical' },
-        ],
-      },
-    ],
-  },
-  {
-    year: 4,
-    title: 'Fourth Year',
-    semesters: [
-      {
-        semester: 7,
-        subjects: [
-          { name: 'Endocrinology', code: 'ZOO-401', credits: 3, type: 'Theory + Practical' },
-          { name: 'Toxicology', code: 'ZOO-402', credits: 3, type: 'Theory + Practical' },
-          { name: 'Marine Biology', code: 'ZOO-403', credits: 3, type: 'Theory' },
-          { name: 'Biotechnology', code: 'ZOO-404', credits: 3, type: 'Theory + Practical' },
-          { name: 'Zoogeography of Pakistan', code: 'ZOO-405', credits: 3, type: 'Theory' },
-          { name: 'Research Project-I', code: 'ZOO-406', credits: 3, type: 'Practical' },
-        ],
-      },
-      {
-        semester: 8,
-        subjects: [
-          { name: 'Freshwater Biology', code: 'ZOO-407', credits: 3, type: 'Theory + Practical' },
-          { name: 'Medical Zoology', code: 'ZOO-408', credits: 3, type: 'Theory' },
-          { name: 'Economic Zoology', code: 'ZOO-409', credits: 3, type: 'Theory' },
-          { name: 'Advanced Genetics & Genomics', code: 'ZOO-410', credits: 3, type: 'Theory + Practical' },
-          { name: 'Conservation Biology', code: 'ZOO-411', credits: 3, type: 'Theory' },
-          { name: 'Research Project-II', code: 'ZOO-412', credits: 3, type: 'Practical' },
-        ],
-      },
-    ],
-  },
-];
-
-const yearIcons = [Dna, Microscope, Bug, FlaskConical];
-const yearColors = [
-  { gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', ring: 'ring-blue-500/20' },
-  { gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', ring: 'ring-emerald-500/20' },
-  { gradient: 'from-amber-500 to-orange-600', bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', ring: 'ring-amber-500/20' },
-  { gradient: 'from-primary to-rose-600', bg: 'bg-red-50', text: 'text-primary', border: 'border-red-200', ring: 'ring-primary/20' },
-];
-
-const typeColors: Record<string, string> = {
-  'Theory': 'bg-blue-100 text-blue-700',
-  'Practical': 'bg-green-100 text-green-700',
-  'Theory + Practical': 'bg-purple-100 text-purple-700',
-};
-
-const CourseDetail = () => {
+export const MediaDetailPage = () => {
+  const { slug, id } = useParams<{ slug?: string; id?: string }>();
+  const [item, setItem] = useState<any>(null);
+  const [recentItems, setRecentItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const pageRef = useRef<HTMLDivElement>(null);
-  const [openYear, setOpenYear] = useState<number>(1);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const identifier = id || slug;
+
+    fetch('/api/v1/media')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const found = data.find(
+            (m) =>
+              String(m.id) === identifier ||
+              m.slug === identifier ||
+              m.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === identifier
+          );
+          if (found) {
+            setItem(found);
+          } else {
+            setItem(data[0]);
+          }
+          setRecentItems(data.filter((m) => String(m.id) !== identifier).slice(0, 3));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id, slug]);
+
+  useEffect(() => {
+    if (!item) return;
 
     const ctx = gsap.context(() => {
-      gsap.from('.course-hero-content', {
+      gsap.from('.detail-hero', {
         y: 40,
+        opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
-        delay: 0.2,
       });
 
-      gsap.from('.year-accordion', {
+      gsap.from('.detail-media-container', {
         y: 30,
-        scale: 0.98,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.detail-content-section', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.3,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.detail-sidebar-card', {
+        x: 30,
+        opacity: 0,
         duration: 0.6,
-        stagger: 0.12,
-        ease: 'power2.out',
+        stagger: 0.15,
         delay: 0.4,
+        ease: 'power2.out',
       });
     }, pageRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [item]);
 
-  const toggleYear = (year: number) => {
-    setOpenYear(openYear === year ? 0 : year);
-  };
-
-  const getTotalCredits = (semesters: Semester[]) => {
-    return semesters.reduce(
-      (total, sem) => total + sem.subjects.reduce((s, sub) => s + sub.credits, 0),
-      0
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center bg-gray-900 text-white">
+        <div className="flex items-center gap-3 text-teal-400 font-semibold text-lg animate-pulse">
+          <Sparkles className="w-6 h-6" />
+          <span>Loading Media Article...</span>
+        </div>
+      </div>
     );
-  };
+  }
 
-  const getTotalSubjects = (semesters: Semester[]) => {
-    return semesters.reduce((total, sem) => total + sem.subjects.length, 0);
-  };
+  if (!item) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 container-custom text-center bg-gray-50">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Media Article Not Found</h2>
+        <Link
+          to="/media"
+          className="inline-flex items-center gap-2 bg-primary text-teal-300 px-6 py-3 rounded-xl font-bold hover:bg-primary-dark transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Media Hub
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>BS Zoology Program | GDC Larkana</title>
-        <meta name="description" content="Explore the BS Zoology program at Government Degree College Larkana. Complete curriculum, learning objectives, and career prospects." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/course/zoology" />
+        <title>{`${item.title} | WenClims Weather & Climate Media`}</title>
+        <meta name="description" content={item.excerpt || item.title} />
       </Helmet>
-      <div ref={pageRef} className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-20 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-        </div>
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }}></div>
 
-        <div className="container-custom relative z-10">
-          <div className="course-hero-content">
-            {/* Back Button */}
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group"
-            >
-              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-              <span className="text-sm font-medium">Back to Home</span>
-            </Link>
-
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">BS Zoology Program</span>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Zoology <span className="text-primary-light">Course Outline</span>
-            </h1>
-            <p className="text-lg text-white/70 max-w-2xl mb-10">
-              Complete 4-year BS Zoology degree program at Government Degree College Larkana.
-              Explore semester-wise courses, credit hours, and subjects.
-            </p>
-
-            {/* Quick Stats */}
-            <div className="flex flex-wrap gap-6">
-              {[
-                { icon: Clock, label: 'Duration', value: '4 Years' },
-                { icon: BookOpen, label: 'Total Semesters', value: '8' },
-                { icon: GraduationCap, label: 'Total Credit Hours', value: '140+' },
-                { icon: FlaskConical, label: 'Practicals Included', value: 'Yes' },
-              ].map((stat, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3">
-                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-primary-light" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-white/50">{stat.label}</div>
-                    <div className="text-white font-semibold">{stat.value}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div ref={pageRef} className="min-h-screen bg-gray-50 pb-24">
+        {/* Full-width Premium Cinema Hero */}
+        <div className="relative bg-gradient-to-br from-gray-950 via-primary-dark to-gray-900 pt-32 pb-24 overflow-hidden border-b border-gray-800">
+          <div className="absolute inset-0 opacity-15">
+            <div className="absolute top-10 left-10 w-96 h-96 bg-teal-500 rounded-full blur-3xl" />
+            <div className="absolute bottom-10 right-10 w-[30rem] h-[30rem] bg-blue-600 rounded-full blur-3xl" />
           </div>
-        </div>
-      </div>
 
-      {/* Course Content */}
-      <div className="container-custom py-16">
-        <div className="max-w-5xl mx-auto">
-          {/* Year Accordions */}
-          {zoologyCourseData.map((yearData, yearIndex) => {
-            const isOpen = openYear === yearData.year;
-            const colors = yearColors[yearIndex];
-            const YearIcon = yearIcons[yearIndex];
+        {/* Hero Section Container */}
+        <div className="w-full px-4 md:px-8 max-w-[1750px] mx-auto relative z-10">
+          <div className="detail-hero max-w-6xl">
+              {/* Back Breadcrumb */}
+              <Link
+                to="/media"
+                className="inline-flex items-center gap-2 text-teal-400/80 hover:text-teal-300 transition-colors mb-8 group text-sm font-semibold"
+              >
+                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                <span>Back to Media &amp; Talkshows</span>
+              </Link>
 
-            return (
-              <div key={yearData.year} className="year-accordion mb-6">
-                {/* Year Header */}
-                <button
-                  onClick={() => toggleYear(yearData.year)}
-                  className={`w-full flex items-center justify-between p-6 rounded-2xl transition-all duration-300 ${
-                    isOpen
-                      ? `bg-gradient-to-r ${colors.gradient} text-white shadow-lg`
-                      : 'bg-white hover:shadow-md border border-gray-100 hover:border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                      isOpen ? 'bg-white/20' : `${colors.bg}`
-                    }`}>
-                      <YearIcon className={`w-7 h-7 ${isOpen ? 'text-white' : colors.text}`} />
-                    </div>
-                    <div className="text-left">
-                      <h3 className={`text-xl font-bold ${isOpen ? 'text-white' : 'text-gray-900'}`}>
-                        {yearData.title}
-                      </h3>
-                      <p className={`text-sm ${isOpen ? 'text-white/80' : 'text-gray-500'}`}>
-                        {getTotalSubjects(yearData.semesters)} Subjects &middot; {getTotalCredits(yearData.semesters)} Credit Hours
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                      isOpen ? 'bg-white/20 text-white' : `${colors.bg} ${colors.text}`
-                    }`}>
-                      2 Semesters
-                    </span>
-                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${
-                      isOpen ? 'rotate-180 text-white' : 'text-gray-400'
-                    }`} />
-                  </div>
-                </button>
+              {/* Category & Tags Pill */}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <span className="bg-teal-500/20 backdrop-blur-md border border-teal-500/40 text-teal-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-2 shadow-lg">
+                  <Tag className="w-3.5 h-3.5 text-teal-400" />
+                  {item.type || 'Media'}
+                </span>
 
-                {/* Semester Content */}
-                {isOpen && (
-                  <div className="mt-4 space-y-6 animate-in">
-                    {yearData.semesters.map((sem) => (
-                      <div key={sem.semester} className={`bg-white rounded-2xl border ${colors.border} overflow-hidden`}>
-                        {/* Semester Header */}
-                        <div className={`${colors.bg} px-6 py-4 flex items-center justify-between`}>
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 bg-gradient-to-br ${colors.gradient} rounded-lg flex items-center justify-center`}>
-                              <span className="text-white text-sm font-bold">{sem.semester}</span>
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-gray-900">Semester {sem.semester}</h4>
-                              <p className="text-xs text-gray-500">
-                                {sem.subjects.length} subjects &middot;{' '}
-                                {sem.subjects.reduce((t, s) => t + s.credits, 0)} credit hours
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                <div className="flex items-center text-xs text-white/70 gap-1.5 bg-white/5 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-white/10">
+                  <Calendar className="w-3.5 h-3.5 text-teal-400" />
+                  <span>
+                    {item.published_at
+                      ? new Date(item.published_at).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })
+                      : 'Recent Publication'}
+                  </span>
+                </div>
 
-                        {/* Subjects Table */}
-                        <div className="overflow-x-auto">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b border-gray-100">
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Course Code</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Subject Name</th>
-                                <th className="text-center px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Credits</th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Type</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {sem.subjects.map((subject, subIndex) => (
-                                <tr
-                                  key={subIndex}
-                                  className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
-                                >
-                                  <td className="px-6 py-4">
-                                    <span className="text-sm text-gray-400 font-medium">{String(subIndex + 1).padStart(2, '0')}</span>
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <span className={`text-sm font-mono font-semibold ${colors.text}`}>
-                                      {subject.code}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <span className="text-sm font-medium text-gray-800">{subject.name}</span>
-                                  </td>
-                                  <td className="px-6 py-4 text-center">
-                                    <span className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg text-sm font-bold text-gray-700">
-                                      {subject.credits}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${typeColors[subject.type]}`}>
-                                      {subject.type}
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                            <tfoot>
-                              <tr className={`${colors.bg}`}>
-                                <td colSpan={3} className="px-6 py-3 text-sm font-bold text-gray-700">Total Credit Hours</td>
-                                <td className="px-6 py-3 text-center">
-                                  <span className={`inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br ${colors.gradient} rounded-lg text-sm font-bold text-white`}>
-                                    {sem.subjects.reduce((t, s) => t + s.credits, 0)}
-                                  </span>
-                                </td>
-                                <td></td>
-                              </tr>
-                            </tfoot>
-                          </table>
-                        </div>
-                      </div>
-                    ))}
+                {item.author_name && (
+                  <div className="flex items-center text-xs text-white/70 gap-1.5 bg-white/5 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-white/10">
+                    <User className="w-3.5 h-3.5 text-teal-400" />
+                    <span>{item.author_name}</span>
                   </div>
                 )}
               </div>
-            );
-          })}
 
-          {/* Bottom Info */}
-          <div className="mt-12 bg-white rounded-2xl border border-gray-100 p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <GraduationCap className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  BS Zoology - Government Degree College Larkana
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  This is a 4-year (8 semesters) undergraduate program. Students must complete all
-                  required courses along with research projects in the final year. The program
-                  includes both theoretical and practical components to provide comprehensive
-                  knowledge in Zoological Sciences.
+              {/* Title */}
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white leading-tight mb-6 tracking-tight">
+                {item.title}
+              </h1>
+
+              {/* Sub-excerpt */}
+              {item.excerpt && (
+                <p className="text-lg md:text-xl text-teal-100/80 font-normal leading-relaxed max-w-3xl">
+                  {item.excerpt}
                 </p>
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {['Cell Biology', 'Genetics', 'Ecology', 'Parasitology', 'Marine Biology', 'Biotechnology'].map((tag) => (
-                    <span key={tag} className="text-xs font-medium bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full">
-                      {tag}
-                    </span>
-                  ))}
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Layout */}
+        <div className="w-full px-4 md:px-8 max-w-[1750px] mx-auto -mt-12 relative z-20">
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Left/Center Main Column (9 Cols): Video / Cover & Article Text */}
+            <div className="lg:col-span-9 space-y-8">
+              {/* Media Player OR Cover Banner Card */}
+              <div className="detail-media-container bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80">
+                {item.embed_url ? (
+                  <div className="relative w-full aspect-video bg-black shadow-inner">
+                    <iframe
+                      src={item.embed_url}
+                      title={item.title}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : item.cover_image ? (
+                  <div className="relative h-80 md:h-[28rem] w-full bg-gray-900 overflow-hidden">
+                    <img
+                      src={item.cover_image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  </div>
+                ) : null}
+
+                {/* Article Body Container */}
+                <div className="detail-content-section p-8 md:p-12">
+                  {/* Highlight Callout */}
+                  {item.excerpt && (
+                    <div className="p-6 mb-8 rounded-2xl bg-gradient-to-r from-teal-500/10 via-teal-500/5 to-transparent border-l-4 border-teal-500 text-gray-800 text-base md:text-lg font-medium italic leading-relaxed">
+                      "{item.excerpt}"
+                    </div>
+                  )}
+
+                  {/* Body Text */}
+                  <div className="prose prose-lg prose-teal max-w-none text-gray-800 leading-relaxed font-sans space-y-6">
+                    {item.body ? (
+                      <div dangerouslySetInnerHTML={{ __html: item.body.replace(/\n/g, '<br/><br/>') }} />
+                    ) : (
+                      <p>
+                        Full coverage and climate attribution documentation published by WenClims. This research report addresses climate impacts, hydrological forecasting, and regional resilience.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* External Source Action Box */}
+                  {item.external_url && (
+                    <div className="mt-12 p-6 rounded-2xl bg-gradient-to-r from-primary to-primary-dark text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg border border-teal-500/30">
+                      <div>
+                        <h4 className="text-lg font-bold text-teal-300 mb-1">Watch / Read External Source</h4>
+                        <p className="text-xs text-white/70">Access the full broadcast or press release directly at the origin outlet.</p>
+                      </div>
+                      <a
+                        href={item.external_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-teal-400 hover:bg-teal-300 text-gray-900 font-extrabold px-6 py-3 rounded-xl transition-all shadow-md text-sm shrink-0"
+                      >
+                        <span>Open Source Link</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </div>
+                  )}
+
+                  {/* Share & Tags Bar */}
+                  <div className="mt-10 pt-8 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Tags:</span>
+                      {Array.isArray(item.tags)
+                        ? item.tags.map((t: string, i: number) => (
+                            <span
+                              key={i}
+                              className="bg-gray-100 text-gray-700 text-xs font-semibold px-3 py-1 rounded-lg border border-gray-200"
+                            >
+                              #{t}
+                            </span>
+                          ))
+                        : (
+                            <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-3 py-1 rounded-lg border border-gray-200">
+                              #ClimateAttribution
+                            </span>
+                          )}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(window.location.href);
+                        alert('Page URL copied to clipboard!');
+                      }}
+                      className="inline-flex items-center gap-2 bg-gray-100 hover:bg-teal-50 text-gray-700 hover:text-teal-700 px-5 py-2.5 rounded-xl font-bold text-sm transition-all border border-gray-200"
+                    >
+                      <Share2 className="w-4 h-4 text-teal-600" />
+                      <span>Share This Media</span>
+                    </button>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            {/* Right Column (3 Cols): Sidebar Info & Related Media */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Author & Info Card */}
+              <div className="detail-sidebar-card bg-white rounded-3xl p-6 shadow-xl border border-gray-200/80">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-teal-600 text-teal-300 font-extrabold text-xl flex items-center justify-center shadow-md">
+                    {item.author_name ? item.author_name[0] : 'W'}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg leading-tight">{item.author_name || 'WenClims Media'}</h3>
+                    <p className="text-xs text-teal-600 font-semibold uppercase tracking-wider mt-0.5">Climate Research &amp; Media</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3.5 border-t border-gray-100 pt-5 text-sm text-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400 font-medium">Category:</span>
+                    <span className="font-bold text-gray-900 uppercase text-xs bg-gray-100 px-2.5 py-1 rounded-md">
+                      {item.type}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400 font-medium">Status:</span>
+                    <span className="inline-flex items-center gap-1 text-emerald-700 font-bold text-xs bg-emerald-50 px-2.5 py-1 rounded-md">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Published
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400 font-medium">Video Embed:</span>
+                    <span className="font-bold text-gray-900 text-xs">
+                      {item.embed_url ? 'Available (YouTube)' : 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Related Media Card */}
+              {recentItems.length > 0 && (
+                <div className="detail-sidebar-card bg-white rounded-3xl p-6 shadow-xl border border-gray-200/80">
+                  <h3 className="font-heading font-bold text-gray-900 text-lg mb-5 flex items-center gap-2">
+                    <Tv className="w-5 h-5 text-teal-600" />
+                    <span>More Climate Media</span>
+                  </h3>
+
+                  <div className="space-y-4">
+                    {recentItems.map((rec) => (
+                      <Link
+                        key={rec.id}
+                        to={`/media/item/${rec.id}`}
+                        className="group flex gap-3.5 p-2 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
+                      >
+                        <div className="w-20 h-16 rounded-lg bg-gray-900 overflow-hidden shrink-0">
+                          <img
+                            src={rec.cover_image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;q=80'}
+                            alt={rec.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                        </div>
+                        <div className="overflow-hidden">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-teal-600 block mb-0.5">
+                            {rec.type}
+                          </span>
+                          <h4 className="text-xs font-bold text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2 leading-snug">
+                            {rec.title}
+                          </h4>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <Link
+                    to="/media"
+                    className="mt-6 w-full inline-flex items-center justify-center gap-2 bg-gray-50 hover:bg-teal-50 text-teal-700 font-bold text-xs py-3 rounded-xl transition-all border border-gray-200"
+                  >
+                    <span>View All Media Articles</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
 
-export default CourseDetail;
+export default MediaDetailPage;

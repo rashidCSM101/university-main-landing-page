@@ -190,6 +190,29 @@ const Faculty = () => {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
+  const [facultyList, setFacultyList] = useState<FacultyMember[]>(facultyData);
+
+  useEffect(() => {
+    fetch('/api/v1/team')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped: FacultyMember[] = data.map((item: any) => ({
+            name: item.name,
+            designation: item.role,
+            qualification: 'Climate Scientist',
+            specialization: item.bio || item.role,
+            experience: 'Senior Scientist',
+            email: 'wenclims@gmail.com',
+            phone: '+92-333-5672483',
+            department: item.team ? item.team.toUpperCase() : 'LEADERSHIP',
+            image: item.photo || '',
+          }));
+          setFacultyList(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -228,7 +251,7 @@ const Faculty = () => {
     return () => ctx.revert();
   }, []);
 
-  const filtered = facultyData.filter(f => {
+  const filtered = facultyList.filter(f => {
     const matchesDept = filter === 'All' || f.department === filter;
     const matchesSearch =
       search === '' ||

@@ -1,47 +1,55 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const blogs = [
-    {
-      id: 1,
-      title: 'The Future of Education Technology',
-      excerpt: 'Discover how technology is reshaping the educational landscape and what it means for students and educators.',
-      date: 'Dec 20, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Technology',
-    },
-    {
-      id: 2,
-      title: 'Tips for Academic Success in University',
-      excerpt: 'Essential strategies for excelling in your academic journey and making the most of your university experience.',
-      date: 'Dec 18, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Education',
-    },
-    {
-      id: 3,
-      title: 'Career Opportunities After Graduation',
-      excerpt: 'Explore the vast career opportunities available to our graduates and how to prepare for the job market.',
-      date: 'Dec 15, 2025',
-      author: 'Admin',
-      image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      category: 'Career',
-    },
-  ];
+const fallbackBlogs = [
+  {
+    id: '1',
+    title: 'Heatwave Attribution and Climate Impact in South Asia 2025',
+    excerpt: 'Comprehensive analysis of recent extreme temperatures and attribution modeling in regional weather systems.',
+    published_at: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    author_name: 'Dr. Rashid',
+    cover_image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    type: 'blog',
+    slug: 'heatwave-attribution-south-asia-2025',
+  },
+  {
+    id: '2',
+    title: 'Monsoon Dynamics & Hydrological Forecasting Report',
+    excerpt: 'An in-depth review of monsoon precipitation shifts, runoff predictability, and flood warning integrations.',
+    published_at: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    author_name: 'Dr. Rashid',
+    cover_image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    type: 'blog',
+    slug: 'monsoon-dynamics-hydrological-forecasting',
+  },
+];
 
 const Blog = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const [blogs, setBlogs] = useState<any[]>(fallbackBlogs);
+
+  useEffect(() => {
+    // Dynamic Fetch from Express API Backend
+    fetch('/api/v1/media?type=blog')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setBlogs(data);
+        }
+      })
+      .catch(() => {
+        // Fallback to static items if backend is offline
+      });
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from('.blog-header', {
         y: 50,
         opacity: 0,
@@ -53,7 +61,6 @@ const Blog = () => {
         },
       });
 
-      // Cards animation
       gsap.from('.blog-card', {
         y: 50,
         scale: 0.95,
@@ -69,7 +76,7 @@ const Blog = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [blogs]);
 
   return (
     <section ref={sectionRef} className="section-padding bg-white">
@@ -80,18 +87,18 @@ const Blog = () => {
             <div className="flex items-center space-x-3 mb-4">
               <div className="decorative-line"></div>
               <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-                Our Blog
+                Our Blog &amp; Insights
               </span>
             </div>
             <h2 className="section-title">
-              Latest Insights &{' '}
-              <span className="text-primary">Updates</span>
+              Latest Climate Insights &amp;{' '}
+              <span className="text-primary">Attribution</span>
             </h2>
           </div>
-          <button className="btn-secondary mt-6 md:mt-0 group">
-            <span>View All Posts</span>
+          <Link to="/media/blogs" className="btn-secondary mt-6 md:mt-0 group">
+            <span>View All Articles</span>
             <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
 
         {/* Blog Grid */}
@@ -99,57 +106,58 @@ const Blog = () => {
           {blogs.map((blog) => (
             <article
               key={blog.id}
-              className="blog-card group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+              className="blog-card group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-between"
             >
-              {/* Image */}
-              <div className="relative overflow-hidden h-52">
-                <img
-                  src={blog.image}
-                  alt={blog.title}
-                  loading="lazy"
-                  width={800}
-                  height={533}
-                  className="blog-image w-full h-full object-cover"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center">
-                    <Tag className="w-3 h-3 mr-1" />
-                    {blog.category}
-                  </span>
+              <div>
+                {/* Image */}
+                <div className="relative overflow-hidden h-52">
+                  <img
+                    src={blog.cover_image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
+                    alt={blog.title}
+                    loading="lazy"
+                    width={800}
+                    height={533}
+                    className="blog-image w-full h-full object-cover"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                      <Tag className="w-3 h-3 mr-1" />
+                      {Array.isArray(blog.tags) ? blog.tags[0] || 'Climate' : 'Climate'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{blog.published_at ? new Date(blog.published_at).toLocaleDateString() : 'Recent'}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <User className="w-4 h-4" />
+                      <span>{blog.author_name || 'Dr. Rashid'}</span>
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                    {blog.title}
+                  </h3>
+
+                  <p className="text-gray-600 mb-4 line-clamp-2">
+                    {blog.excerpt}
+                  </p>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="p-6">
-                {/* Meta */}
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{blog.date}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <User className="w-4 h-4" />
-                    <span>{blog.author}</span>
-                  </div>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                  {blog.title}
-                </h3>
-
-                {/* Excerpt */}
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {blog.excerpt}
-                </p>
-
-                {/* Read More */}
-                <span
+              <div className="px-6 pb-6">
+                <Link
+                  to={`/media/blogs/${blog.slug}`}
                   className="inline-flex items-center text-primary font-medium cursor-pointer group-hover:gap-2 transition-all"
                 >
-                  <span>Read More</span>
+                  <span>Read Article</span>
                   <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-                </span>
+                </Link>
               </div>
             </article>
           ))}

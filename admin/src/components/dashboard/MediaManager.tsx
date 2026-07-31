@@ -1,0 +1,416 @@
+import React, { useState, useEffect } from 'react';
+import { api } from '../../services/api';
+import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Video, Image as ImageIcon, Upload } from 'lucide-react';
+
+export const MediaManager: React.FC = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [search, setSearch] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<any>({
+    id: null,
+    type: 'blog',
+    title: '',
+    slug: '',
+    body: '',
+    excerpt: '',
+    external_url: '',
+    embed_url: '',
+    cover_image: '',
+    author_name: 'Dr. Rashid',
+    tags: 'Climate, South Asia',
+    status: 'published',
+  });
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const data = await api.getAdminMedia(selectedType !== 'all' ? { type: selectedType } : undefined);
+      setItems(data);
+    } catch {
+      setItems([
+        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid', created_at: new Date().toISOString() },
+        { id: '2', type: 'talkshow', title: 'Climate Resilience & Flood Warning Talkshow', slug: 'talkshow-climate-resilience', embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', status: 'published', author_name: 'Dr. Rashid', created_at: new Date().toISOString() },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [selectedType]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const tagArray = typeof formData.tags === 'string'
+      ? formData.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      : formData.tags;
+
+    const payload = {
+      ...formData,
+      tags: tagArray,
+      slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    };
+
+    try {
+      if (formData.id) {
+        await api.updateMedia(formData.id, payload);
+      } else {
+        await api.createMedia(payload);
+      }
+      setIsEditing(false);
+      loadData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to save media item');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this media item?')) return;
+    try {
+      await api.deleteMedia(id);
+      loadData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to delete');
+    }
+  };
+
+  const openCreate = () => {
+    setFormData({
+      id: null,
+      type: 'blog',
+      title: '',
+      slug: '',
+      body: '',
+      excerpt: '',
+      external_url: '',
+      embed_url: '',
+      cover_image: '',
+      author_name: 'Dr. Rashid',
+      tags: 'Climate Change, South Asia',
+      status: 'published',
+    });
+    setIsEditing(true);
+  };
+
+  const openEdit = (item: any) => {
+    setFormData({
+      ...item,
+      tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
+    });
+    setIsEditing(true);
+  };
+
+  const filteredItems = items.filter(item =>
+    item.title.toLowerCase().includes(search.toLowerCase()) ||
+    item.slug.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="admin-content">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 className="page-title">Blogs &amp; Media Manager</h1>
+          <p className="page-subtitle">Publish articles, documentaries, podcasts, talkshows, and print media</p>
+        </div>
+        <button onClick={openCreate} className="btn-teal">
+          <Plus size={18} /> New Media Item
+        </button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+        {['all', 'blog', 'documentary', 'podcast', 'talkshow', 'print'].map((t) => (
+          <button
+            key={t}
+            onClick={() => setSelectedType(t)}
+            className={`btn-ghost ${selectedType === t ? 'active' : ''}`}
+            style={{
+              fontSize: '0.8rem',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '999px',
+              textTransform: 'capitalize',
+              background: selectedType === t ? '#0B1E3D' : '#fff',
+              color: selectedType === t ? '#00C8C8' : '#4D5D78',
+              borderColor: selectedType === t ? '#0B1E3D' : '#E2E8F4',
+            }}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {/* Search Input */}
+      <div style={{ position: 'relative', maxWidth: '360px', marginBottom: '1.5rem' }}>
+        <Search size={16} color="#9AA5BC" style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)' }} />
+        <input
+          type="text"
+          placeholder="Filter by title..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-field"
+          style={{ paddingLeft: '2.5rem' }}
+        />
+      </div>
+
+      {/* Editor Modal */}
+      {isEditing && (
+        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', background: '#fff', border: '2px solid #00C8C8' }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.35rem', color: '#0B1E3D', marginBottom: '1.25rem' }}>
+            {formData.id ? 'Edit Media Item' : 'Create New Media Item'}
+          </h2>
+          <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Media Type</label>
+              <select
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+              >
+                <option value="blog">Blog Article</option>
+                <option value="documentary">Documentary</option>
+                <option value="talkshow">Talkshow Video</option>
+                <option value="podcast">Podcast &amp; Radio</option>
+                <option value="print">Print Media Excerpt</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+              >
+                <option value="published">Published (Live on Website)</option>
+                <option value="draft">Draft (Private)</option>
+              </select>
+            </div>
+
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Title</label>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+                placeholder="e.g. Extreme Weather Attribution Talkshow"
+              />
+            </div>
+
+            {/* Talkshow / Documentary Video Embed URL */}
+            {(formData.type === 'talkshow' || formData.type === 'documentary') && (
+              <div style={{ gridColumn: '1 / -1', background: '#F0F7FF', padding: '1rem', borderRadius: '10px', border: '1px solid #B8D8F0' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Video size={16} color="#00C8C8" /> Talkshow / Video Embed URL (YouTube or Vimeo)
+                </label>
+                <input
+                  type="url"
+                  value={formData.embed_url || ''}
+                  onChange={(e) => setFormData({ ...formData, embed_url: e.target.value })}
+                  className="input-field"
+                  style={{ paddingLeft: '1rem', marginTop: '0.4rem', background: '#fff' }}
+                  placeholder="https://www.youtube.com/embed/VIDEO_ID or https://player.vimeo.com/video/..."
+                />
+                <span style={{ fontSize: '0.75rem', color: '#6B7A95', marginTop: '0.2rem', display: 'block' }}>
+                  Paste YouTube Embed URL to allow instant video playback on the website.
+                </span>
+              </div>
+            )}
+
+            {/* External URL (For Talkshows, Podcasts, or Print Outlets) */}
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <LinkIcon size={14} color="#009A9A" /> External Link / Original Source URL (Optional)
+              </label>
+              <input
+                type="url"
+                value={formData.external_url || ''}
+                onChange={(e) => setFormData({ ...formData, external_url: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+                placeholder="https://youtube.com/watch?v=... or https://dawn.com/..."
+              />
+            </div>
+
+            {/* Cover Image / Thumbnail URL & Device File Upload */}
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1.25rem', borderRadius: '12px', border: '1px solid #E2E8F4' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <ImageIcon size={16} color="#00C8C8" /> Cover Image / Thumbnail
+              </label>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                {/* Device File Input */}
+                <label className="btn-teal" style={{ cursor: 'pointer', fontSize: '0.8rem', padding: '0.5rem 1rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Upload size={15} /> Upload Image from Device
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (uploadEvent) => {
+                          setFormData({ ...formData, cover_image: uploadEvent.target?.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
+
+                <span style={{ fontSize: '0.8rem', color: '#9AA5BC', fontStyle: 'italic' }}>or paste web image link:</span>
+              </div>
+
+              <input
+                type="text"
+                value={
+                  formData.cover_image && formData.cover_image.startsWith('data:image')
+                    ? '[Device Image File Loaded Successfully]'
+                    : formData.cover_image || ''
+                }
+                onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem', marginTop: '0.6rem', background: '#fff' }}
+                placeholder="https://images.unsplash.com/... or upload from device above"
+              />
+
+              {/* Image Live Preview */}
+              {formData.cover_image && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#fff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #00C8C8' }}>
+                  <img
+                    src={formData.cover_image}
+                    alt="Preview"
+                    style={{ width: '80px', height: '50px', objectFit: 'cover', borderRadius: '6px' }}
+                  />
+                  <div style={{ flexGrow: 1 }}>
+                    <span style={{ fontSize: '0.8rem', color: '#0B1E3D', fontWeight: 700, display: 'block' }}>
+                      {formData.cover_image.startsWith('data:image') ? '✓ Local Device Image Loaded' : '✓ Web Image URL Set'}
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: '#6B7A95' }}>Ready to save and display on website</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, cover_image: '' })}
+                    style={{ fontSize: '0.75rem', color: '#dc2626', background: '#FEE2E2', border: 'none', padding: '0.3rem 0.6rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Author / Speaker Name</label>
+              <input
+                type="text"
+                value={formData.author_name}
+                onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Tags (comma-separated)</label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem' }}
+                placeholder="Talkshow, Climate Change, Attribution"
+              />
+            </div>
+
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Excerpt / Summary</label>
+              <textarea
+                rows={2}
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem', height: 'auto' }}
+              />
+            </div>
+
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Body Content / Description</label>
+              <textarea
+                rows={4}
+                value={formData.body}
+                onChange={(e) => setFormData({ ...formData, body: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem', height: 'auto' }}
+              />
+            </div>
+
+            <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+              <button type="button" onClick={() => setIsEditing(false)} className="btn-ghost">
+                Cancel
+              </button>
+              <button type="submit" className="btn-teal">
+                Save &amp; Publish
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Table List */}
+      <div className="card">
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+          <thead>
+            <tr style={{ background: '#F0F4FA', borderBottom: '1px solid #E2E8F4', color: '#0B1E3D', fontWeight: 600 }}>
+              <th style={{ padding: '0.875rem 1rem' }}>Title</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Type</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Author / Source</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Status</th>
+              <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>Loading media items...</td></tr>
+            ) : filteredItems.length === 0 ? (
+              <tr><td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>No media items found.</td></tr>
+            ) : (
+              filteredItems.map((item) => (
+                <tr key={item.id} style={{ borderBottom: '1px solid #E8ECF2' }}>
+                  <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>
+                    {item.title}
+                    {item.embed_url && <div style={{ fontSize: '0.725rem', color: '#009A9A' }}>🎥 Video Embed Configured</div>}
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    <span className="badge badge-navy" style={{ textTransform: 'capitalize' }}>{item.type}</span>
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{item.author_name || 'Dr. Rashid'}</td>
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    <span className={`badge ${item.status === 'published' ? 'badge-teal' : 'badge-gold'}`}>
+                      {item.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                    <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Edit">
+                      <Edit2 size={15} />
+                    </button>
+                    <button onClick={() => handleDelete(item.id)} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete">
+                      <Trash2 size={15} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};

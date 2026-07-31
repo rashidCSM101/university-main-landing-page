@@ -280,6 +280,7 @@ function AppContent() {
 
           {/* ── Media Hub ─────────────────────────────────── */}
           <Route path="/media"                element={<main><MediaHubPage /></main>} />
+          <Route path="/media/item/:id"       element={<main><BlogPost /></main>} />
           <Route path="/media/blogs"          element={<main><BlogsPageWrapped /></main>} />
           <Route path="/media/blogs/:slug"    element={<main><BlogPost /></main>} />
           <Route path="/media/documentaries"  element={<main><DocumentariesPageWrapped /></main>} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ChevronDown, CloudSun } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import logoImg from '../../assets/images/logo.png';
 
 // WenClims — Weather and Climate Services
 // Navigation: same component structure as before, content replaced for wenclims.org
@@ -80,9 +81,11 @@ const Header = () => {
 
           {/* Logo — WenClims brand */}
           <Link to="/" className="flex items-center space-x-3" onClick={closeMenu} aria-label="WenClims Home">
-            <div className={`p-2 rounded-lg transition-colors ${isScrolled ? 'bg-primary' : 'bg-white/10 backdrop-blur-sm'}`}>
-              <CloudSun className={`w-7 h-7 ${isScrolled ? 'text-teal' : 'text-teal'}`} />
-            </div>
+            <img 
+              src={logoImg} 
+              alt="WenClims Logo" 
+              className="h-10 w-auto object-contain transition-transform duration-300 hover:scale-105"
+            />
             <div className="flex flex-col leading-none">
               <span className={`text-lg font-heading font-bold tracking-tight ${isScrolled ? 'text-primary' : 'text-white'}`}>
                 WenClims
@@ -148,19 +151,8 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Desktop CTA — link to admin dashboard (no auth on public site per security guide) */}
+          {/* Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <a
-              href="https://admin.wenclims.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`text-sm font-medium transition-colors ${
-                isScrolled ? 'text-gray-600 hover:text-primary' : 'text-white/80 hover:text-white'
-              }`}
-              aria-label="WenClims Admin Dashboard"
-            >
-              Dashboard
-            </a>
             <Link
               to="/contact"
               className="btn-teal text-sm px-5 py-2.5 rounded-lg"
