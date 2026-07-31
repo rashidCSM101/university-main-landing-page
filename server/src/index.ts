@@ -14,6 +14,7 @@ import adminTeamRoutes from './routes/adminTeam';
 import adminToolsRoutes from './routes/adminTools';
 import adminUsersRoutes from './routes/adminUsers';
 import adminAuditRoutes from './routes/adminAudit';
+import adminSystemRoutes from './routes/adminSystem';
 
 dotenv.config();
 
@@ -74,6 +75,8 @@ app.use('/api/v1/admin/team', adminTeamRoutes);
 app.use('/api/v1/admin/tools', adminToolsRoutes);
 app.use('/api/v1/admin/users', adminUsersRoutes);
 app.use('/api/v1/admin/audit-logs', adminAuditRoutes);
+app.use('/api/v1/admin/system', adminSystemRoutes);
+app.use('/api/v1/system', adminSystemRoutes);
 
 // Global Error Handler — prevents sensitive stack trace leaks in client response
 app.use((err: any, req: Request, res: Response, next: any) => {

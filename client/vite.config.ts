@@ -36,12 +36,17 @@ export default defineConfig({
   build: {
     // Security: source maps off in production (no code exposure)
     sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         // Hashed filenames prevent cache poisoning
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
+        manualChunks: {
+          amcharts: ['@amcharts/amcharts5', '@amcharts/amcharts5/xy', '@amcharts/amcharts5/map'],
+          vendor: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
+        },
       },
     },
   },

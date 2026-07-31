@@ -1,6 +1,7 @@
 import React from 'react';
-import { Bell, Search, ShieldCheck, Sparkles } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Search, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
+import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 
 interface TopBarProps {
   title?: string;
@@ -8,6 +9,7 @@ interface TopBarProps {
 
 export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="topbar">
@@ -42,16 +44,37 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
           <Bell size={18} />
         </button>
 
-        {/* User Status Badge */}
-        <div className="topbar-user-info" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingLeft: '0.5rem' }}>
+        {/* User Status & Bio Shortcut Badge */}
+        <div
+          onClick={() => navigate(`${OBFUSCATED_ADMIN_PATH}/team`)}
+          className="topbar-user-info"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            paddingLeft: '0.75rem',
+            paddingRight: '0.5rem',
+            paddingTop: '0.35rem',
+            paddingBottom: '0.35rem',
+            borderRadius: '999px',
+            cursor: 'pointer',
+            background: 'rgba(0,200,200,0.06)',
+            border: '1px solid rgba(0,200,200,0.2)',
+            transition: 'all 0.2s ease',
+          }}
+          title="Click to edit My Profile & Bio Settings"
+        >
           <div style={{ textAlign: 'right' }}>
-            <div className="topbar-user-name">{user?.name || 'Dr. Rashid'}</div>
+            <div className="topbar-user-name" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>{user?.name || 'Dr. Rashid'}</span>
+              <UserCheck size={13} color="#00C8C8" />
+            </div>
             <div className="topbar-user-role" style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', justifyContent: 'flex-end' }}>
               <ShieldCheck size={12} color="#009A9A" />
               {user?.role === 'super_admin' ? 'Super Admin' : 'Editor'}
             </div>
           </div>
-          <div className="topbar-avatar">
+          <div className="topbar-avatar" style={{ background: 'linear-gradient(135deg, #00C8C8, #0B1E3D)', color: '#fff', fontWeight: 700 }}>
             {user?.name?.charAt(0) || 'R'}
           </div>
         </div>

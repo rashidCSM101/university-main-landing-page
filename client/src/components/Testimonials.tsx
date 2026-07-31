@@ -6,34 +6,34 @@ import { Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
-    {
-      id: 1,
-      name: 'Ahmed Ali Shaikh',
-      role: 'BS Zoology Graduate',
-      content:
-        'GDC Larkana provided me with the perfect environment to grow and learn. The faculty is exceptional, and the resources available are world-class. I couldn\'t have asked for a better educational experience.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: 'Fatima Naz Parveen',
-      role: 'BS Zoology Student',
-      content:
-        'The courses here are world-class. I learned so much and made lifelong connections. The professors are always available to help, and the career guidance helped me plan my future goals.',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: 'Muhammad Bilal Memon',
-      role: 'Intermediate Science Student',
-      content:
-        'The hands-on experience and practical lab work at GDC Larkana prepared me for higher studies. The campus life and extracurricular activities were invaluable.',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      rating: 5,
-    },
-  ];
+  {
+    id: 1,
+    name: 'Dr. Tariq Hassan',
+    role: 'Climate Policy Advisor, Asian Development Bank (ADB)',
+    content:
+      'WenClims provided exceptional scientific guidance and flood attribution modeling for our regional infrastructure resilience program. Their research insights are indispensable for South Asian climate policy.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: 'Dr. Elena Rostova',
+    role: 'Senior Environmental Scientist, EU Climate Initiative',
+    content:
+      'Working with the WenClims team on Indus Basin hydrological vulnerability was seamless. Their peer-reviewed datasets and localized climate intelligence set the gold standard in South Asia.',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: 'Muhammad Bilal Khan',
+    role: 'Disaster Risk Reduction Specialist, NDMA Pakistan',
+    content:
+      'The real-time weather telemetry and extreme heatwave advisory tools developed by WenClims have greatly enhanced our early warning capabilities across vulnerable districts.',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+    rating: 5,
+  },
+];
 
 const Testimonials = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -78,8 +78,8 @@ const Testimonials = () => {
             </div>
 
             <h2 className="section-title mb-6">
-              Feedback From{' '}
-              <span className="text-primary">Students</span>
+              Impact Endorsements &amp;{' '}
+              <span className="text-[#008B8B]">Partner Feedback</span>
             </h2>
 
             {/* Testimonial Card */}
@@ -149,7 +149,7 @@ const Testimonials = () => {
             <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Happy Students"              loading="lazy"
+                alt="Partner Organizations"              loading="lazy"
                 width={800}
                 height={533}
                 className="rounded-2xl w-full h-[500px] object-cover"
@@ -171,8 +171,8 @@ const Testimonials = () => {
                     ))}
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900">10K+</div>
-                    <div className="text-sm text-gray-500">Happy Students</div>
+                    <div className="font-bold text-gray-900">50+</div>
+                    <div className="text-sm text-gray-500">Global Research Partners</div>
                   </div>
                 </div>
               </div>

@@ -12,7 +12,10 @@ import { ProjectsManager } from './components/dashboard/ProjectsManager';
 import { TeamManager } from './components/dashboard/TeamManager';
 import { ToolsManager } from './components/dashboard/ToolsManager';
 import { UsersManager } from './components/dashboard/UsersManager';
-import { AuditLogViewer } from './components/dashboard/AuditLogViewer';
+import { AuditLogsManager } from './components/dashboard/AuditLogsManager';
+import { SystemHealthManager } from './components/dashboard/SystemHealthManager';
+import { GlobalBannerManager } from './components/dashboard/GlobalBannerManager';
+import { SiteSettingsManager } from './components/dashboard/SiteSettingsManager';
 
 const AdminLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ children, title }) => {
   const [collapsed, setCollapsed] = React.useState(() => {
@@ -138,7 +141,43 @@ export function App() {
           element={
             <ProtectedRoute>
               <AdminLayout title="Security Audit Trail">
-                <AuditLogViewer />
+                <AuditLogsManager />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Super Admin System Health & DB Backup */}
+        <Route
+          path={`${OBFUSCATED_ADMIN_PATH}/health`}
+          element={
+            <ProtectedRoute>
+              <AdminLayout title="System Health & DB Backup">
+                <SystemHealthManager />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Super Admin Global Emergency Banner */}
+        <Route
+          path={`${OBFUSCATED_ADMIN_PATH}/banner`}
+          element={
+            <ProtectedRoute>
+              <AdminLayout title="Emergency Website Banner">
+                <GlobalBannerManager />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Site Settings Manager */}
+        <Route
+          path={`${OBFUSCATED_ADMIN_PATH}/settings`}
+          element={
+            <ProtectedRoute>
+              <AdminLayout title="Site Settings & Policy">
+                <SiteSettingsManager />
               </AdminLayout>
             </ProtectedRoute>
           }

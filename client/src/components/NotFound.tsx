@@ -6,7 +6,7 @@ const NotFound = () => {
   return (
     <>
       <Helmet>
-        <title>404 - Page Not Found | GDC Larkana</title>
+        <title>404 - Page Not Found | WenClims — Weather and Climate Services</title>
         <meta name="description" content="The page you are looking for does not exist." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

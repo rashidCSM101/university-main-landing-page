@@ -62,8 +62,8 @@ router.post('/login', authRateLimiter, async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    // Short-lived Access Token (15 minutes)
-    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '15m' });
+    // Long-lived Access Token (7 days)
+    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
 
     // Long-lived Refresh Token (7 days)
     const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '7d' });

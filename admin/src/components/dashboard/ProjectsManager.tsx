@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Plus, Edit2, Trash2, FolderKanban } from 'lucide-react';
+import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 
 export const ProjectsManager: React.FC = () => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState<any>({
     id: null,
     title: '',
@@ -64,13 +67,17 @@ export const ProjectsManager: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete project record?')) return;
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
-      await api.deleteProject(id);
+      await api.deleteProject(deleteTarget.id);
+      setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete');
+      alert(err?.message || 'Failed to delete project');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -231,7 +238,7 @@ export const ProjectsManager: React.FC = () => {
                     <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }}>
                       <Edit2 size={15} />
                     </button>
-                    <button onClick={() => handleDelete(item.id)} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }}>
+                    <button onClick={() => setDeleteTarget({ id: item.id, title: item.title })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }}>
                       <Trash2 size={15} />
                     </button>
                   </td>
@@ -241,6 +248,15 @@ export const ProjectsManager: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        title="Delete Project Record"
+        itemTitle={deleteTarget?.title}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        loading={isDeleting}
+      />
     </div>
   );
 };

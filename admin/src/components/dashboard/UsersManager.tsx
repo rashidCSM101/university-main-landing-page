@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, UserCheck, ShieldCheck, UserX } from 'lucide-react';
+import { Plus, UserCheck, ShieldCheck, UserX, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export const UsersManager: React.FC = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
+
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -10,7 +14,7 @@ export const UsersManager: React.FC = () => {
     name: '',
     email: '',
     password: '',
-    role: 'editor',
+    role: 'member',
   });
 
   const loadData = async () => {
@@ -21,6 +25,8 @@ export const UsersManager: React.FC = () => {
     } catch {
       setUsers([
         { id: '1', name: 'Dr. Rashid', email: 'admin@wenclims.org', role: 'super_admin', is_active: true, created_at: new Date().toISOString() },
+        { id: '2', name: 'Mehran', email: 'mehran@wenclims.org', role: 'admin', is_active: true, created_at: new Date().toISOString() },
+        { id: '3', name: 'Dr. Ayesha Malik', email: 'ayesha@wenclims.org', role: 'member', is_active: true, created_at: new Date().toISOString() },
       ]);
     } finally {
       setLoading(false);
@@ -31,8 +37,16 @@ export const UsersManager: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent non-super_admin from selecting admin/super_admin role
+    if (!isSuperAdmin && (formData.role === 'admin' || formData.role === 'super_admin')) {
+      alert('Permission Denied: Admin accounts can only create Member user accounts.');
+      return;
+    }
+
     try {
       await api.createUser(formData);
+      setFormData({ name: '', email: '', password: '', role: 'member' });
       setIsEditing(false);
       loadData();
     } catch (err: any) {
@@ -41,9 +55,14 @@ export const UsersManager: React.FC = () => {
   };
 
   const handleRoleToggle = async (id: string, currentRole: string) => {
-    const newRole = currentRole === 'super_admin' ? 'editor' : 'super_admin';
+    if (!isSuperAdmin) {
+      alert('Permission Denied: Only Super Admin can modify user roles.');
+      return;
+    }
+
+    const nextRole = currentRole === 'super_admin' ? 'admin' : currentRole === 'admin' ? 'member' : 'admin';
     try {
-      await api.updateUserRole(id, newRole);
+      await api.updateUserRole(id, nextRole);
       loadData();
     } catch (err: any) {
       alert(err?.message || 'Failed to update role');
@@ -61,27 +80,32 @@ export const UsersManager: React.FC = () => {
 
   return (
     <div className="admin-content">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="page-title">User Roles & Access Control</h1>
-          <p className="page-subtitle">Super Admin console for user account creation, RBAC roles, and deactivation</p>
+          <h1 className="page-title">User Roles &amp; Account Controls</h1>
+          <p className="page-subtitle">
+            {isSuperAdmin
+              ? 'Super Admin Console: Create Super Admin, Executive Admin, and Member accounts'
+              : 'Admin Console: Create new Member accounts (Admins can only add Members)'}
+          </p>
         </div>
         <button onClick={() => setIsEditing(true)} className="btn-teal">
-          <Plus size={18} /> Add New Account
+          <Plus size={18} /> Add New User Account
         </button>
       </div>
 
       {isEditing && (
-        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', background: '#fff', border: '2px solid #00C8C8' }}>
+        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', background: '#fff', border: '2px solid #00C8C8', borderRadius: '16px' }}>
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.35rem', color: '#0B1E3D', marginBottom: '1.25rem' }}>
             Create New Account
           </h2>
           <form onSubmit={handleCreate} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Full Name</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Full Name *</label>
               <input
                 type="text"
                 required
+                placeholder="e.g. Dr. Ayesha Malik"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="input-field"
@@ -90,10 +114,11 @@ export const UsersManager: React.FC = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Email Address</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Email Address *</label>
               <input
                 type="email"
                 required
+                placeholder="ayesha@wenclims.org"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="input-field"
@@ -102,11 +127,11 @@ export const UsersManager: React.FC = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Password (min 8 chars)</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Initial Password (min 6 chars) *</label>
               <input
                 type="password"
                 required
-                minLength={8}
+                minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="input-field"
@@ -115,16 +140,22 @@ export const UsersManager: React.FC = () => {
             </div>
 
             <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Assign Role</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Assign Account Role *</label>
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 className="input-field"
                 style={{ paddingLeft: '1rem' }}
               >
-                <option value="editor">Editor (Content Manager)</option>
-                <option value="super_admin">Super Admin (Full Access)</option>
+                <option value="member">Member Scientist (Submits Own Posts &amp; Bio)</option>
+                {isSuperAdmin && <option value="admin">Executive Admin (Manages All Content &amp; Adds Members)</option>}
+                {isSuperAdmin && <option value="super_admin">Super Admin (Full System Access)</option>}
               </select>
+              {!isSuperAdmin && (
+                <span style={{ fontSize: '0.725rem', color: '#6B7A95', marginTop: '0.25rem', display: 'block' }}>
+                  Note: As an Admin, you can only create Member accounts. Super Admin role required for Admin promotion.
+                </span>
+              )}
             </div>
 
             <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
@@ -143,7 +174,7 @@ export const UsersManager: React.FC = () => {
               <th style={{ padding: '0.875rem 1rem' }}>Email</th>
               <th style={{ padding: '0.875rem 1rem' }}>Role</th>
               <th style={{ padding: '0.875rem 1rem' }}>Status</th>
-              <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Role Action</th>
+              <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -157,8 +188,8 @@ export const UsersManager: React.FC = () => {
                   <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>{u.name}</td>
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{u.email}</td>
                   <td style={{ padding: '0.875rem 1rem' }}>
-                    <span className={`badge ${u.role === 'super_admin' ? 'badge-teal' : 'badge-navy'}`}>
-                      {u.role === 'super_admin' ? 'Super Admin' : 'Editor'}
+                    <span className={`badge ${u.role === 'super_admin' ? 'badge-teal' : u.role === 'admin' ? 'badge-gold' : 'badge-navy'}`}>
+                      {u.role === 'super_admin' ? 'Super Admin' : u.role === 'admin' ? 'Executive Admin' : 'Member'}
                     </span>
                   </td>
                   <td style={{ padding: '0.875rem 1rem' }}>
@@ -167,13 +198,15 @@ export const UsersManager: React.FC = () => {
                     </span>
                   </td>
                   <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                    <button
-                      onClick={() => handleRoleToggle(u.id, u.role)}
-                      className="btn-ghost"
-                      style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', marginRight: '0.4rem' }}
-                    >
-                      Set as {u.role === 'super_admin' ? 'Editor' : 'Admin'}
-                    </button>
+                    {isSuperAdmin && (
+                      <button
+                        onClick={() => handleRoleToggle(u.id, u.role)}
+                        className="btn-ghost"
+                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', marginRight: '0.4rem' }}
+                      >
+                        Change Role
+                      </button>
+                    )}
                     <button
                       onClick={() => handleStatusToggle(u.id)}
                       className="btn-ghost"

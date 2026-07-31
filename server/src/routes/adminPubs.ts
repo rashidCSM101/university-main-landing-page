@@ -56,6 +56,22 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+
+    // Fetch existing publication
+    const existing = await query('SELECT author_name FROM publications WHERE id = $1', [id]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ error: 'Publication not found.' });
+    }
+
+    // Role check: Member can only edit their own publications
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      const isAuthor = existing.rows[0].author_name?.toLowerCase().trim() === req.user?.name?.toLowerCase().trim();
+      if (!isAuthor) {
+        return res.status(403).json({ error: 'Permission denied. Members can only edit their own submitted publications.' });
+      }
+    }
+
     const parseResult = publicationSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -84,10 +100,6 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     ];
 
     const result = await query(text, params);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Publication not found.' });
-    }
-
     await logAudit(req.user, 'UPDATE_PUBLICATION', 'publications', id, req.ip || '127.0.0.1', { title: item.title });
 
     return res.json(result.rows[0]);
@@ -98,6 +110,12 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    // Only Super Admin and Admin can delete publications
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission denied. Members cannot delete publications. Only Admin or Super Admin can delete content.' });
+    }
+
     const { id } = req.params;
     const result = await query('DELETE FROM publications WHERE id = $1 RETURNING title', [id]);
     if (result.rows.length === 0) {

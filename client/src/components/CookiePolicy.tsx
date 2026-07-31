@@ -25,9 +25,9 @@ const CookiePolicy = () => {
   return (
     <>
       <Helmet>
-        <title>Cookie Policy | GDC Larkana</title>
-        <meta name="description" content="Cookie Policy of Government Degree College Larkana. Understand how and why we use cookies on our website." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/cookies" />
+        <title>Cookie Policy | WenClims — Weather and Climate Services</title>
+        <meta name="description" content="Cookie Policy of Weather and Climate Services (WenClims). Understand how and why we use cookies on our website." />
+        <link rel="canonical" href="https://wenclims.org/privacy" />
       </Helmet>
       <div ref={pageRef} className="min-h-screen bg-gray-50">
         {/* Hero */}
@@ -87,7 +87,7 @@ const CookiePolicy = () => {
                     <span className="w-3 h-3 rounded-full bg-blue-500"></span>
                     Functional Cookies
                   </h3>
-                  <p className="text-gray-600 text-sm">These cookies remember your preferences and choices (such as language or region) to provide a more personalized experience. They may also be used to remember the login status for the student portal.</p>
+                  <p className="text-gray-600 text-sm">These cookies remember your preferences and choices (such as language or region) to provide a more personalized experience. They may also be used to remember the login status for the research member portal.</p>
                 </div>
 
                 <div className="bg-gray-50 rounded-xl p-6">
@@ -120,7 +120,7 @@ const CookiePolicy = () => {
                 <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Receive notifications when a cookie is being set</span></li>
               </ul>
               <p className="text-gray-500 text-sm mt-4">
-                Please note that disabling cookies may affect the functionality of certain features on our website, such as the student portal login and form submissions.
+                Please note that disabling cookies may affect the functionality of certain features on our website, such as the research member portal login and form submissions.
               </p>
             </div>
 
@@ -144,10 +144,10 @@ const CookiePolicy = () => {
                 If you have questions about our use of cookies, please contact us:
               </p>
               <div className="bg-gray-50 rounded-xl p-6 text-gray-600 space-y-2">
-                <p><strong>Government Degree College Larkana</strong></p>
-                <p>Station Road, Larkana, Sindh 77150, Pakistan</p>
-                <p>Email: info@gdclarkana.edu.pk</p>
-                <p>Phone: +92 (74) 123-4567</p>
+                <p><strong>Weather and Climate Services (WenClims)</strong></p>
+                <p>88, Lane 2, Lake View Lanes (LVL), Korang Road, Bani Gala, Islamabad, Pakistan</p>
+                <p>Email: wenclims@gmail.com</p>
+                <p>Phone: +92-333-5672483</p>
               </div>
             </div>
 

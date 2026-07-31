@@ -5,7 +5,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'super_admin' | 'editor';
+  role: 'super_admin' | 'admin' | 'member' | 'editor';
 }
 
 export const OBFUSCATED_ADMIN_PATH = '/admin--wensclims-xk9f2m';

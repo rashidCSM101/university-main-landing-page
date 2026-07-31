@@ -5,9 +5,10 @@ import { Helmet } from 'react-helmet-async';
 import Lenis from 'lenis';
 
 // Above-the-fold: direct imports (not lazy — LCP critical path)
-import Header from './components/Header';
+import Header from './components/layout/Navbar';
 import Hero from './components/Hero';
-import Footer from './components/Footer';
+import Footer from './components/layout/Footer';
+import { EmergencyBanner } from './components/layout/EmergencyBanner';
 
 // ─── Home page sections (lazy-loaded below fold) ───────────────────────────
 const Introduction  = lazy(() => import('./components/Introduction'));
@@ -22,40 +23,42 @@ const Testimonials  = lazy(() => import('./components/Testimonials'));    // rep
 const Admission     = lazy(() => import('./components/Admission'));       // repurposed → CTA / Latest Reports
 const Blog          = lazy(() => import('./components/Blog'));            // repurposed → Latest Blogs
 
-// ─── Full Pages ────────────────────────────────────────────────────────────
-// Tools
-const ToolsPage     = lazy(() => import('./components/About'));           // placeholder → will become Tools.tsx
+// ─── Full Domain Pages ──────────────────────────────────────────────────────
+// Vision & Tools
+const VisionPage    = lazy(() => import('./components/About'));
+const ToolsPage     = lazy(() => import('./components/tools/ToolsPage'));
 
 // Projects
-const ProjectsPage  = lazy(() => import('./components/Admissions'));     // placeholder → will become Projects.tsx
+const ProjectsPage      = lazy(() => import('./components/projects/ProjectsPage'));
+const ProjectDetailPage = lazy(() => import('./components/projects/ProjectDetail'));
 
 // Publications
-const PublicationsHub    = lazy(() => import('./components/GradingPolicy'));     // placeholder → Publications.tsx
-const ResearchPage       = lazy(() => import('./components/GradingPolicy'));     // placeholder → Research.tsx
-const ReportsPage        = lazy(() => import('./components/GradingPolicy'));     // placeholder → Reports.tsx
+const PublicationsHub    = lazy(() => import('./components/publications/PublicationsHub'));
+const ResearchPage       = lazy(() => import('./components/publications/PublicationsHub'));
+const ReportsPage        = lazy(() => import('./components/publications/PublicationsHub'));
 
 // Media
-const MediaHub           = lazy(() => import('./components/EventsPage'));        // placeholder → MediaHub.tsx
-const BlogsPage          = lazy(() => import('./components/EventsPage'));        // placeholder → BlogsPage.tsx
-const BlogPost           = lazy(() => import('./components/CourseDetail'));      // placeholder → BlogPost.tsx
-const DocumentariesPage  = lazy(() => import('./components/EventsPage'));       // placeholder → Documentaries.tsx
-const PodcastsPage       = lazy(() => import('./components/EventsPage'));        // placeholder → Podcasts.tsx
-const TalksPage          = lazy(() => import('./components/EventsPage'));        // placeholder → Talkshows.tsx
-const PrintMediaPage     = lazy(() => import('./components/EventsPage'));        // placeholder → PrintMedia.tsx
+const MediaHub           = lazy(() => import('./components/media/MediaHub'));
+const BlogsPage          = lazy(() => import('./components/media/MediaHub'));
+const BlogPost           = lazy(() => import('./components/media/MediaReaderPage'));
+const DocumentariesPage  = lazy(() => import('./components/media/MediaHub'));
+const PodcastsPage       = lazy(() => import('./components/media/MediaHub'));
+const TalksPage          = lazy(() => import('./components/media/MediaHub'));
+const PrintMediaPage     = lazy(() => import('./components/media/MediaHub'));
 
 // Team
-const TeamPage       = lazy(() => import('./components/Faculty'));        // placeholder → Team.tsx
-const TeamMemberBio  = lazy(() => import('./components/Faculty'));        // placeholder → TeamBio.tsx
+const TeamPage       = lazy(() => import('./components/team/TeamPage'));
+const TeamMemberBio  = lazy(() => import('./components/team/TeamMemberBio'));
 
 // Contact
-const ContactPage    = lazy(() => import('./components/Contact'));
+const ContactPage    = lazy(() => import('./components/contact/ContactPage'));
 
 // Legal
 const PrivacyPolicy  = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 
 // 404
-const NotFound = lazy(() => import('./components/NotFound'));
+const NotFound = lazy(() => import('./components/shared/NotFound'));
 
 import loadingGif from '../assets/images/loading.gif';
 
@@ -179,11 +182,14 @@ const PrintMediaPageWrapped = () => (
   </>
 );
 
+const ClimateMapChart = lazy(() => import('./components/ClimateMapChart'));
+
 // ─── Home page assembly ───────────────────────────────────────────────────
 const HomePage = () => (
   <main id="main-content">
     <Hero />
     <Introduction />
+    <ClimateMapChart />
     <Stats />
     <Reasons />
     <Courses />
@@ -261,17 +267,22 @@ function AppContent() {
 
   return (
     <div className="app">
+      <EmergencyBanner />
       <Header />
       <Suspense fallback={<PageSpinner />}>
         <Routes>
           {/* ── Home ─────────────────────────────────────── */}
           <Route path="/" element={<HomePage />} />
 
+          {/* ── Vision ───────────────────────────────────── */}
+          <Route path="/vision" element={<main><VisionPage /></main>} />
+
           {/* ── Tools ────────────────────────────────────── */}
           <Route path="/tools" element={<main><ToolsPage /></main>} />
 
           {/* ── Projects ─────────────────────────────────── */}
-          <Route path="/projects" element={<main><ProjectsPage /></main>} />
+          <Route path="/projects"     element={<main><ProjectsPage /></main>} />
+          <Route path="/projects/:id" element={<main><ProjectDetailPage /></main>} />
 
           {/* ── Publications ─────────────────────────────── */}
           <Route path="/publications"         element={<main><PublicationsHubPage /></main>} />
@@ -299,7 +310,7 @@ function AppContent() {
           <Route path="/privacy" element={<main><PrivacyPolicy /></main>} />
           <Route path="/terms"   element={<main><TermsOfService /></main>} />
 
-          {/* ── Legacy redirects: old GDC Larkana / LMS routes ── */}
+          {/* ── Route compatibility redirects ── */}
           <Route path="/about"        element={<Navigate to="/tools" replace />} />
           <Route path="/admissions"   element={<Navigate to="/projects" replace />} />
           <Route path="/faculty"      element={<Navigate to="/team" replace />} />

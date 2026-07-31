@@ -2,15 +2,45 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  Calculator,
-  Monitor,
-  FlaskConical,
-  Brain,
-  BookOpen,
-  Cog,
+  CloudRain,
+  ShieldAlert,
+  Thermometer,
+  Sun,
+  Globe2,
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const divisions = [
+  {
+    icon: CloudRain,
+    name: 'Atmospheric & Attribution Science',
+    projects: '12 Active Models',
+    desc: 'High-resolution WRF atmospheric simulations and ERA5 extreme event attribution.',
+    color: 'bg-[#008B8B]',
+  },
+  {
+    icon: ShieldAlert,
+    name: 'Hydrology & Cryosphere Lab',
+    projects: '3,000+ Lakes Monitored',
+    desc: 'Hindu Kush Himalaya snowpack retreat, river basin hydrographs, and GLOF warning systems.',
+    color: 'bg-blue-600',
+  },
+  {
+    icon: Thermometer,
+    name: 'Urban Climate & Health',
+    projects: 'TW > 35°C Monitoring',
+    desc: 'Pre-monsoon humid heatwave mortality risk, wet-bulb thresholds, and cool roof policy.',
+    color: 'bg-amber-600',
+  },
+  {
+    icon: Sun,
+    name: 'Clean Energy Atmospheric GIS',
+    projects: '1km Irradiance Grid',
+    desc: 'Multi-decadal solar irradiance and high-altitude wind velocity atlases for energy grid planners.',
+    color: 'bg-emerald-600',
+  },
+];
 
 const Departments = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -18,9 +48,8 @@ const Departments = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from('.departments-header', {
-        y: 50,
+        y: 40,
         opacity: 0,
         duration: 0.8,
         scrollTrigger: {
@@ -30,19 +59,15 @@ const Departments = () => {
         },
       });
 
-      // Cards animation with stagger
       gsap.from('.department-card', {
-        y: 40,
-        scale: 0.95,
+        y: 30,
+        opacity: 0,
         duration: 0.6,
-        stagger: {
-          amount: 0.8,
-          from: 'start',
-        },
+        stagger: 0.12,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 90%',
+          start: 'top 85%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -51,120 +76,49 @@ const Departments = () => {
     return () => ctx.revert();
   }, []);
 
-  const departments = [
-    {
-      icon: Calculator,
-      name: 'Economics',
-      courses: 12,
-      color: 'bg-blue-500',
-      bgColor: 'bg-blue-50',
-    },
-    {
-      icon: Monitor,
-      name: 'Computer Science',
-      courses: 18,
-      color: 'bg-purple-500',
-      bgColor: 'bg-purple-50',
-    },
-    {
-      icon: FlaskConical,
-      name: 'Biological Science',
-      courses: 15,
-      color: 'bg-green-500',
-      bgColor: 'bg-green-50',
-    },
-    {
-      icon: Brain,
-      name: 'Psychology',
-      courses: 10,
-      color: 'bg-pink-500',
-      bgColor: 'bg-pink-50',
-    },
-    {
-      icon: BookOpen,
-      name: 'English',
-      courses: 8,
-      color: 'bg-orange-500',
-      bgColor: 'bg-orange-50',
-    },
-    {
-      icon: Cog,
-      name: 'Engineering',
-      courses: 20,
-      color: 'bg-red-500',
-      bgColor: 'bg-red-50',
-    },
-  ];
-
   return (
-    <section ref={sectionRef} className="section-padding bg-gray-50">
+    <section ref={sectionRef} className="py-24 bg-white font-sans border-b border-gray-100">
       <div className="container-custom">
         {/* Section Header */}
-        <div className="departments-header text-center max-w-3xl mx-auto mb-16">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="decorative-line"></div>
-            <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-              Our Departments
-            </span>
-            <div className="decorative-line"></div>
+        <div className="departments-header text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#008B8B]/10 text-[#008B8B] text-xs font-bold uppercase tracking-wider border border-[#008B8B]/30">
+            <Globe2 className="w-4 h-4" />
+            <span>Multidisciplinary Research Structure</span>
           </div>
-          <h2 className="section-title mb-6">
-            Popular <span className="text-primary">Departments</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900">
+            Core Research <span className="text-[#008B8B]">Divisions</span>
           </h2>
-          <p className="section-subtitle mx-auto">
-            Explore our diverse range of academic departments, each offering
-            world-class education and research opportunities.
+          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+            Four specialized scientific laboratories advancing extreme weather attribution, water security, and clean energy transition across South Asia.
           </p>
         </div>
 
-        {/* Departments Grid */}
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
-        >
-          {departments.map((dept, index) => (
-            <div
-              key={index}
-              className="department-card bg-white rounded-2xl p-6 text-center cursor-pointer group hover:shadow-xl transition-all duration-300"
-            >
-              {/* Icon */}
+        {/* Divisions Cards Grid */}
+        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {divisions.map((div, idx) => {
+            const Icon = div.icon;
+            return (
               <div
-                className={`department-icon w-16 h-16 ${dept.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300`}
+                key={idx}
+                className="department-card group bg-gray-50 border border-gray-200/80 rounded-3xl p-6 hover:shadow-xl hover:bg-white hover:border-[#008B8B] transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
               >
-                <dept.icon className={`w-8 h-8 ${dept.color.replace('bg-', 'text-')}`} />
+                <div>
+                  <div className={`w-12 h-12 rounded-2xl ${div.color} text-white flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-2 group-hover:text-[#008B8B] transition-colors leading-snug">
+                    {div.name}
+                  </h3>
+                  <div className="text-xs font-bold text-[#008B8B] mb-3">
+                    {div.projects}
+                  </div>
+                  <p className="text-gray-500 text-xs leading-relaxed">
+                    {div.desc}
+                  </p>
+                </div>
               </div>
-
-              {/* Name */}
-              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-primary transition-colors">
-                {dept.name}
-              </h3>
-
-              {/* Courses Count */}
-              <p className="text-sm text-gray-500">
-                {dept.courses} Courses
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* View All Link */}
-        <div className="text-center mt-12">
-          <button className="btn-secondary group">
-            <span>Explore All Departments</span>
-            <svg
-              className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </button>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -1,14 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  ArrowLeft,
-  GraduationCap,
   BookOpen,
   Users,
   Award,
+  Globe2,
   Target,
   Eye,
   Heart,
@@ -16,81 +15,83 @@ import {
   Phone,
   Mail,
   Clock,
-  Sparkles,
   CheckCircle2,
   ArrowRight,
 } from 'lucide-react';
 
+import visionHeroImg from '../../assets/images/vision-hero.avif?url';
+
 gsap.registerPlugin(ScrollTrigger);
 
 const milestones = [
-    { year: '1960', title: 'College Founded', desc: 'Government Degree College Larkana was established to provide quality education in Sindh.' },
-    { year: '1985', title: 'Science Faculty Added', desc: 'Introduction of BSc programs including Zoology, Botany, and Chemistry departments.' },
-    { year: '2005', title: 'Modern Labs Built', desc: 'State-of-the-art science laboratories were constructed for practical learning.' },
-    { year: '2015', title: '4-Year BS Programs', desc: 'HEC-affiliated 4-year BS degree programs launched across departments.' },
-    { year: '2024', title: 'Digital Campus', desc: 'Smart classrooms and digital learning resources introduced campus-wide.' },
-  ];
+  { year: '2010', title: 'WenClims Founded', desc: 'Established as an independent weather & climate research initiative in Islamabad.' },
+  { year: '2015', title: 'Doppler Telemetry Live', desc: 'Integrated high-resolution Doppler weather radar & satellite data streams.' },
+  { year: '2019', title: 'ADB & EU Partnerships', desc: 'Expanded regional partnerships for climate impact & flood risk modeling.' },
+  { year: '2022', title: 'Attribution Science Lead', desc: 'Pioneered extreme monsoon & heatwave event attribution studies in South Asia.' },
+  { year: '2026', title: 'Interactive Climate Portal', desc: 'Launched real-time interactive climate telemetry and amCharts analytics hub.' },
+];
 
 const values = [
-    {
-      icon: Target,
-      title: 'Our Mission',
-      description: 'To provide accessible, quality education that empowers students from Larkana and beyond to become knowledgeable, skilled, and responsible citizens contributing to national development.',
-      gradient: 'from-blue-500 to-indigo-600',
-      bg: 'bg-blue-50',
-    },
-    {
-      icon: Eye,
-      title: 'Our Vision',
-      description: 'To be a leading public sector educational institution in Sindh, recognized for academic excellence, research contributions, and producing graduates who make a positive impact in society.',
-      gradient: 'from-emerald-500 to-teal-600',
-      bg: 'bg-emerald-50',
-    },
-    {
-      icon: Heart,
-      title: 'Our Values',
-      description: 'We uphold integrity, inclusivity, and innovation. We believe in equal opportunity for all students regardless of background, fostering a supportive and progressive learning environment.',
-      gradient: 'from-primary to-rose-600',
-      bg: 'bg-red-50',
-    },
-  ];
+  {
+    icon: Target,
+    title: 'Our Mission',
+    description: 'To provide decision-makers, governments, and civil society with science-based guidance on climate change and its biophysical and socioeconomic impacts across South Asia.',
+    gradient: 'from-blue-500 to-indigo-600',
+    bg: 'bg-blue-50',
+  },
+  {
+    icon: Eye,
+    title: 'Our Vision',
+    description: 'To be South Asia\'s premier climate intelligence hub, empowering communities with cutting-edge attribution science, satellite telemetry, and climate resilience frameworks.',
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+  },
+  {
+    icon: Heart,
+    title: 'Our Values',
+    description: 'We uphold scientific integrity, open-access research, and climate resilience across South Asia, providing independent data to safeguard vulnerable communities.',
+    gradient: 'from-[#008B8B] to-teal-600',
+    bg: 'bg-teal-50',
+  },
+];
 
 const stats = [
-    { value: '60+', label: 'Years of Excellence', icon: Award },
-    { value: '5000+', label: 'Alumni Network', icon: Users },
-    { value: '50+', label: 'Expert Faculty', icon: GraduationCap },
-    { value: '15+', label: 'Departments', icon: BookOpen },
-  ];
+  { value: '18+', label: 'Years Attribution Research', icon: Award },
+  { value: '3,000+', label: 'Glacial Lakes Monitored', icon: Globe2 },
+  { value: '25+', label: 'Research Scientists', icon: Users },
+  { value: '50+', label: 'Peer-Reviewed Monographs', icon: BookOpen },
+];
 
 const facilities = [
-    'Well-equipped Zoology Laboratory',
-    'Digital Library & Reading Room',
-    'Computer Lab with Internet Access',
-    'Botanical Garden & Specimen Museum',
-    'Sports Ground & Indoor Games',
-    'Seminar Hall & Auditorium',
-    'Student Common Room',
-    'Cafeteria & Canteen',
-  ];
+  'WRF Convective Atmospheric Modeling Cluster',
+  'Indus Basin Glacial Outburst Hydrograph Telemetry Center',
+  'Pre-Monsoon Humid Heatwave Observatory (Karachi & Sindh)',
+  'GIS Solar Irradiance & Wind Velocity Mapping Lab',
+  'Open-Access South Asian Climate Monograph Library',
+  'Disaster Management Policy Advisory & Briefing Unit',
+];
 
 const About = () => {
   const pageRef = useRef<HTMLDivElement>(null);
+  const [bgImage, setBgImage] = useState<string>(visionHeroImg);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!pageRef.current) return;
 
     const ctx = gsap.context(() => {
-      gsap.from('.about-hero-content', {
-        y: 40,
+      gsap.from('.about-hero-content > *', {
+        opacity: 0,
+        y: 30,
         duration: 0.8,
+        stagger: 0.15,
         ease: 'power3.out',
-        delay: 0.2,
       });
 
-      gsap.from('.about-section', {
+      gsap.from('.about-card', {
+        opacity: 0,
         y: 40,
-        duration: 0.7,
-        stagger: 0.15,
+        duration: 0.6,
+        stagger: 0.1,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: '.about-sections-wrapper',
@@ -106,64 +107,110 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>About Us | GDC Larkana - History & Mission</title>
-        <meta name="description" content="Learn about Government Degree College Larkana's rich history, mission, vision, and commitment to quality education in Sindh." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/about" />
+        <title>Vision &amp; Mission | WenClims — Weather and Climate Services</title>
+        <meta name="description" content="Learn about WenClims' vision, mission, climate research history, and regional impact." />
+        <link rel="canonical" href="https://wenclims.org/vision" />
       </Helmet>
+
       <div ref={pageRef} className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-        </div>
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }}></div>
+        {/* ═══ HOME-STYLE HERO SECTION (Full Screen Background Image Track + Overlay) ═══ */}
+        <section
+          id="hero"
+          className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-gray-900"
+          aria-label="Vision Hero"
+        >
+          {/* Background Image Track */}
+          <div className="absolute inset-0 w-full h-full will-change-transform">
+            <img
+              src={bgImage}
+              alt="WenClims Vision & Mission Hero Background"
+              onError={() => {
+                if (bgImage !== visionHeroImg) {
+                  setBgImage(visionHeroImg);
+                }
+              }}
+              fetchPriority="high"
+              loading="eager"
+              width={1920}
+              height={1080}
+              className="w-full h-full object-cover object-center scale-105 transition-transform duration-700"
+            />
+            {/* Layered dark gradient overlays — seamless full-screen coverage */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(105deg, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.82) 42%, rgba(10,37,64,0.60) 75%, rgba(10,37,64,0.40) 100%)',
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(to top, rgba(5,20,40,0.98) 0%, rgba(5,20,40,0.60) 50%, transparent 100%)',
+              }}
+            />
+          </div>
 
-        <div className="container-custom relative z-10">
-          <div className="about-hero-content">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-8 group"
-            >
-              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-              <span className="text-sm font-medium">Back to Home</span>
-            </Link>
+          {/* Grid Overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.05]"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+              backgroundSize: '60px 60px',
+            }}
+          />
 
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-accent-gold" />
-              <span className="text-white/90 font-medium text-sm">About Us</span>
-            </div>
+          {/* ── Main Content Block matching max-w-[68rem] ── */}
+          <div className="relative z-10 w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-40 lg:pt-44 pb-20 flex flex-col justify-center">
+            <div className="about-hero-content w-full max-w-4xl">
+              {/* Tag Pill */}
+              <div className="flex items-center space-x-3 mb-6">
+                <span className="w-8 h-px bg-[#00C8C8]" />
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] px-3 py-1 rounded-full border border-[#00C8C8]/50 text-[#00C8C8] bg-[#00C8C8]/10">
+                  Vision &amp; Mission
+                </span>
+              </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
-              Government Degree College{' '}
-              <span className="text-primary-light">Larkana</span>
-            </h1>
-            <p className="text-lg text-white/70 max-w-2xl mb-10">
-              A premier public sector educational institution in Sindh, dedicated to
-              academic excellence and holistic development of students since 1960.
-            </p>
+              {/* Heading matching Home & Tools Hero */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold text-white leading-tight mb-6">
+                Weather &amp; Climate{' '}
+                <span className="relative inline-block">
+                  <span className="text-[#00C8C8]">Services</span>
+                  <svg
+                    className="absolute -bottom-2 left-0 w-full"
+                    viewBox="0 0 300 10"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2 8C80 2 220 2 298 8"
+                      stroke="#00C8C8"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+              </h1>
 
-            {/* Stats Row */}
-            <div className="flex flex-wrap gap-6">
-              {stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3">
-                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-primary-light" />
+              {/* Subtitle */}
+              <p className="text-base md:text-lg text-white/80 mb-8 max-w-3xl leading-relaxed">
+                South Asia's premier science-based climate intelligence platform, translating atmospheric modeling and attribution research into action.
+              </p>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/15 max-w-3xl">
+                {stats.map((stat, i) => (
+                  <div key={i} className="flex flex-col">
+                    <span className="text-2xl font-bold text-white font-heading">{stat.value}</span>
+                    <span className="text-xs text-white/70 mt-0.5">{stat.label}</span>
                   </div>
-                  <div>
-                    <div className="text-xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-white/50">{stat.label}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
       {/* Main Content */}
       <div className="about-sections-wrapper container-custom py-16">
@@ -177,23 +224,16 @@ const About = () => {
               </div>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-5">
                 A Legacy of{' '}
-                <span className="text-primary">Educational Excellence</span>
+                <span className="text-primary">Scientific Excellence</span>
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Government Degree College Larkana is one of the oldest and most prestigious
-                public sector colleges in the Larkana division of Sindh, Pakistan. Established
-                in 1960, the college has been serving as a beacon of knowledge and learning
-                for over six decades.
+                Weather and Climate Services (WenClims) is a premier climate research and advisory organization headquartered in Islamabad, Pakistan. Established to address the growing climate crisis in South Asia, WenClims translates complex atmospheric modeling into actionable intelligence.
               </p>
               <p className="text-gray-600 leading-relaxed mb-6">
-                Affiliated with the University of Sindh, Jamshoro, the college offers a wide
-                range of undergraduate programs including BS Zoology, Botany, Chemistry,
-                Physics, Mathematics, and various Arts programs. Our Zoology department is
-                particularly renowned for its comprehensive curriculum and well-equipped
-                laboratories.
+                In collaboration with international partners such as the Asian Development Bank (ADB) and the European Union (EU), our multidisciplinary team conducts extreme weather event attribution, hydrological vulnerability assessments, and agricultural resilience planning.
               </p>
               <div className="flex flex-wrap gap-3">
-                {['HEC Recognized', 'University of Sindh Affiliated', 'Govt. of Sindh'].map((tag) => (
+                {['Peer-Reviewed Science', 'Indus Basin Research', 'ADB & EU Partner', 'Satellite Telemetry'].map((tag) => (
                   <span key={tag} className="text-xs font-semibold bg-primary/5 text-primary px-4 py-2 rounded-full border border-primary/10">
                     {tag}
                   </span>
@@ -204,7 +244,7 @@ const About = () => {
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="GDC Larkana Campus"
+                  alt="WenClims Climate Telemetry Center"
                   loading="lazy"
                   width={800}
                   height={533}
@@ -314,8 +354,8 @@ const About = () => {
                   Our <span className="text-primary">Facilities</span>
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-6">
-                  GDC Larkana provides a conducive learning environment with modern facilities
-                  that support both academic and extracurricular activities.
+                  WenClims provides state-of-the-art research infrastructure with modern facilities
+                  that support high-resolution weather modeling and satellite telemetry.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {facilities.map((facility, i) => (
@@ -340,14 +380,14 @@ const About = () => {
                 Get in <span className="text-primary-light">Touch</span>
               </h2>
               <p className="text-white/60 mb-10 max-w-lg">
-                Want to learn more about our programs or visit the campus? Contact us today.
+                Want to learn more about our research, data services, or collaborate on climate projects? Contact us today.
               </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { icon: MapPin, label: 'Address', value: 'Government Degree College, Larkana, Sindh' },
-                  { icon: Phone, label: 'Phone', value: '+92 (74) 123-4567' },
-                  { icon: Mail, label: 'Email', value: 'info@gdclarkana.edu.pk' },
-                  { icon: Clock, label: 'Timing', value: 'Mon - Sat: 8AM - 3PM' },
+                  { icon: MapPin, label: 'Address', value: '88, Lane 2, Lake View Lanes, Bani Gala, Islamabad' },
+                  { icon: Phone, label: 'Phone', value: '+92-333-5672483' },
+                  { icon: Mail, label: 'Email', value: 'wenclims@gmail.com' },
+                  { icon: Clock, label: 'Timing', value: 'Mon - Fri: 9AM - 5PM' },
                 ].map((info, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">

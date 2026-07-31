@@ -8,6 +8,7 @@ router.use(authenticateToken);
 
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -17,6 +18,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -24,8 +26,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
     const item = parseResult.data;
     const text = `
-      INSERT INTO team_members (name, slug, role, team, photo, bio, social_links, sort_order, is_active)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO team_members (name, slug, role, team, photo, bio, social_links, sort_order, show_on_home, is_active)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `;
     const params = [
@@ -37,6 +39,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.bio || null,
       JSON.stringify(item.social_links || {}),
       item.sort_order || 0,
+      item.show_on_home ?? false,
       item.is_active,
     ];
 
@@ -54,7 +57,26 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
     const { id } = req.params;
+
+    // Non-super_admin users can only update their own profile record
+    if (req.user?.role !== 'super_admin') {
+      const existing = await query('SELECT name, social_links FROM team_members WHERE id = $1', [id]);
+      if (existing.rows.length > 0) {
+        const row = existing.rows[0];
+        const rowEmail = row.social_links?.email || '';
+        const rowName = row.name || '';
+        const isOwn =
+          rowName.toLowerCase().trim() === req.user.name?.toLowerCase().trim() ||
+          rowEmail.toLowerCase().trim() === req.user.email?.toLowerCase().trim();
+
+        if (!isOwn) {
+          return res.status(403).json({ error: 'Permission denied. You can only edit your own personal bio.' });
+        }
+      }
+    }
+
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -63,8 +85,8 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     const item = parseResult.data;
     const text = `
       UPDATE team_members 
-      SET name=$1, slug=$2, role=$3, team=$4, photo=$5, bio=$6, social_links=$7, sort_order=$8, is_active=$9, updated_at=NOW()
-      WHERE id=$10
+      SET name=$1, slug=$2, role=$3, team=$4, photo=$5, bio=$6, social_links=$7, sort_order=$8, show_on_home=$9, is_active=$10, updated_at=NOW()
+      WHERE id=$11
       RETURNING *
     `;
     const params = [
@@ -76,6 +98,7 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
       item.bio || null,
       JSON.stringify(item.social_links || {}),
       item.sort_order || 0,
+      item.show_on_home ?? false,
       item.is_active,
       id,
     ];
@@ -95,6 +118,10 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Permission denied. Only Super Admin can delete team members.' });
+    }
+
     const { id } = req.params;
     const result = await query('DELETE FROM team_members WHERE id = $1 RETURNING name', [id]);
     if (result.rows.length === 0) {

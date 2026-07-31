@@ -14,6 +14,8 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  Activity,
+  Megaphone,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 import logoImg from '../../assets/logo.png';
@@ -29,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   const navItems = [
     { label: 'Overview', path: OBFUSCATED_ADMIN_PATH, icon: LayoutDashboard, exact: true },
+    { label: 'My Bio Settings', path: `${OBFUSCATED_ADMIN_PATH}/team`, icon: UserCheck },
     { label: 'Blogs & Media', path: `${OBFUSCATED_ADMIN_PATH}/media`, icon: FileText, badge: '12' },
     { label: 'Publications', path: `${OBFUSCATED_ADMIN_PATH}/publications`, icon: BookOpen },
     { label: 'Projects', path: `${OBFUSCATED_ADMIN_PATH}/projects`, icon: FolderKanban },
@@ -39,7 +42,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const adminOnlyItems = [
     { label: 'User Roles', path: `${OBFUSCATED_ADMIN_PATH}/users`, icon: UserCheck },
     { label: 'Audit Logs', path: `${OBFUSCATED_ADMIN_PATH}/audit`, icon: ShieldAlert },
-    { label: 'Site Settings', path: `${OBFUSCATED_ADMIN_PATH}/settings`, icon: Settings },
+    { label: 'System Health & Backup', path: `${OBFUSCATED_ADMIN_PATH}/health`, icon: Activity },
+    { label: 'Emergency Banner', path: `${OBFUSCATED_ADMIN_PATH}/banner`, icon: Megaphone },
   ];
 
   return (
@@ -93,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           );
         })}
 
-        {user?.role === 'super_admin' && (
+        {(user?.role === 'super_admin' || user?.role === 'admin') && (
           <>
             {!collapsed && <div className="sidebar-section-label">System Admin</div>}
             {adminOnlyItems.map((item) => {

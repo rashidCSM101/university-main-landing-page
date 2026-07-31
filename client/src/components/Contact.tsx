@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Seo } from './Seo';
+import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -106,11 +106,11 @@ const Contact = () => {
 
   return (
     <>
-      <Seo
-        title="Contact | WenClims — Weather and Climate Services"
-        description="Reach out to WenClims for climate data requests, research collaborations, policy consulting, and general inquiries. Based in Islamabad, Pakistan."
-        path="/contact"
-      />
+      <Helmet>
+        <title>Contact | WenClims — Weather and Climate Services</title>
+        <meta name="description" content="Reach out to WenClims for climate data requests, research collaborations, policy consulting, and general inquiries. Based in Islamabad, Pakistan." />
+        <link rel="canonical" href="https://wenclims.org/contact" />
+      </Helmet>
       <div ref={pageRef} className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary-dark pt-32 pb-24 overflow-hidden">

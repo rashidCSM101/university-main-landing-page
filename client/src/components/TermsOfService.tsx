@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowLeft, Sparkles, FileText, ArrowRight } from 'lucide-react';
+import { ArrowLeft, FileText, ArrowRight, Sparkles } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,8 +15,15 @@ const TermsOfService = () => {
     const ctx = gsap.context(() => {
       gsap.from('.terms-hero-content', { y: 40, duration: 0.8, ease: 'power3.out', delay: 0.2 });
       gsap.from('.terms-section', {
-        y: 30, duration: 0.6, stagger: 0.1, ease: 'power2.out',
-        scrollTrigger: { trigger: '.terms-wrapper', start: 'top 85%', toggleActions: 'play none none reverse' },
+        y: 30,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.terms-wrapper',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
       });
     }, pageRef);
     return () => ctx.revert();
@@ -25,9 +32,9 @@ const TermsOfService = () => {
   return (
     <>
       <Helmet>
-        <title>Terms of Service | GDC Larkana</title>
-        <meta name="description" content="Terms of Service for Government Degree College Larkana website. Read the conditions governing your use of our website and services." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/terms" />
+        <title>Terms of Service | WenClims — Weather and Climate Services</title>
+        <meta name="description" content="Terms of Service for Weather and Climate Services (WenClims). Read the conditions governing your use of our website, datasets, and climate services." />
+        <link rel="canonical" href="https://wenclims.org/terms" />
       </Helmet>
       <div ref={pageRef} className="min-h-screen bg-gray-50">
         {/* Hero */}
@@ -44,102 +51,85 @@ const TermsOfService = () => {
                 <span className="text-sm font-medium">Back to Home</span>
               </Link>
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 mb-6">
-                <FileText className="w-4 h-4 text-accent-gold" />
-                <span className="text-white/90 font-medium text-sm">Legal</span>
+                <FileText className="w-4 h-4 text-teal" />
+                <span className="text-white/90 font-medium text-sm">Legal &amp; Policy</span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4">
+              <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
                 Terms of <span className="text-primary-light">Service</span>
               </h1>
-              <p className="text-lg text-white/70 max-w-2xl">
-                Please read these terms carefully before using our website and services.
+              <p className="text-white/70 text-lg max-w-2xl">
+                Please review these Terms of Service governing your access to and use of Weather and Climate Services (WenClims) website and climate intelligence resources.
               </p>
-              <p className="text-sm text-white/40 mt-4">Last updated: February 14, 2026</p>
+              <p className="text-xs text-white/50 mt-4">Last Updated: February 2026</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="terms-wrapper container-custom py-16">
-          <div className="max-w-4xl mx-auto space-y-10">
+        <div className="container-custom py-16">
+          <div className="terms-wrapper max-w-4xl mx-auto space-y-8">
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">1. Acceptance of Terms</h2>
               <p className="text-gray-600 leading-relaxed">
-                By accessing and using the Government Degree College Larkana website (gdclarkana.edu.pk), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please discontinue use of our website immediately. These terms apply to all visitors, students, faculty, and users of our website.
+                By accessing and using the Weather and Climate Services (WenClims) website (wenclims.org), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please discontinue use of our website immediately. These terms apply to all visitors, researchers, partners, and users of our climate services.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">2. Use of Website</h2>
-              <p className="text-gray-600 leading-relaxed mb-4">You agree to use our website only for lawful purposes and in accordance with these terms. You must not:</p>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">2. Use of Website &amp; Climate Resources</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">You agree to use our website and resources strictly for lawful purposes and in accordance with these terms. You must not:</p>
               <ul className="space-y-2 text-gray-600">
-                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Use the website in any way that violates applicable laws or regulations</span></li>
-                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Attempt to gain unauthorized access to any part of the website or its systems</span></li>
-                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Upload or transmit viruses, malware, or any harmful code</span></li>
-                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Impersonate any person or entity, or falsely represent your affiliation</span></li>
-                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Scrape, copy, or redistribute website content without written permission</span></li>
+                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Use the website in any way that violates applicable local, national, or international laws</span></li>
+                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Attempt to gain unauthorized access to any part of the platform or backend infrastructure</span></li>
+                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Upload or transmit viruses, malware, or any malicious code</span></li>
+                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Impersonate WenClims personnel or falsely represent affiliation with our organization</span></li>
+                <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span>Scrape or redistribute climate datasets without proper attribution or written consent</span></li>
               </ul>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">3. Student Portal & Accounts</h2>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">3. Accounts &amp; Access Controls</h2>
               <p className="text-gray-600 leading-relaxed">
-                If you create a student account on our portal, you are responsible for maintaining the confidentiality of your login credentials. You must notify the college administration immediately if you suspect unauthorized access to your account. GDC Larkana reserves the right to suspend or terminate accounts that violate these terms or college regulations.
+                If you create an account on our platform or dashboard, you are responsible for maintaining the confidentiality of your credentials. You must notify WenClims administration immediately if you suspect unauthorized access. WenClims reserves the right to suspend or terminate accounts that violate these terms.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">4. Intellectual Property</h2>
               <p className="text-gray-600 leading-relaxed">
-                All content on this website, including text, images, logos, course materials, timetables, notices, and design elements, is the property of Government Degree College Larkana or its content providers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works from this content without prior written consent from the college.
+                All research papers, climate datasets, publications, reports, logos, and design elements on this website are the intellectual property of Weather and Climate Services (WenClims) or its research contributors and are protected by applicable intellectual property laws. Proper attribution is required when citing WenClims publications.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">5. Academic Information Disclaimer</h2>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">5. Scientific &amp; Climate Disclaimer</h2>
               <p className="text-gray-600 leading-relaxed">
-                While we strive to keep all academic information (timetables, exam schedules, admission dates, fee structures) accurate and up-to-date, GDC Larkana does not guarantee the completeness or accuracy of any information on this website. Official academic decisions should always be confirmed through the college administration office. The college reserves the right to modify courses, schedules, and policies without prior notice.
+                While WenClims employs state-of-the-art climate models and peer-reviewed methodology, weather telemetry and climate impact projections carry inherent scientific uncertainty. WenClims provides scientific guidance for informational and policy planning purposes and cannot guarantee absolute meteorological forecasts.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">6. Limitation of Liability</h2>
               <p className="text-gray-600 leading-relaxed">
-                GDC Larkana shall not be held liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use this website. This includes, but is not limited to, damages from errors, omissions, interruptions, or delays in website service. Your use of the website is at your own risk.
+                WenClims shall not be held liable for direct, indirect, incidental, or consequential damages resulting from the use or inability to use this website or reliance on climate projections.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">7. External Links</h2>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">7. Governing Law</h2>
               <p className="text-gray-600 leading-relaxed">
-                Our website may contain links to external websites (such as the University of Sindh, HEC, or social media platforms). These links are provided for convenience only. GDC Larkana does not endorse or take responsibility for the content, privacy practices, or terms of any third-party websites.
+                These Terms of Service shall be governed by and construed in accordance with the laws of Pakistan. Any disputes shall be subject to the jurisdiction of the courts in Islamabad, Pakistan.
               </p>
             </div>
 
             <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">8. Changes to Terms</h2>
-              <p className="text-gray-600 leading-relaxed">
-                GDC Larkana reserves the right to update or modify these Terms of Service at any time without prior notice. Changes will be effective immediately upon posting on this page. Your continued use of the website after any modifications constitutes acceptance of the updated terms. We encourage you to revisit this page periodically.
-              </p>
-            </div>
-
-            <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">9. Governing Law</h2>
-              <p className="text-gray-600 leading-relaxed">
-                These Terms of Service shall be governed by and construed in accordance with the laws of Pakistan. Any disputes arising under these terms shall be subject to the exclusive jurisdiction of the courts in Larkana, Sindh.
-              </p>
-            </div>
-
-            <div className="terms-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">10. Contact</h2>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                For questions regarding these Terms of Service, contact us:
-              </p>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">8. Contact Us</h2>
               <div className="bg-gray-50 rounded-xl p-6 text-gray-600 space-y-2">
-                <p><strong>Government Degree College Larkana</strong></p>
-                <p>Station Road, Larkana, Sindh 77150, Pakistan</p>
-                <p>Email: info@gdclarkana.edu.pk</p>
-                <p>Phone: +92 (74) 123-4567</p>
+                <p><strong>Weather and Climate Services (WenClims)</strong></p>
+                <p>88, Lane 2, Lake View Lanes (LVL), Korang Road, Bani Gala, Islamabad, Pakistan</p>
+                <p>Email: wenclims@gmail.com</p>
+                <p>Phone: +92-333-5672483</p>
               </div>
             </div>
 
@@ -149,6 +139,7 @@ const TermsOfService = () => {
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
+
           </div>
         </div>
       </div>

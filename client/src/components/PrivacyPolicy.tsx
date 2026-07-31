@@ -25,9 +25,9 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy | GDC Larkana</title>
-        <meta name="description" content="Privacy Policy of Government Degree College Larkana. Learn how we collect, use, and protect your personal information." />
-        <link rel="canonical" href="https://gdclarkana.edu.pk/privacy" />
+        <title>Privacy Policy | WenClims — Weather and Climate Services</title>
+        <meta name="description" content="Privacy Policy of Weather and Climate Services (WenClims). Learn how we collect, use, and protect your information." />
+        <link rel="canonical" href="https://wenclims.org/privacy" />
       </Helmet>
       <div ref={pageRef} className="min-h-screen bg-gray-50">
         {/* Hero */}
@@ -65,7 +65,7 @@ const PrivacyPolicy = () => {
             <div className="policy-section bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">1. Information We Collect</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Government Degree College Larkana may collect the following types of information when you use our website:
+                Weather and Climate Services (WenClims) may collect the following types of information when you use our website:
               </p>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start gap-3"><Sparkles className="w-4 h-4 text-primary mt-1 flex-shrink-0" /><span><strong>Personal Information:</strong> Name, email address, phone number, and academic details when you fill out contact forms, admission applications, or registration forms.</span></li>
@@ -117,10 +117,10 @@ const PrivacyPolicy = () => {
                 If you have any questions about this Privacy Policy or how we handle your data, please contact us:
               </p>
               <div className="bg-gray-50 rounded-xl p-6 text-gray-600 space-y-2">
-                <p><strong>Government Degree College Larkana</strong></p>
-                <p>Station Road, Larkana, Sindh 77150, Pakistan</p>
-                <p>Email: info@gdclarkana.edu.pk</p>
-                <p>Phone: +92 (74) 123-4567</p>
+                <p><strong>Weather and Climate Services (WenClims)</strong></p>
+                <p>88, Lane 2, Lake View Lanes (LVL), Korang Road, Bani Gala, Islamabad, Pakistan</p>
+                <p>Email: wenclims@gmail.com</p>
+                <p>Phone: +92-333-5672483</p>
               </div>
             </div>
 

@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Plus, Edit2, Trash2, BookOpen, Search } from 'lucide-react';
+import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
+import { useAuth } from '../../hooks/useAuth';
 
 export const PublicationsManager: React.FC = () => {
+  const { user } = useAuth();
+  const isPowerUser = user?.role === 'super_admin' || user?.role === 'admin';
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState<any>({
     id: null,
     type: 'peer-reviewed',
@@ -49,13 +55,17 @@ export const PublicationsManager: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this publication?')) return;
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
-      await api.deletePublication(id);
+      await api.deletePublication(deleteTarget.id);
+      setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete');
+      alert(err?.message || 'Failed to delete publication');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -213,12 +223,17 @@ export const PublicationsManager: React.FC = () => {
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{item.outlet_name || 'N/A'}</td>
                   <td style={{ padding: '0.875rem 1rem', color: '#6B7A95' }}>{item.published_date || 'N/A'}</td>
                   <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                    <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }}>
-                      <Edit2 size={15} />
-                    </button>
-                    <button onClick={() => handleDelete(item.id)} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }}>
-                      <Trash2 size={15} />
-                    </button>
+                    {(isPowerUser || item.author_name?.toLowerCase().trim() === user?.name?.toLowerCase().trim()) && (
+                      <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }}>
+                        <Edit2 size={15} />
+                      </button>
+                    )}
+
+                    {isPowerUser && (
+                      <button onClick={() => setDeleteTarget({ id: item.id, title: item.title })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }}>
+                        <Trash2 size={15} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -226,6 +241,15 @@ export const PublicationsManager: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        title="Delete Publication"
+        itemTitle={deleteTarget?.title}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        loading={isDeleting}
+      />
     </div>
   );
 };

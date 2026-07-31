@@ -58,11 +58,12 @@ export const teamMemberSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   slug: z.string().min(2, 'Slug is required'),
   role: z.string().min(2, 'Role is required'),
-  team: z.enum(['leadership', 'policy', 'data-modelling']).optional(),
+  team: z.string().optional(),
   photo: z.string().optional().or(z.literal('')),
   bio: z.string().optional(),
-  social_links: z.record(z.string(), z.string()).optional(),
+  social_links: z.record(z.string(), z.any()).optional(),
   sort_order: z.number().int().optional(),
+  show_on_home: z.boolean().default(false),
   is_active: z.boolean().default(true),
 });
 

@@ -10,6 +10,8 @@ import img2 from '../../assets/images/2.webp?url';
 import img3 from '../../assets/images/3.webp?url';
 import img4 from '../../assets/images/4.webp?url';
 
+import { DataTicker } from './home/DataTicker';
+
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Carousel Slides ─────────────────────────────────────────────────────────
@@ -265,7 +267,12 @@ const Hero = () => {
       */}
 
       {/* ── Main Content ────────────────────────────────────────────────── */}
-      <div className="container-custom relative z-10 pt-36 md:pt-40 lg:pt-44 pb-24 w-full">
+      <div className="container-custom relative z-10 pt-28 md:pt-32 lg:pt-36 pb-24 w-full">
+        {/* Live Attribution Data Ticker */}
+        <div className="mb-6 rounded-2xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-md">
+          <DataTicker />
+        </div>
+
         <div ref={contentRef} className="w-full max-w-[68rem]">
 
           {/* Tag pill */}

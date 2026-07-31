@@ -1,248 +1,216 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { GraduationCap, Building2, Users, Sparkles, MapPin, Calendar, Zap, Heart, TrendingUp, Award, BookOpen, ArrowUpRight } from 'lucide-react';
+import {
+  Sparkles,
+  Globe2,
+  ArrowRight,
+  ArrowUpRight,
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const climatePillars = [
+  {
+    number: '01',
+    category: 'Attribution Science',
+    badge: 'Peer-Reviewed',
+    title: 'Extreme Event Attribution',
+    location: 'Indus Basin & South Asia',
+    description:
+      'Isolating human-induced climate warming from natural atmospheric variability to quantify extreme monsoon precipitation and heatwave drivers.',
+    stats1: { value: '40+ Yrs', label: 'ERA5 Reanalysis' },
+    stats2: { value: '7 Days', label: 'Rapid Attribution' },
+    thumbnail: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=800&q=80',
+    link: '/vision',
+    badgeColor: 'bg-emerald-500/90 text-white',
+    accentColor: '#008B8B',
+  },
+  {
+    number: '02',
+    category: 'Real-Time Telemetry',
+    badge: 'High Precision',
+    title: 'Satellite & Doppler Radar',
+    location: 'Regional Observation Nodes',
+    description:
+      'Ingesting live NASA TERRA/AQUA satellite feeds and high-resolution weather telemetry to track GLOF hazards, soil moisture, and flood hydrographs.',
+    stats1: { value: '24/7', label: 'Live Data Streams' },
+    stats2: { value: '1 km', label: 'Spatial Resolution' },
+    thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+    link: '/tools',
+    badgeColor: 'bg-blue-600/90 text-white',
+    accentColor: '#00C8C8',
+  },
+  {
+    number: '03',
+    category: 'Policy Impact',
+    badge: 'ADB · EU Partner',
+    title: 'Climate Risk Advisory',
+    location: 'Multilateral Partnerships',
+    description:
+      'Translating atmospheric modeling into municipal heat action plans, Indus Basin flood vulnerability frameworks, and regional clean energy atlases.',
+    stats1: { value: '$15M+', label: 'Research Grants' },
+    stats2: { value: '12+', label: 'Active Projects' },
+    thumbnail: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80',
+    link: '/projects',
+    badgeColor: 'bg-teal-600/90 text-white',
+    accentColor: '#008B8B',
+  },
+];
 
 const Reasons = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
-  const [favorites, setFavorites] = useState<number[]>([]);
-
-  const toggleFavorite = (index: number) => {
-    setFavorites(prev => 
-      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
-    );
-  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
+      // Header entrance
       gsap.from('.reasons-title', {
-        y: 50,
+        y: 40,
         opacity: 0,
         duration: 0.8,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse',
         },
       });
 
-      // Cards stagger animation
-      gsap.from('.reason-card', {
-        y: 50,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 90%',
-          toggleActions: 'play none none reverse',
-        },
-      });
+      // Cards stagger entrance
+      if (cardsRef.current) {
+        gsap.fromTo(
+          cardsRef.current.children,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: 'top 85%',
+            },
+          }
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const reasons = [
-    {
-      icon: GraduationCap,
-      title: 'Expert Faculty Members',
-      description: 'Learn from distinguished professors and industry experts',
-      category: 'Academic',
-      badge: 'Excellence',
-      bgGradient: 'from-blue-400 via-blue-500 to-blue-600',
-      badgeColor: 'bg-primary',
-      categoryColor: 'bg-blue-600',
-      location: 'Faculty of Sciences',
-      stats: { value: '150+', label: 'Professors', icon: Users },
-      stats2: { value: '25+', label: 'Years Exp.', icon: Award },
-      number: '01',
-      link: '/faculty',
-    },
-    {
-      icon: Building2,
-      title: 'Modern Infrastructure',
-      description: 'State-of-the-art laboratories and learning facilities',
-      category: 'Facilities',
-      badge: 'Premium',
-      bgGradient: 'from-rose-400 via-primary to-rose-700',
-      badgeColor: 'bg-orange-500',
-      categoryColor: 'bg-gray-700',
-      location: 'Main Campus',
-      stats: { value: '50+', label: 'Labs', icon: Building2 },
-      stats2: { value: '100%', label: 'Equipped', icon: TrendingUp },
-      number: '02',
-      link: '/about',
-    },
-    {
-      icon: Users,
-      title: 'Career Opportunities',
-      description: 'Strong industry partnerships and placement support',
-      category: 'Career',
-      badge: 'Top Rated',
-      bgGradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-      badgeColor: 'bg-red-500',
-      categoryColor: 'bg-teal-700',
-      location: 'Career Services',
-      stats: { value: '90%', label: 'Placements', icon: TrendingUp },
-      stats2: { value: '200+', label: 'Companies', icon: BookOpen },
-      number: '03',
-      link: '/about',
-    },
-  ];
-
   return (
-    <section ref={sectionRef} className="section-padding bg-gradient-to-b from-gray-50 to-white">
-      <div className="container-custom">
+    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
+      {/* Background Decorative Blur Circles */}
+      <div className="absolute top-10 left-10 w-96 h-96 bg-[#008B8B]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#00C8C8]/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="reasons-title text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-full px-5 py-2 mb-6">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-              Why Choose Us
+          <div className="inline-flex items-center gap-2 bg-[#008B8B]/10 border border-[#008B8B]/20 rounded-full px-4 py-1.5 mb-4">
+            <Sparkles className="w-4 h-4 text-[#008B8B]" />
+            <span className="text-[#008B8B] font-bold uppercase tracking-widest text-xs">
+              The WenClims Advantage
             </span>
           </div>
-          <h2 className="section-title mb-6">
-            The Reasons to Choose{' '}
-            <span className="text-primary">GDC Larkana</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 mb-5 leading-tight">
+            Why Partner With <span className="text-[#008B8B]">WenClims</span>
           </h2>
-          <p className="section-subtitle mx-auto">
-            Discover what makes GDC Larkana the preferred choice for thousands of students
-            worldwide seeking quality education and career success.
+          <p className="text-base md:text-lg text-gray-600 leading-relaxed mx-auto max-w-2xl">
+            South Asia&apos;s premier science-based platform delivering high-resolution weather telemetry, extreme event attribution, and actionable climate risk advisory.
           </p>
         </div>
 
-        {/* Reasons Cards */}
+        {/* 3 Premium Feature Cards Grid */}
         <div ref={cardsRef} className="grid md:grid-cols-3 gap-8">
-          {reasons.map((reason, index) => {
-            const StatIcon1 = reason.stats.icon;
-            const StatIcon2 = reason.stats2.icon;
-            const isFavorite = favorites.includes(index);
-            
-            return (
-              <Link
-                key={index}
-                to={reason.link}
-                className="reason-card group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-              >
-                {/* Image/Gradient Section */}
-                <div className={`relative h-64 bg-gradient-to-br ${reason.bgGradient} overflow-hidden`}>
-                  {/* Background Pattern */}
-                  <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl"></div>
-                    <div className="absolute bottom-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-                  </div>
-                  
-                  {/* Icon in Center */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <reason.icon className="w-24 h-24 text-white/90 group-hover:scale-110 transition-transform duration-500" />
-                  </div>
+          {climatePillars.map((pillar, index) => (
+            <Link
+              key={index}
+              to={pillar.link}
+              className="reason-card group bg-white rounded-3xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col justify-between hover:-translate-y-2"
+            >
+              <div>
+                {/* Image Section with Glass Overlay */}
+                <div className="relative h-56 overflow-hidden bg-gray-900">
+                  <img
+                    src={pillar.thumbnail}
+                    alt={pillar.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
+                  />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/40 to-transparent" />
 
                   {/* Top Badges */}
-                  <div className="absolute top-4 left-4 flex items-center gap-2">
-                    <span className={`${reason.badgeColor} text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg`}>
-                      {reason.badge}
+                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                    <span className={`${pillar.badgeColor} text-xs font-bold px-3 py-1 rounded-full shadow-md backdrop-blur-md`}>
+                      {pillar.badge}
                     </span>
-                    <span className="bg-gray-800/80 backdrop-blur-sm text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
-                      <Zap className="w-4 h-4" fill="currentColor" />
-                    </span>
-                  </div>
-
-                  <div className="absolute top-4 right-4">
-                    <span className={`${reason.categoryColor} text-white text-xs font-medium px-4 py-2 rounded-full shadow-lg`}>
-                      {reason.category}
+                    <span className="bg-black/60 backdrop-blur-md text-[#00C8C8] text-xs font-mono font-bold px-3 py-1 rounded-full border border-white/20">
+                      Pillar #{pillar.number}
                     </span>
                   </div>
 
-                  {/* Bottom Price Badge & Heart */}
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                    <span className="bg-teal-600 text-white font-bold text-lg px-5 py-2.5 rounded-xl shadow-lg">
-                      #{reason.number}
+                  {/* Category Pill on Bottom of Image */}
+                  <div className="absolute bottom-4 left-4 z-10">
+                    <span className="text-[11px] font-semibold tracking-wider text-white/90 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/30">
+                      {pillar.category}
                     </span>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        toggleFavorite(index);
-                      }}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
-                        isFavorite 
-                          ? 'bg-red-500 text-white scale-110' 
-                          : 'bg-white text-gray-600 hover:bg-red-50 hover:text-red-500'
-                      }`}
-                    >
-                      <Heart className={`w-5 h-5 transition-all ${isFavorite ? 'fill-current' : ''}`} />
-                    </button>
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="p-6">
-                  {/* Location */}
-                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
-                    <MapPin className="w-4 h-4" />
-                    <span>{reason.location}</span>
+                {/* Card Body */}
+                <div className="p-6 sm:p-7">
+                  {/* Location Scope */}
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2 font-medium">
+                    <Globe2 className="w-3.5 h-3.5 text-[#008B8B]" />
+                    <span>{pillar.location}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                    {reason.title}
+                  <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#008B8B] transition-colors leading-snug">
+                    {pillar.title}
                   </h3>
 
-                  {/* Publisher Info */}
-                  <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-rose-600 flex items-center justify-center">
-                      <GraduationCap className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm text-gray-600 font-medium">GDC Larkana</span>
-                    <div className="flex items-center gap-1 text-xs text-gray-400 ml-auto">
-                      <Calendar className="w-3 h-3" />
-                      <span>Est. 1935</span>
-                    </div>
-                  </div>
-
                   {/* Description */}
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5">{reason.description}</p>
+                  <p className="text-gray-600 text-xs leading-relaxed mb-6">
+                    {pillar.description}
+                  </p>
 
-                  {/* Stats */}
-                  <div className="flex items-center gap-6 text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <StatIcon1 className="w-4 h-4 text-gray-700" />
-                      </div>
-                      <div className="text-xs">
-                        <div className="font-bold text-gray-900">{reason.stats.value}</div>
-                        <div className="text-gray-500">{reason.stats.label}</div>
-                      </div>
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-gray-50 border border-gray-100 mb-2">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-gray-900 font-heading">{pillar.stats1.value}</span>
+                      <span className="text-[10px] text-gray-500">{pillar.stats1.label}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <StatIcon2 className="w-4 h-4 text-gray-700" />
-                      </div>
-                      <div className="text-xs">
-                        <div className="font-bold text-gray-900">{reason.stats2.value}</div>
-                        <div className="text-gray-500">{reason.stats2.label}</div>
-                      </div>
+                    <div className="flex flex-col border-l border-gray-200 pl-3">
+                      <span className="text-sm font-bold text-[#008B8B] font-heading">{pillar.stats2.value}</span>
+                      <span className="text-[10px] text-gray-500">{pillar.stats2.label}</span>
                     </div>
                   </div>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+
+              {/* Card Footer Link */}
+              <div className="px-6 pb-6 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#008B8B] group-hover:text-teal-700">
+                <span>Explore Science Pillar</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </div>
+            </Link>
+          ))}
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-14">
-          <p className="text-gray-500 mb-5 text-sm">
-            Ready to start your journey with us?
+        <div className="text-center mt-16 pt-8 border-t border-gray-200/80">
+          <p className="text-gray-600 text-sm mb-4">
+            Looking for climate attribution research or regional telemetry access?
           </p>
-          <Link to="/admissions" className="btn-primary group">
-            <span>Apply Now</span>
+          <Link
+            to="/projects"
+            className="inline-flex items-center justify-center px-6 py-3 bg-[#008B8B] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md group"
+          >
+            <span>Explore Funded Projects &amp; Advisory</span>
             <ArrowUpRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>

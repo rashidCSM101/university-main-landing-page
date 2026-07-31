@@ -104,8 +104,13 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ error: 'Media item not found.' });
     }
 
-    if (req.user?.role !== 'super_admin' && existing.rows[0].author_id !== req.user?.id) {
-      return res.status(403).json({ error: 'Forbidden. You can only edit your own content.' });
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    const isAuthor =
+      existing.rows[0].author_id === req.user?.id ||
+      existing.rows[0].author_name?.toLowerCase().trim() === req.user?.name?.toLowerCase().trim();
+
+    if (!isPowerUser && !isAuthor) {
+      return res.status(403).json({ error: 'Forbidden. You can only edit your own submitted content.' });
     }
 
     const item = parseResult.data;
@@ -149,15 +154,13 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id } = req.params;
-    const existing = await query('SELECT * FROM media_items WHERE id = $1', [id]);
-    if (existing.rows.length === 0) {
-      return res.status(404).json({ error: 'Item not found.' });
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission denied. Members cannot delete posts. Only Admin or Super Admin can delete content.' });
     }
 
-    if (req.user?.role !== 'super_admin' && existing.rows[0].author_id !== req.user?.id) {
-      return res.status(403).json({ error: 'Forbidden. You can only delete your own content.' });
-    }
+    const { id } = req.params;
+    const existing = await query('SELECT * FROM media_items WHERE id = $1', [id]);
 
     await query('DELETE FROM media_items WHERE id = $1', [id]);
     await logAudit(req.user, 'DELETE_MEDIA', 'media_items', id, req.ip || '127.0.0.1', { title: existing.rows[0].title });

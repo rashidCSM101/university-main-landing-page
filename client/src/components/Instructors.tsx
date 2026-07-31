@@ -1,51 +1,97 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { GraduationCap, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { fetchTeamMembers } from '../services/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const instructors = [
-    {
-      id: 1,
-      name: 'Prof. Farhan Ahmed Shaikh',
-      role: 'Head of Zoology Department',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 2,
-      name: 'Dr. Nazia Parveen Bhutto',
-      role: 'Associate Professor, Zoology',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 3,
-      name: 'Dr. Abdul Rashid Memon',
-      role: 'Assistant Professor, Zoology',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-    {
-      id: 4,
-      name: 'Prof. Saima Khatoon Soomro',
-      role: 'Lecturer, Zoology',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      social: { facebook: '#', twitter: '#', linkedin: '#', instagram: '#' },
-    },
-  ];
+const fallbackScientists = [
+  {
+    id: '1',
+    name: 'Dr. Rashid',
+    role: 'Lead Climate Attribution Scientist & Founder',
+    division: 'Atmospheric & Convective Modeling',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    experience: '18+ Yrs Research Exp',
+    slug: 'dr-rashid',
+  },
+  {
+    id: '2',
+    name: 'Dr. Ayesha Malik',
+    role: 'Senior Hydrological & GLOF Modeling Lead',
+    division: 'Hydrology & HKH Cryosphere',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+    experience: '12+ Yrs Research Exp',
+    slug: 'dr-ayesha-malik',
+  },
+  {
+    id: '3',
+    name: 'Mehran',
+    role: 'Executive Admin & Operations Lead',
+    division: 'Multilateral Grant Management',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+    experience: '10+ Yrs Research Exp',
+    slug: 'mehran',
+  },
+  {
+    id: '4',
+    name: 'Dr. Sana Khan',
+    role: 'Urban Heat Action & Climate Health Specialist',
+    division: 'Climate Policy & Health',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80',
+    experience: '9+ Yrs Research Exp',
+    slug: 'dr-sana-khan',
+  },
+];
 
 const Instructors = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
+  const [scientists, setScientists] = useState<any[]>(fallbackScientists);
+  const [loading, setLoading] = useState(true);
+
+  // Helper to generate 2-letter initials for avatar fallback
+  const getInitials = (name: string) => {
+    if (!name) return 'WC';
+    const parts = name.replace(/^(Dr\.|Prof\.|Mr\.|Mrs\.|Ms\.)\s+/i, '').trim().split(' ');
+    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    return name.substring(0, 2).toUpperCase();
+  };
+
   useEffect(() => {
+    setLoading(true);
+    fetchTeamMembers(true)
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.slice(0, 4).map((item: any) => ({
+            id: item.id?.toString() || Math.random().toString(),
+            name: item.name || 'Scientific Research Member',
+            role: item.role || 'Climate Research Specialist',
+            division: item.team || 'Atmospheric & Attribution Science',
+            image: item.image || item.photo_url || item.social_links?.image || null,
+            experience: item.experience || 'Research Fellow',
+            slug: item.slug || (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'team-member'),
+          }));
+          setScientists(mapped);
+        } else {
+          setScientists(fallbackScientists);
+        }
+      })
+      .catch(() => {
+        setScientists(fallbackScientists);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.from('.instructors-header', {
-        y: 50,
+        y: 40,
+        opacity: 0,
         duration: 0.8,
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -54,111 +100,128 @@ const Instructors = () => {
         },
       });
 
-      // Cards animation
-      gsap.from('.instructor-card', {
-        y: 50,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 90%',
-          toggleActions: 'play none none reverse',
-        },
-      });
+      if (cardsRef.current && scientists.length > 0) {
+        gsap.fromTo(
+          cardsRef.current.children,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.12,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [scientists, loading]);
 
   return (
-    <section ref={sectionRef} className="section-padding bg-gray-900 text-white">
+    <section ref={sectionRef} className="py-24 bg-gray-50 font-sans">
       <div className="container-custom">
         {/* Section Header */}
-        <div className="instructors-header text-center max-w-3xl mx-auto mb-16">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-12 h-px bg-primary"></div>
-            <span className="text-primary font-semibold uppercase tracking-wider text-sm">
-              Expert Team
-            </span>
-            <div className="w-12 h-px bg-primary"></div>
+        <div className="instructors-header text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#008B8B]/10 text-[#008B8B] text-xs font-bold uppercase tracking-wider border border-[#008B8B]/30">
+            <GraduationCap className="w-4 h-4" />
+            <span>Scientific Faculty &amp; Leadership</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-6">
-            Learn from Experienced{' '}
-            <span className="text-primary">Instructor</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900">
+            Meet Our Lead <span className="text-[#008B8B]">Climate Scientists</span>
           </h2>
-          <p className="text-gray-400 text-lg">
-            Our instructors are industry experts and academic leaders who are
-            passionate about teaching and mentoring the next generation.
+          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+            A multidisciplinary team of atmospheric physicists, hydrologists, and climate risk policy experts leading Attribution Science across South Asia.
           </p>
         </div>
 
-        {/* Instructors Grid */}
-        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {instructors.map((instructor) => (
-            <div
-              key={instructor.id}
-              className="instructor-card group bg-gray-800 rounded-2xl overflow-hidden hover:bg-gray-700 transition-colors"
-            >
-              {/* Image */}
-              <div className="relative overflow-hidden aspect-[4/5]">
-                <img
-                  src={instructor.image}
-                  alt={instructor.name}
-                  loading="lazy"
-                  width={600}
-                  height={750}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* Overlay with Social Links */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
-                  <div className="flex space-x-3">
-                    <span
-                      aria-label={`${instructor.name} on Facebook`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
-                    >
-                      <Facebook className="w-5 h-5" />
-                    </span>
-                    <span
-                      aria-label={`${instructor.name} on Twitter`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
-                    >
-                      <Twitter className="w-5 h-5" />
-                    </span>
-                    <span
-                      aria-label={`${instructor.name} on LinkedIn`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
-                    >
-                      <Linkedin className="w-5 h-5" />
-                    </span>
-                    <span
-                      aria-label={`${instructor.name} on Instagram`}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
-                    >
-                      <Instagram className="w-5 h-5" />
-                    </span>
-                  </div>
+        {/* Scientists Cards Grid */}
+        {loading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm animate-pulse">
+                <div className="h-72 bg-gray-200 w-full" />
+                <div className="p-6 space-y-3">
+                  <div className="h-5 bg-gray-200 rounded-md w-3/4" />
+                  <div className="h-4 bg-gray-100 rounded-md w-1/2" />
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {scientists.map((sc) => (
+              <div
+                key={sc.id}
+                className="instructor-card group bg-white rounded-3xl border border-gray-200 shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col justify-between hover:-translate-y-2"
+              >
+                <div>
+                  {/* Portrait Cover Image Section */}
+                  <div className="relative h-72 w-full overflow-hidden bg-gray-900">
+                    {sc.image ? (
+                      <img
+                        src={sc.image}
+                        alt={sc.name}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                          if (e.currentTarget.parentElement) {
+                            e.currentTarget.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-[#008B8B] to-teal-900 text-white font-bold text-4xl flex items-center justify-center">${getInitials(sc.name)}</div>`;
+                          }
+                        }}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-95 group-hover:brightness-100"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#008B8B] to-teal-900 text-white font-bold text-4xl flex items-center justify-center">
+                        {getInitials(sc.name)}
+                      </div>
+                    )}
 
-              {/* Content */}
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-primary transition-colors">
-                  {instructor.name}
-                </h3>
-                <p className="text-gray-400">{instructor.role}</p>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-80" />
+
+                    {/* Floating Experience Badge */}
+                    <span className="absolute top-3 right-3 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-[#008B8B] text-white shadow-lg backdrop-blur-md border border-white/20">
+                      {sc.experience}
+                    </span>
+
+                    {/* Floating Division Tag */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <span className="inline-block text-[11px] font-bold px-3 py-1 rounded-full bg-gray-900/90 text-[#00C8C8] border border-[#00C8C8]/40 backdrop-blur-md shadow-md">
+                        {sc.division}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-heading font-bold text-gray-900 group-hover:text-[#008B8B] transition-colors leading-snug mb-1">
+                      {sc.name}
+                    </h3>
+                    <p className="text-xs font-semibold text-[#008B8B] leading-relaxed">
+                      {sc.role}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card Action Link */}
+                <div className="px-6 pb-6 pt-0">
+                  <Link
+                    to={`/team/${sc.slug}`}
+                    className="w-full py-3 px-4 rounded-xl bg-gray-50 group-hover:bg-[#008B8B] text-gray-700 group-hover:text-white font-bold text-xs flex items-center justify-between transition-all duration-300 shadow-sm"
+                  >
+                    <span>Read Bio &amp; Research</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <Link to="/faculty" className="btn-primary">
-            View All Instructors
-          </Link>
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

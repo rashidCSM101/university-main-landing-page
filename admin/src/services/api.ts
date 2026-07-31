@@ -24,6 +24,14 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
   const data = await response.json();
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      if (data.error && data.error.toLowerCase().includes('token')) {
+        localStorage.removeItem('wenclims_admin_user');
+        localStorage.removeItem('wenclims_admin_token');
+        alert('Your admin session has expired. Please log in again to continue.');
+        window.location.href = '/admin--wensclims-xk9f2m/login';
+      }
+    }
     throw new Error(data.error || 'API Request failed');
   }
 
@@ -113,6 +121,15 @@ export const api = {
   // Audit Logs (Super Admin Only)
   getAuditLogs: (params?: { action?: string }) => {
     const query = new URLSearchParams(params as any).toString();
-    return apiFetch<any[]>(`/admin/audit-logs${query ? `?${query}` : ''}`);
+    return apiFetch<any[]>(`/admin/system/audit${query ? `?${query}` : ''}`);
   },
+
+  // System Health & DB Backup (Super Admin Only)
+  getSystemHealth: () =>
+    apiFetch<any>('/admin/system/health'),
+  getEmergencyBanner: () =>
+    apiFetch<any>('/system/banner'),
+  updateEmergencyBanner: (banner: any) =>
+    apiFetch<any>('/admin/system/banner', { method: 'PUT', body: JSON.stringify(banner) }),
+  downloadDbBackupUrl: () => `${API_BASE_URL}/admin/system/backup`,
 };
