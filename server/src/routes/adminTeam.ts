@@ -6,9 +6,24 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
-router.get('/', async (req: AuthenticatedRequest, res: Response) => {
+async function ensureTeamTableSchema() {
   try {
     await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
+    await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
+    await query('ALTER TABLE team_members ALTER COLUMN photo TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN role TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN team TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN bio TYPE TEXT');
+  } catch (err) {
+    // Column type alter safe catch
+  }
+}
+
+router.get('/', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await ensureTeamTableSchema();
+    // Remove legacy dummy seed members if present
+    await query("DELETE FROM team_members WHERE slug IN ('mr-rashid', 'dr-rashid', 'dr-ayesha-malik', 'mehran', 'dr-sana-khan')");
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -18,7 +33,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
+    await ensureTeamTableSchema();
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -33,7 +48,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     const params = [
       item.name,
       item.slug,
-      item.role,
+      item.role || 'Associate Researcher',
       item.team || null,
       item.photo || null,
       item.bio || null,
@@ -48,16 +63,17 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
     return res.status(201).json(result.rows[0]);
   } catch (error: any) {
+    console.error('Error creating team member:', error);
     if (error.code === '23505') {
       return res.status(400).json({ error: 'Team member with this slug already exists.' });
     }
-    return res.status(500).json({ error: 'Failed to create team member.' });
+    return res.status(500).json({ error: 'Failed to create team member: ' + (error.message || 'Server error') });
   }
 });
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
+    await ensureTeamTableSchema();
     const { id } = req.params;
 
     // Non-super_admin users can only update their own profile record

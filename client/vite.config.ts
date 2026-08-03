@@ -45,7 +45,8 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks: {
           amcharts: ['@amcharts/amcharts5', '@amcharts/amcharts5/xy', '@amcharts/amcharts5/map'],
-          vendor: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
+          animations: ['gsap', 'lenis'],
+          vendor: ['react', 'react-dom', 'react-router-dom', 'lucide-react', 'react-helmet-async'],
         },
       },
     },

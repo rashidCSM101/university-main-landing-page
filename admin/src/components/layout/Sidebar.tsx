@@ -119,18 +119,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           </>
         )}
 
-        {!collapsed && <div className="sidebar-section-label">Quick Links</div>}
-        <a
-          href="http://localhost:5173"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="sidebar-link"
-          style={{ color: 'rgba(255,255,255,0.5)' }}
-          title={collapsed ? 'Live Site Preview' : undefined}
-        >
-          <ExternalLink className="sidebar-link-icon" />
-          {!collapsed && <span>Live Site Preview</span>}
-        </a>
       </nav>
 
       {/* Footer / User Profile Card */}

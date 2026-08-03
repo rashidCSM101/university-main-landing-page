@@ -10,15 +10,33 @@ const router = Router();
  */
 router.get('/banner', async (req, res: Response) => {
   try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(255) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     const result = await query("SELECT value FROM system_settings WHERE key = 'emergency_banner'");
     if (result.rows.length === 0) {
-      return res.json({
+      const defaultPayload = {
         is_active: false,
         message: '🔴 Emergency Alert: Indus Basin Flash Flood & Precipitation Attribution Study 2026 Released',
         url: '/publications',
-      });
+      };
+      await query(
+        "INSERT INTO system_settings (key, value, updated_at) VALUES ('emergency_banner', $1, NOW())",
+        [JSON.stringify(defaultPayload)]
+      );
+      return res.json(defaultPayload);
     }
-    return res.json(result.rows[0].value);
+    const stored = result.rows[0].value;
+    // Guarantee is_active is boolean
+    return res.json({
+      ...stored,
+      is_active: Boolean(stored?.is_active),
+    });
   } catch {
     return res.json({
       is_active: false,

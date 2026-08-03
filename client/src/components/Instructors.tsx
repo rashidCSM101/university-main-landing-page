@@ -7,44 +7,8 @@ import { fetchTeamMembers } from '../services/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const fallbackScientists = [
-  {
-    id: '1',
-    name: 'Dr. Rashid',
-    role: 'Lead Climate Attribution Scientist & Founder',
-    division: 'Atmospheric & Convective Modeling',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    experience: '18+ Yrs Research Exp',
-    slug: 'dr-rashid',
-  },
-  {
-    id: '2',
-    name: 'Dr. Ayesha Malik',
-    role: 'Senior Hydrological & GLOF Modeling Lead',
-    division: 'Hydrology & HKH Cryosphere',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-    experience: '12+ Yrs Research Exp',
-    slug: 'dr-ayesha-malik',
-  },
-  {
-    id: '3',
-    name: 'Mehran',
-    role: 'Executive Admin & Operations Lead',
-    division: 'Multilateral Grant Management',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-    experience: '10+ Yrs Research Exp',
-    slug: 'mehran',
-  },
-  {
-    id: '4',
-    name: 'Dr. Sana Khan',
-    role: 'Urban Heat Action & Climate Health Specialist',
-    division: 'Climate Policy & Health',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80',
-    experience: '9+ Yrs Research Exp',
-    slug: 'dr-sana-khan',
-  },
-];
+// Fallback scientists (empty - real data loaded dynamically from PostgreSQL)
+const fallbackScientists: any[] = [];
 
 const Instructors = () => {
   const sectionRef = useRef<HTMLDivElement>(null);

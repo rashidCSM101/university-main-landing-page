@@ -19,8 +19,11 @@
     <meta property="og:url" content="https://wenclims.org" />
     <meta property="og:title" content="WenClims — Weather and Climate Services, Pakistan" />
     <meta property="og:description" content="Science-based climate guidance and policy analysis for South Asia. Climate research, consulting, and data services from Islamabad." />
-    <!-- Note: Facebook requires PNG 1200×630. Export og-image.svg → og-image.png and update below -->
-    <meta property="og:image" content="https://wenclims.org/og-image.svg" />
+    <!-- Facebook, WhatsApp & LinkedIn require PNG 1200×630. SVG meta images are rejected by social crawlers -->
+    <meta property="og:image" content="https://wenclims.org/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="WenClims" />
     <meta property="og:locale" content="en_PK" />
 
@@ -29,7 +32,7 @@
     <meta name="twitter:site" content="@wenclims" />
     <meta name="twitter:title" content="WenClims — Weather and Climate Services, Pakistan" />
     <meta name="twitter:description" content="Science-based climate guidance and policy analysis for South Asia. Based in Islamabad, Pakistan." />
-    <meta name="twitter:image" content="https://wenclims.org/og-image.svg" />
+    <meta name="twitter:image" content="https://wenclims.org/og-image.png" />
 
     <!-- Geo & Language -->
     <meta name="geo.region" content="PK-IS" />
@@ -91,10 +94,21 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap">
     </noscript>
   </head>
-  <body>
+  <body style="background-color: #0B1E3D;">
     <div id="root">
-      <div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #ffffff; z-index: 99999;">
-        <img src="/loading.gif" alt="Loading..." style="width: 220px; max-width: 80%; height: auto; object-fit: contain;" />
+      <div style="position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #0B1E3D; color: #ffffff; z-index: 99999; font-family: sans-serif;">
+        <div style="width: 64px; height: 64px; margin-bottom: 16px;">
+          <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; color: #00C8C8;" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="2.5" opacity="0.9" />
+            <ellipse cx="50" cy="50" rx="44" ry="18" stroke="currentColor" stroke-dasharray="3 3" opacity="0.7" />
+            <ellipse cx="50" cy="50" rx="44" ry="32" stroke="currentColor" opacity="0.5" />
+            <ellipse cx="50" cy="50" rx="18" ry="44" stroke="currentColor" opacity="0.7" />
+            <ellipse cx="50" cy="50" rx="32" ry="44" stroke="currentColor" opacity="0.5" />
+            <line x1="50" y1="6" x2="50" y2="94" stroke="currentColor" stroke-width="2" />
+            <line x1="6" y1="50" x2="94" y2="50" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </div>
+        <div style="font-size: 16px; font-weight: 700; letter-spacing: 0.05em; color: #ffffff;">WenClims <span style="color: #00C8C8;">Telemetry</span></div>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>

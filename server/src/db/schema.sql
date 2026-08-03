@@ -82,12 +82,13 @@ CREATE TABLE IF NOT EXISTS team_members (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name         VARCHAR(255) NOT NULL,
   slug         VARCHAR(255) UNIQUE NOT NULL,
-  role         VARCHAR(255) NOT NULL,
-  team         VARCHAR(50) CHECK (team IN ('leadership', 'policy', 'data-modelling')),
-  photo        VARCHAR(1000),
+  role         TEXT NOT NULL,
+  team         TEXT,
+  photo        TEXT,
   bio          TEXT,
   social_links JSONB DEFAULT '{}'::jsonb,
   sort_order   INT DEFAULT 0,
+  show_on_home BOOLEAN DEFAULT FALSE,
   is_active    BOOLEAN DEFAULT TRUE,
   created_at   TIMESTAMPTZ DEFAULT NOW(),
   updated_at   TIMESTAMPTZ DEFAULT NOW()
@@ -196,9 +197,3 @@ VALUES
 ('Solar & Wind Energy Atlas', 'Energy', 'Renewable energy potential mapping across South Asian regions.', 'https://pakclimtool.com/energy', 3, TRUE)
 ON CONFLICT DO NOTHING;
 
--- Seed Sample Team Members
-INSERT INTO team_members (name, slug, role, team, bio, sort_order, is_active)
-VALUES
-('Dr. Rashid', 'dr-rashid', 'Lead Climate Scientist & Executive Director', 'leadership', 'Expert in climate attribution science, extreme weather modeling, and policy translation across South Asia.', 1, TRUE),
-('Dr. Ayesha Malik', 'dr-ayesha-malik', 'Senior Hydrometeorological Analyst', 'data-modelling', 'Specializing in satellite data integration, numerical weather prediction, and flood hazard mapping.', 2, TRUE)
-ON CONFLICT (slug) DO NOTHING;

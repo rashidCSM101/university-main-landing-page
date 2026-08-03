@@ -60,16 +60,49 @@ const TermsOfService = lazy(() => import('./components/TermsOfService'));
 // 404
 const NotFound = lazy(() => import('./components/shared/NotFound'));
 
-import loadingGif from '../assets/images/loading.gif';
-
-// ─── Loading spinner ───────────────────────────────────────────────────────
+// ─── Lightweight SVG 3D Vector Globe Loader (1.5 KB vs 15 MB GIF) ─────────
 const PageSpinner = () => (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
-    <img
-      src={loadingGif}
-      alt="Loading..."
-      className="w-52 md:w-64 h-auto object-contain max-h-[300px]"
-    />
+  <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0B1E3D] text-white font-sans">
+    <div className="relative flex items-center justify-center mb-6">
+      {/* Outer Glow Pulse Ring */}
+      <div className="absolute w-36 h-36 rounded-full border border-[#00C8C8]/30 animate-ping opacity-30" />
+      
+      {/* Spinning Teal Orbital Ring */}
+      <div className="absolute w-32 h-32 rounded-full border-2 border-t-[#00C8C8] border-r-transparent border-b-[#008B8B] border-l-transparent animate-spin duration-1000" />
+      
+      {/* Reverse Outer Ring */}
+      <div className="absolute w-24 h-24 rounded-full border border-teal-500/20 border-dashed animate-[spin_4s_linear_infinite_reverse]" />
+
+      {/* 3D Vector Globe SVG */}
+      <div className="w-20 h-20 rounded-full bg-[#071328] border border-[#00C8C8]/40 p-3 shadow-2xl shadow-teal-950 flex items-center justify-center">
+        <svg
+          viewBox="0 0 100 100"
+          className="w-full h-full text-[#00C8C8] animate-[spin_8s_linear_infinite]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        >
+          <circle cx="50" cy="50" r="44" stroke="currentColor" strokeWidth="2.5" opacity="0.9" />
+          <ellipse cx="50" cy="50" rx="44" ry="18" stroke="currentColor" strokeDasharray="3 3" opacity="0.7" />
+          <ellipse cx="50" cy="50" rx="44" ry="32" stroke="currentColor" opacity="0.5" />
+          <ellipse cx="50" cy="50" rx="18" ry="44" stroke="currentColor" opacity="0.7" />
+          <ellipse cx="50" cy="50" rx="32" ry="44" stroke="currentColor" opacity="0.5" />
+          <line x1="50" y1="6" x2="50" y2="94" stroke="currentColor" strokeWidth="2" />
+          <line x1="6" y1="50" x2="94" y2="50" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      </div>
+    </div>
+
+    {/* Brand & Loading Indicator */}
+    <div className="text-center space-y-1.5">
+      <div className="text-lg font-heading font-bold tracking-wider text-white">
+        WenClims <span className="text-[#00C8C8]">Telemetry</span>
+      </div>
+      <p className="text-xs text-gray-400 font-medium tracking-widest uppercase flex items-center justify-center gap-1.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#00C8C8] animate-ping" />
+        <span>Initializing Climate Intelligence...</span>
+      </p>
+    </div>
   </div>
 );
 

@@ -56,13 +56,13 @@ export const projectSchema = z.object({
 // Team Member Validation Schema
 export const teamMemberSchema = z.object({
   name: z.string().min(2, 'Name is required'),
-  slug: z.string().min(2, 'Slug is required'),
-  role: z.string().min(2, 'Role is required'),
-  team: z.string().optional(),
-  photo: z.string().optional().or(z.literal('')),
-  bio: z.string().optional(),
-  social_links: z.record(z.string(), z.any()).optional(),
-  sort_order: z.number().int().optional(),
+  slug: z.string().min(1, 'Slug is required'),
+  role: z.string().optional().nullable().or(z.literal('')),
+  team: z.string().optional().nullable().or(z.literal('')),
+  photo: z.string().optional().nullable().or(z.literal('')),
+  bio: z.string().optional().nullable().or(z.literal('')),
+  social_links: z.record(z.string(), z.any()).optional().nullable(),
+  sort_order: z.number().int().optional().nullable(),
   show_on_home: z.boolean().default(false),
   is_active: z.boolean().default(true),
 });

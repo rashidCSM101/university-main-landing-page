@@ -31,53 +31,8 @@ export interface TeamMemberItem {
   social_links?: any;
 }
 
-// Fallback seed team data in case API server is offline
-const fallbackMembers: TeamMemberItem[] = [
-  {
-    id: '1',
-    name: 'Dr. Rashid',
-    slug: 'dr-rashid',
-    role: 'Lead Climate Attribution Scientist & Institute Founder',
-    team: 'Atmospheric & Attribution Science',
-    bio: 'Pioneer in South Asian extreme weather event attribution, convection-permitting WRF regional modeling, and IPCC AR6 convective precipitation dynamics.',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    experience: '18+ Yrs Exp',
-    social_links: { email: 'admin@wenclims.org', qualification: 'Ph.D. Atmospheric Physics' },
-  },
-  {
-    id: '2',
-    name: 'Dr. Ayesha Malik',
-    slug: 'dr-ayesha-malik',
-    role: 'Senior Hydrological & GLOF Modeling Lead',
-    team: 'Hydrology & Cryosphere',
-    bio: 'Specialist in Hindu Kush Himalaya glacial outburst flood hydrographs, snow-melt runoff modeling (HBV/VIC), and Indus River basin water security.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    experience: '12+ Yrs Exp',
-    social_links: { email: 'ayesha@wenclims.org', qualification: 'Ph.D. Hydrology & Water Resources' },
-  },
-  {
-    id: '3',
-    name: 'Mehran',
-    slug: 'mehran',
-    role: 'Executive Admin & Operations Manager',
-    team: 'Operations & Research Admin',
-    bio: 'Coordinates international research grants, ADB & World Bank project deliverables, and academic publication workflows.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    experience: '10+ Yrs Exp',
-    social_links: { email: 'mehran@wenclims.org', qualification: 'M.Sc. Research Management' },
-  },
-  {
-    id: '4',
-    name: 'Dr. Sana Khan',
-    slug: 'dr-sana-khan',
-    role: 'Urban Heat Action & Climate Health Specialist',
-    team: 'Climate Policy & Health',
-    bio: 'Lead researcher on urban heat island vulnerability, wet-bulb stress thresholds (TW > 35°C), and NDMA heat emergency response plans in Sindh.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-    experience: '9+ Yrs Exp',
-    social_links: { email: 'sana@wenclims.org', qualification: 'Ph.D. Environmental Health & Urban Climate' },
-  },
-];
+// Fallback seed team data (empty - real data loaded dynamically from PostgreSQL)
+const fallbackMembers: TeamMemberItem[] = [];
 
 const teamStats = [
   { value: '25+', label: 'Research Scientists', icon: Users },

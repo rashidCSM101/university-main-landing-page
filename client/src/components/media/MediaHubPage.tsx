@@ -149,7 +149,7 @@ export const MediaHubPage = () => {
   });
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-950 text-gray-100 pt-28 pb-20">
+    <div ref={pageRef} className="min-h-screen bg-gray-950 text-gray-100">
       <Helmet>
         <title>Media, Podcasts &amp; Documentaries | WenClims</title>
         <meta
@@ -159,164 +159,280 @@ export const MediaHubPage = () => {
         <link rel="canonical" href="https://wenclims.org/media" />
       </Helmet>
 
-      {/* Hero Header */}
-      <div className="container-custom mb-12">
-        <div className="media-hero text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal/10 border border-teal/30 text-teal text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
-            <span>Multimedia Knowledge Hub</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight">
-            Climate <span className="text-teal">Media &amp; Insights</span>
-          </h1>
-          <p className="text-gray-400 text-base md:text-lg leading-relaxed font-light">
-            Documentaries, talkshow interviews, podcasts, and blog articles communicating atmospheric research, extreme weather attribution, and South Asian climate policies.
-          </p>
+      {/* ═══ HOME-STYLE HERO SECTION (Full Background Image Track + Overlay) ═══ */}
+      <section
+        id="hero"
+        className="relative min-h-[80vh] flex flex-col justify-center overflow-hidden bg-gray-900 border-b border-gray-800/60"
+        aria-label="Media Hub Hero"
+      >
+        {/* Background Image Track */}
+        <div className="absolute inset-0 w-full h-full will-change-transform">
+          <img
+            src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?auto=format&fit=crop&w=1920&q=80"
+            alt="WenClims Climate Media Hero Background"
+            fetchPriority="high"
+            loading="eager"
+            width={1920}
+            height={1080}
+            className="w-full h-full object-cover object-center scale-105 transition-transform duration-700 filter brightness-90"
+          />
+          {/* Layered dark gradient overlays — matching Tools & Vision hero */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(105deg, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.85) 42%, rgba(10,37,64,0.65) 75%, rgba(10,37,64,0.45) 100%)',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to top, rgba(5,20,40,0.98) 0%, rgba(5,20,40,0.60) 50%, transparent 100%)',
+            }}
+          />
         </div>
-      </div>
 
-      {/* Filter Controls & Search */}
-      <div className="container-custom mb-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-gray-900/90 border border-gray-800 p-4 rounded-3xl shadow-xl backdrop-blur-md">
-          {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-            {mediaTypes.map((t) => {
-              const Icon = t.icon;
-              const isActive = selectedType === t.key;
-              return (
-                <button
-                  key={t.key}
-                  onClick={() => setSelectedType(t.key)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
-                    isActive
-                      ? 'bg-teal text-gray-950 shadow-lg shadow-teal/20'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/80'
-                  }`}
+        {/* Grid Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        {/* Content Block matching Tools & Vision Max Width */}
+        <div className="relative z-10 w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 pt-32 md:pt-36 lg:pt-40 pb-16 flex flex-col justify-center">
+          <div className="media-hero w-full max-w-4xl">
+            {/* Top Link & Tag Pill */}
+            <div className="flex items-center space-x-3 mb-6">
+              <span className="w-8 h-px bg-[#00C8C8]" />
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] px-3 py-1 rounded-full border border-[#00C8C8]/50 text-[#00C8C8] bg-[#00C8C8]/10 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Multimedia Knowledge Hub
+              </span>
+            </div>
+
+            {/* Heading matching Tools & Vision Hero styling */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold text-white leading-tight mb-6">
+              Climate Media &amp;{' '}
+              <span className="relative inline-block">
+                <span className="text-[#00C8C8]">Insights</span>
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 300 10"
+                  fill="none"
+                  aria-hidden="true"
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{t.label}</span>
-                </button>
-              );
-            })}
-          </div>
+                  <path
+                    d="M2 8C50 3 150 2 298 7"
+                    stroke="#00C8C8"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+            </h1>
 
-          {/* Search Field */}
-          <div className="relative w-full md:w-72 flex-shrink-0">
-            <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search title, keyword, tag..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-2xl bg-gray-950/80 border border-gray-800 text-xs font-medium text-white placeholder-gray-500 focus:outline-none focus:border-teal transition-all"
-            />
-          </div>
-        </div>
-      </div>
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-gray-200 leading-relaxed font-light mb-10 max-w-3xl">
+              Documentaries, talkshow interviews, podcasts, and scientific blog articles communicating extreme weather attribution, water security, and South Asian climate policies.
+            </p>
 
-      {/* Media Cards Grid */}
-      <div className="container-custom">
-        {filteredMedia.length === 0 ? (
-          <div className="bg-gray-900/60 border border-gray-800 rounded-3xl p-12 text-center max-w-md mx-auto my-12">
-            <Sparkles className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-white mb-1">No Media Found</h3>
-            <p className="text-gray-400 text-xs mb-4">No content matches your search query or filter.</p>
-            <button
-              onClick={() => {
-                setSelectedType('all');
-                setSearch('');
-              }}
-              className="px-4 py-2 bg-teal text-gray-950 font-bold text-xs rounded-xl hover:bg-teal-400 transition-all"
-            >
-              Reset Filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {filteredMedia.map((m) => (
-              <div
-                key={m.id}
-                className="media-card group bg-gray-900/90 border border-gray-800/80 hover:border-teal/50 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-teal/5 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  {/* Card Thumbnail Container */}
-                  <div className="relative aspect-video w-full overflow-hidden bg-gray-950">
-                    {m.cover_image ? (
-                      <img
-                        src={m.cover_image}
-                        alt={m.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-900 to-teal-950 flex items-center justify-center">
-                        <Sparkles className="w-10 h-10 text-teal/40" />
-                      </div>
-                    )}
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent opacity-80" />
-
-                    {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-gray-900/90 text-teal border border-teal/40 backdrop-blur-md">
-                        {m.type}
-                      </span>
-                      {m.embed_url && (
-                        <span className="w-8 h-8 rounded-full bg-teal text-gray-950 flex items-center justify-center shadow-lg">
-                          <Play className="w-4 h-4 fill-current ml-0.5" />
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-gray-400 font-mono">
-                      <Calendar className="w-3.5 h-3.5 text-teal" />
-                      <span>{m.published_at ? new Date(m.published_at).toLocaleDateString() : '2025'}</span>
-                      {m.author_name && (
-                        <>
-                          <span className="text-gray-600">•</span>
-                          <span className="text-gray-300 font-sans">{m.author_name}</span>
-                        </>
-                      )}
-                    </div>
-
-                    <h3 className="text-xl font-heading font-bold text-white group-hover:text-teal transition-colors leading-snug line-clamp-2">
-                      {m.title}
-                    </h3>
-
-                    {m.excerpt && (
-                      <p className="text-gray-400 text-xs leading-relaxed line-clamp-3 font-light">
-                        {m.excerpt}
-                      </p>
-                    )}
-                  </div>
+            {/* Quick Feature Badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#00C8C8]/20 border border-[#00C8C8]/40 flex items-center justify-center text-[#00C8C8]">
+                  <Video className="w-4 h-4" />
                 </div>
-
-                {/* Card Footer Actions */}
-                <div className="p-6 pt-0 border-t border-gray-800/60 mt-4 flex items-center justify-between">
-                  {m.embed_url ? (
-                    <button
-                      onClick={() => setActiveItem(m)}
-                      className="inline-flex items-center gap-2 text-xs font-bold text-teal hover:text-teal-300 transition-colors"
-                    >
-                      <Play className="w-3.5 h-3.5" />
-                      <span>Watch &amp; Read</span>
-                    </button>
-                  ) : (
-                    <Link
-                      to={`/media/blogs/${m.slug || m.id}`}
-                      className="inline-flex items-center gap-2 text-xs font-bold text-teal hover:text-teal-300 transition-colors"
-                    >
-                      <span>Read Full Article</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  )}
+                <div>
+                  <div className="text-xs font-bold text-white">HD Documentaries</div>
+                  <div className="text-[10px] text-gray-400">Attribution Science</div>
                 </div>
               </div>
-            ))}
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400">
+                  <Mic className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Radio &amp; Podcasts</div>
+                  <div className="text-[10px] text-gray-400">Expert Interviews</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400">
+                  <Tv className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">TV Talkshows</div>
+                  <div className="text-[10px] text-gray-400">National Broadcasts</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Research Blogs</div>
+                  <div className="text-[10px] text-gray-400">Monographs &amp; Papers</div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+      </section>
+
+      {/* Main Content Area (Clean Light Theme matching Tools & Vision pages) */}
+      <div className="py-16 bg-gray-50">
+
+        {/* Filter Controls & Search Bar */}
+        <div className="w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white border border-gray-200 p-3.5 rounded-2xl shadow-sm">
+            {/* Category Tabs — scrollbar hidden completely to prevent line */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {mediaTypes.map((t) => {
+                const Icon = t.icon;
+                const isActive = selectedType === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setSelectedType(t.key)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      isActive
+                        ? 'bg-[#008B8B] text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Search Field */}
+            <div className="relative w-full md:w-72 flex-shrink-0">
+              <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search title, keyword, tag..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#008B8B] focus:bg-white transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Media Cards Grid */}
+        <div className="w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8">
+          {filteredMedia.length === 0 ? (
+            <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center max-w-md mx-auto my-12 shadow-sm">
+              <Sparkles className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-gray-900 mb-1">No Media Found</h3>
+              <p className="text-gray-500 text-xs mb-4">No content matches your search query or filter.</p>
+              <button
+                onClick={() => {
+                  setSelectedType('all');
+                  setSearch('');
+                }}
+                className="px-4 py-2 bg-[#008B8B] text-white font-bold text-xs rounded-xl hover:bg-[#007373] transition-all shadow-md"
+              >
+                Reset Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredMedia.map((m) => (
+                <div
+                  key={m.id}
+                  className="media-card group bg-white border border-gray-200/80 hover:border-[#008B8B]/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Card Thumbnail Container */}
+                    <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
+                      {m.cover_image ? (
+                        <img
+                          src={m.cover_image}
+                          alt={m.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-gray-100 to-teal-50 flex items-center justify-center">
+                          <Sparkles className="w-10 h-10 text-[#008B8B]/40" />
+                        </div>
+                      )}
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent opacity-60" />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-gray-900/80 text-[#00C8C8] border border-[#00C8C8]/30 backdrop-blur-md">
+                          {m.type}
+                        </span>
+                        {m.embed_url && (
+                          <span className="w-8 h-8 rounded-full bg-[#00C8C8] text-[#0B1E3D] flex items-center justify-center shadow-lg">
+                            <Play className="w-4 h-4 fill-current ml-0.5" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-6 space-y-3">
+                      <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
+                        <Calendar className="w-3.5 h-3.5 text-[#008B8B]" />
+                        <span>{m.published_at ? new Date(m.published_at).toLocaleDateString() : '2025'}</span>
+                        {m.author_name && (
+                          <>
+                            <span className="text-gray-300">•</span>
+                            <span className="text-gray-600 font-sans font-medium">{m.author_name}</span>
+                          </>
+                        )}
+                      </div>
+
+                      <h3 className="text-lg font-heading font-bold text-gray-900 group-hover:text-[#008B8B] transition-colors leading-snug line-clamp-2">
+                        {m.title}
+                      </h3>
+
+                      {m.excerpt && (
+                        <p className="text-gray-600 text-xs leading-relaxed line-clamp-3 font-light">
+                          {m.excerpt}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Footer Actions */}
+                  <div className="p-6 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    {m.embed_url ? (
+                      <button
+                        onClick={() => setActiveItem(m)}
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] hover:text-[#006666] transition-colors"
+                      >
+                        <Play className="w-3.5 h-3.5" />
+                        <span>Watch &amp; Read</span>
+                      </button>
+                    ) : (
+                      <Link
+                        to={`/media/blogs/${m.slug || m.id}`}
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] hover:text-[#006666] transition-colors"
+                      >
+                        <span>Read Full Article</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Embed Media Lightbox Modal */}

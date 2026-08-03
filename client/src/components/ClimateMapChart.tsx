@@ -56,12 +56,44 @@ const ClimateMapChart = () => {
     const chart = root.container.children.push(
       am5map.MapChart.new(root, {
         panX: 'rotateX',
-        panY: 'translateY',
-        projection: am5map.geoMercator(),
+        panY: 'rotateY',
+        projection: am5map.geoOrthographic(),
         homeGeoPoint: { latitude: 28, longitude: 75 },
-        homeZoomLevel: 3.5,
       })
     );
+
+    // Ocean background polygon for realistic 3D Globe sphere
+    const backgroundSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
+    backgroundSeries.mapPolygons.template.setAll({
+      fill: am5.color(0x0b192c),
+      fillOpacity: 0.9,
+      strokeOpacity: 0,
+    });
+    backgroundSeries.data.push({
+      geometry: am5map.getGeoRectangle(90, 180, -90, -180),
+    });
+
+    // Continuous 3D Auto-Rotation Easing Loop
+    let rotationAnimation: any = null;
+    const startAutoRotation = () => {
+      rotationAnimation = chart.animate({
+        key: 'rotationX',
+        from: chart.get('rotationX', 0),
+        to: chart.get('rotationX', 0) + 360,
+        duration: 35000,
+        loops: Infinity,
+        easing: am5.ease.linear,
+      });
+    };
+    startAutoRotation();
+
+    // Pause on user drag, resume smooth rotation on drag release
+    chart.chartContainer.events.on('pointerdown', () => {
+      if (rotationAnimation) rotationAnimation.stop();
+    });
+    chart.chartContainer.events.on('globalpointerup', () => {
+      startAutoRotation();
+    });
 
     // Map Polygon Series (Countries)
     const polygonSeries = chart.series.push(

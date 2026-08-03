@@ -20,7 +20,7 @@ export const TeamManager: React.FC = () => {
     id: null,
     name: user?.name || '',
     slug: user?.name ? user.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '',
-    role: 'Associate Researcher',
+    role: 'Research Associate',
     team: 'Atmospheric & Attribution Science',
     photo: '',
     bio: '',
@@ -191,7 +191,7 @@ export const TeamManager: React.FC = () => {
       id: null,
       name: '',
       slug: '',
-      role: 'Associate Researcher',
+      role: 'Research Associate',
       team: 'Atmospheric & Attribution Science',
       photo: '',
       bio: '',
@@ -290,18 +290,23 @@ export const TeamManager: React.FC = () => {
             />
           </div>
 
-          {/* 2. Position / Post Designation */}
+          {/* 2. Position / Post Designation (Dropdown with fixed allowed posts) */}
           <div>
             <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Post / Designation *</label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Lead Climate Scientist, Associate Researcher, Assistant Researcher..."
-              value={formData.role}
+            <select
+              value={formData.role || 'Research Associate'}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="input-field"
               style={{ paddingLeft: '1rem' }}
-            />
+            >
+              <option value="Chief Executive Officer">Chief Executive Officer</option>
+              <option value="Chief Operating Officer">Chief Operating Officer</option>
+              <option value="Team Lead">Team Lead</option>
+              <option value="Co-Lead">Co-Lead</option>
+              <option value="Research Associate">Research Associate</option>
+              <option value="Research Assistant">Research Assistant</option>
+              <option value="Intern">Intern</option>
+            </select>
           </div>
 
           {/* 3. Division / Department */}
@@ -323,7 +328,7 @@ export const TeamManager: React.FC = () => {
 
           {/* 4. Years of Experience */}
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Years of Experience</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Years of Experience (Optional)</label>
             <input
               type="text"
               placeholder="e.g. 15+ Years"
@@ -336,10 +341,10 @@ export const TeamManager: React.FC = () => {
 
           {/* 5. Qualification / Academic Credentials */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Ph.D. Degrees</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Ph.D. Degrees (Optional)</label>
             <input
               type="text"
-              placeholder="e.g. Ph.D. Atmospheric Physics & Attribution Science (QAU & Oxford)"
+              placeholder="e.g. Ph.D. Atmospheric Physics & Attribution Science"
               value={formData.qualification}
               onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
               className="input-field"
@@ -349,10 +354,10 @@ export const TeamManager: React.FC = () => {
 
           {/* 6. Specialization / Expertise */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Specialization &amp; Research Focus Domain</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Specialization &amp; Research Focus Domain (Optional)</label>
             <input
               type="text"
-              placeholder="e.g. Extreme Event Attribution, Convective Monsoon Modeling & IPCC Assessment"
+              placeholder="e.g. Extreme Event Attribution, Convective Monsoon Modeling & IPCC Assessment (or leave empty)"
               value={formData.specialization}
               onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
               className="input-field"
@@ -364,7 +369,7 @@ export const TeamManager: React.FC = () => {
           <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1.25rem', borderRadius: '1rem', border: '1px solid #E2E8F4' }}>
             <label style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0B1E3D', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Upload size={18} color="#00C8C8" />
-              <span>Profile Photo Settings (Device Upload or Web Link)</span>
+              <span>Profile Photo Settings (Device Upload or Web Link - Optional)</span>
             </label>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1.25rem', alignItems: 'center' }}>
@@ -387,8 +392,8 @@ export const TeamManager: React.FC = () => {
 
                 {/* Web Link Input */}
                 <input
-                  type="url"
-                  placeholder="Or paste web image URL (https://...)"
+                  type="text"
+                  placeholder="Or paste web image URL (https://...) - Optional"
                   value={formData.photo}
                   onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
                   className="input-field"
@@ -400,9 +405,9 @@ export const TeamManager: React.FC = () => {
 
           {/* 8. Contact Info: Email & Phone */}
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Official Email Address</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Official Email Address (Optional)</label>
             <input
-              type="email"
+              type="text"
               placeholder="e.g. rashid@wenclims.org"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -412,7 +417,7 @@ export const TeamManager: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Phone / Contact Number</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Phone / Contact Number (Optional)</label>
             <input
               type="text"
               placeholder="e.g. +92 51 9260100"
@@ -425,7 +430,7 @@ export const TeamManager: React.FC = () => {
 
           {/* 9. Office Address */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Office Address / Location</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Office Address / Location (Optional)</label>
             <input
               type="text"
               placeholder="e.g. WenClims Research HQ, Sector H-8/4, Islamabad, Pakistan"
@@ -436,11 +441,11 @@ export const TeamManager: React.FC = () => {
             />
           </div>
 
-          {/* 10. Social & Academic URLs */}
+          {/* 10. Social & Academic URLs (All Optional) */}
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Google Scholar Profile URL</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Google Scholar Profile URL (Optional)</label>
             <input
-              type="url"
+              type="text"
               placeholder="https://scholar.google.com/..."
               value={formData.google_scholar}
               onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })}
@@ -450,9 +455,9 @@ export const TeamManager: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>ORCID ID Link</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>ORCID ID Link (Optional)</label>
             <input
-              type="url"
+              type="text"
               placeholder="https://orcid.org/0000-..."
               value={formData.orcid}
               onChange={(e) => setFormData({ ...formData, orcid: e.target.value })}
@@ -462,9 +467,9 @@ export const TeamManager: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn Profile URL</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn Profile URL (Optional)</label>
             <input
-              type="url"
+              type="text"
               placeholder="https://linkedin.com/in/..."
               value={formData.linkedin}
               onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
@@ -474,9 +479,9 @@ export const TeamManager: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>X (Twitter) Profile URL</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>X (Twitter) Profile URL (Optional)</label>
             <input
-              type="url"
+              type="text"
               placeholder="https://x.com/..."
               value={formData.x_twitter}
               onChange={(e) => setFormData({ ...formData, x_twitter: e.target.value })}
@@ -485,12 +490,12 @@ export const TeamManager: React.FC = () => {
             />
           </div>
 
-          {/* 11. Scientific Biography (Bio) */}
+          {/* 11. Scientific Biography (Bio) (Optional) */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Full Bio Text)</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Full Bio Text) (Optional)</label>
             <textarea
               rows={4}
-              placeholder="Write your academic background, research focus, IPCC contributions, and career summary..."
+              placeholder="Write your academic background, research focus, IPCC contributions, and career summary (or leave empty)..."
               value={formData.bio || ''}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               className="input-field"
@@ -498,12 +503,12 @@ export const TeamManager: React.FC = () => {
             />
           </div>
 
-          {/* 12. Key Research Publications */}
+          {/* 12. Key Research Publications (Optional) */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Key Research Papers / Publications List</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Key Research Papers / Publications List (Optional)</label>
             <textarea
               rows={3}
-              placeholder="List major published research papers and journal DOIs..."
+              placeholder="List major published research papers and journal DOIs (or leave empty)..."
               value={formData.publications || ''}
               onChange={(e) => setFormData({ ...formData, publications: e.target.value })}
               className="input-field"
