@@ -22,8 +22,6 @@ async function ensureTeamTableSchema() {
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     await ensureTeamTableSchema();
-    // Remove legacy dummy seed members if present
-    await query("DELETE FROM team_members WHERE slug IN ('mr-rashid', 'dr-rashid', 'dr-ayesha-malik', 'mehran', 'dr-sana-khan')");
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -76,8 +74,9 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     await ensureTeamTableSchema();
     const { id } = req.params;
 
-    // Non-super_admin users can only update their own profile record
-    if (req.user?.role !== 'super_admin') {
+    // Power users (super_admin and admin) can update any team member. Member role can only update their own personal bio.
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
       const existing = await query('SELECT name, social_links FROM team_members WHERE id = $1', [id]);
       if (existing.rows.length > 0) {
         const row = existing.rows[0];

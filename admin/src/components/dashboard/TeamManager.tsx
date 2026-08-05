@@ -282,7 +282,7 @@ export const TeamManager: React.FC = () => {
             <input
               type="text"
               required
-              placeholder="e.g. Dr. Rashid"
+              placeholder="e.g. Ali"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="input-field"

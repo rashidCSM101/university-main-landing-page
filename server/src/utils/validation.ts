@@ -24,33 +24,33 @@ export const mediaItemSchema = z.object({
 
 // Publication Validation Schema
 export const publicationSchema = z.object({
-  type: z.enum(['peer-reviewed', 'report']),
+  type: z.string().default('peer-reviewed'),
   title: z.string().min(3, 'Title is required'),
-  author_name: z.string().optional(),
+  author_name: z.string().optional().nullable(),
   co_authors: z.array(z.string()).optional(),
-  outlet_name: z.string().optional(),
-  external_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  published_date: z.string().optional(),
-  abstract: z.string().optional(),
-  thumbnail: z.string().optional().or(z.literal('')),
+  outlet_name: z.string().optional().nullable(),
+  external_url: z.string().optional().nullable().or(z.literal('')),
+  published_date: z.string().optional().nullable().or(z.literal('')),
+  abstract: z.string().optional().nullable(),
+  thumbnail: z.string().optional().nullable().or(z.literal('')),
   tags: z.array(z.string()).optional(),
-  status: z.enum(['draft', 'published']).default('published'),
+  status: z.string().default('published'),
 });
 
 // Project Validation Schema
 export const projectSchema = z.object({
   title: z.string().min(3, 'Project title is required'),
   slug: z.string().min(3, 'Project slug is required'),
-  funder_name: z.string().optional(),
-  funder_code: z.string().optional(),
-  region: z.string().optional(),
+  funder_name: z.string().optional().nullable(),
+  funder_code: z.string().optional().nullable(),
+  region: z.string().optional().nullable(),
   objectives: z.array(z.string()).optional(),
   activities: z.array(z.string()).optional(),
   services: z.array(z.string()).optional(),
   images: z.array(z.string()).optional(),
-  status: z.enum(['active', 'completed', 'upcoming']).default('active'),
-  start_date: z.string().optional(),
-  end_date: z.string().optional(),
+  status: z.string().default('active'),
+  start_date: z.string().optional().nullable().or(z.literal('')),
+  end_date: z.string().optional().nullable().or(z.literal('')),
 });
 
 // Team Member Validation Schema
@@ -70,10 +70,10 @@ export const teamMemberSchema = z.object({
 // Tool Validation Schema
 export const toolSchema = z.object({
   title: z.string().min(2, 'Title is required'),
-  sector: z.enum(['Climate', 'Meteo', 'Energy', 'Water']),
-  description: z.string().optional(),
-  external_url: z.string().url('Invalid external URL'),
-  thumbnail: z.string().optional().or(z.literal('')),
-  sort_order: z.number().int().optional(),
+  sector: z.string().min(1, 'Sector is required'),
+  description: z.string().optional().nullable(),
+  external_url: z.string().optional().nullable().or(z.literal('')),
+  thumbnail: z.string().optional().nullable().or(z.literal('')),
+  sort_order: z.number().int().optional().nullable(),
   is_active: z.boolean().default(true),
 });

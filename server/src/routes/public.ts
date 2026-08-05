@@ -99,7 +99,6 @@ router.get('/team', async (req: Request, res: Response) => {
     const { home } = req.query;
     await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
     await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
-    await query("DELETE FROM team_members WHERE slug IN ('mr-rashid', 'dr-rashid', 'dr-ayesha-malik', 'mehran', 'dr-sana-khan')");
 
     if (home === 'true') {
       const homeResult = await query(

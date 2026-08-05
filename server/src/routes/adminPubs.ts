@@ -6,8 +6,22 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
+async function ensurePubsTableSchema() {
+  try {
+    await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_type_check');
+    await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_status_check');
+    await query('ALTER TABLE publications ALTER COLUMN thumbnail TYPE TEXT');
+    await query('ALTER TABLE publications ALTER COLUMN external_url TYPE TEXT');
+    await query('ALTER TABLE publications ALTER COLUMN outlet_name TYPE TEXT');
+    await query('ALTER TABLE publications ALTER COLUMN author_name TYPE TEXT');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensurePubsTableSchema();
     const result = await query('SELECT * FROM publications ORDER BY created_at DESC');
     return res.json(result.rows);
   } catch (error) {
@@ -35,7 +49,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.co_authors || [],
       item.outlet_name || null,
       item.external_url || null,
-      item.published_date || null,
+      (item.published_date && item.published_date.trim() !== '' ? item.published_date : null),
       item.abstract || null,
       item.thumbnail || null,
       item.tags || [],

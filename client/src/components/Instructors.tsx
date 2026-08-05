@@ -35,7 +35,7 @@ const Instructors = () => {
             name: item.name || 'Scientific Research Member',
             role: item.role || 'Climate Research Specialist',
             division: item.team || 'Atmospheric & Attribution Science',
-            image: item.image || item.photo_url || item.social_links?.image || null,
+            image: item.photo || item.image || item.photo_url || item.social_links?.photo || item.social_links?.image || null,
             experience: item.experience || 'Research Fellow',
             slug: item.slug || (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'team-member'),
           }));

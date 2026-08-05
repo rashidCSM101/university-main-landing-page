@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   name          VARCHAR(255) NOT NULL,
   email         VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role          VARCHAR(50) NOT NULL CHECK (role IN ('super_admin', 'editor')),
+  role          VARCHAR(50) NOT NULL,
   totp_secret   VARCHAR(255),
   is_active     BOOLEAN DEFAULT TRUE,
   last_login    TIMESTAMPTZ,

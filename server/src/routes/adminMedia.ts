@@ -148,12 +148,22 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
+async function ensureMediaTableSchema() {
+  try {
+    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_type_check');
+    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_status_check');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 /**
  * DELETE /api/v1/admin/media/:id
  * Delete media item / blog
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureMediaTableSchema();
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
       return res.status(403).json({ error: 'Permission denied. Members cannot delete posts. Only Admin or Super Admin can delete content.' });
@@ -161,6 +171,9 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
     const { id } = req.params;
     const existing = await query('SELECT * FROM media_items WHERE id = $1', [id]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ error: 'Media item not found.' });
+    }
 
     await query('DELETE FROM media_items WHERE id = $1', [id]);
     await logAudit(req.user, 'DELETE_MEDIA', 'media_items', id, req.ip || '127.0.0.1', { title: existing.rows[0].title });

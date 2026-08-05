@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, UserCheck, ShieldCheck, UserX, ShieldAlert } from 'lucide-react';
+import { Plus, UserCheck, ShieldCheck, UserX, ShieldAlert, Trash2, Edit2 } from 'lucide-react';
+import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
 export const UsersManager: React.FC = () => {
@@ -10,6 +11,9 @@ export const UsersManager: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const [formData, setFormData] = useState<any>({
     name: '',
     email: '',
@@ -23,11 +27,7 @@ export const UsersManager: React.FC = () => {
       const data = await api.getAdminUsers();
       setUsers(data);
     } catch {
-      setUsers([
-        { id: '1', name: 'Dr. Rashid', email: 'admin@wenclims.org', role: 'super_admin', is_active: true, created_at: new Date().toISOString() },
-        { id: '2', name: 'Mehran', email: 'mehran@wenclims.org', role: 'admin', is_active: true, created_at: new Date().toISOString() },
-        { id: '3', name: 'Dr. Ayesha Malik', email: 'ayesha@wenclims.org', role: 'member', is_active: true, created_at: new Date().toISOString() },
-      ]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -54,13 +54,12 @@ export const UsersManager: React.FC = () => {
     }
   };
 
-  const handleRoleToggle = async (id: string, currentRole: string) => {
+  const handleRoleChange = async (id: string, nextRole: string) => {
     if (!isSuperAdmin) {
       alert('Permission Denied: Only Super Admin can modify user roles.');
       return;
     }
 
-    const nextRole = currentRole === 'super_admin' ? 'admin' : currentRole === 'admin' ? 'member' : 'admin';
     try {
       await api.updateUserRole(id, nextRole);
       loadData();
@@ -75,6 +74,20 @@ export const UsersManager: React.FC = () => {
       loadData();
     } catch (err: any) {
       alert(err?.message || 'Failed to toggle status');
+    }
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!deleteTarget || !isSuperAdmin) return;
+    setIsDeleting(true);
+    try {
+      await api.deleteUser(deleteTarget.id);
+      setDeleteTarget(null);
+      loadData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to delete user account');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -105,7 +118,7 @@ export const UsersManager: React.FC = () => {
               <input
                 type="text"
                 required
-                placeholder="e.g. Dr. Ayesha Malik"
+                placeholder="e.g. Ali Haider"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="input-field"
@@ -188,9 +201,21 @@ export const UsersManager: React.FC = () => {
                   <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>{u.name}</td>
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{u.email}</td>
                   <td style={{ padding: '0.875rem 1rem' }}>
-                    <span className={`badge ${u.role === 'super_admin' ? 'badge-teal' : u.role === 'admin' ? 'badge-gold' : 'badge-navy'}`}>
-                      {u.role === 'super_admin' ? 'Super Admin' : u.role === 'admin' ? 'Executive Admin' : 'Member'}
-                    </span>
+                    {isSuperAdmin && u.id !== user?.id ? (
+                      <select
+                        value={u.role}
+                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                        style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.78rem', border: '1px solid #CBD5E1', background: '#F8FAFC', fontWeight: 600 }}
+                      >
+                        <option value="member">Member</option>
+                        <option value="admin">Executive Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                      </select>
+                    ) : (
+                      <span className={`badge ${u.role === 'super_admin' ? 'badge-teal' : u.role === 'admin' ? 'badge-gold' : 'badge-navy'}`}>
+                        {u.role === 'super_admin' ? 'Super Admin' : u.role === 'admin' ? 'Executive Admin' : 'Member'}
+                      </span>
+                    )}
                   </td>
                   <td style={{ padding: '0.875rem 1rem' }}>
                     <span className={`badge ${u.is_active ? 'badge-teal' : 'badge-gold'}`}>
@@ -198,22 +223,24 @@ export const UsersManager: React.FC = () => {
                     </span>
                   </td>
                   <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                    {isSuperAdmin && (
-                      <button
-                        onClick={() => handleRoleToggle(u.id, u.role)}
-                        className="btn-ghost"
-                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', marginRight: '0.4rem' }}
-                      >
-                        Change Role
-                      </button>
-                    )}
                     <button
                       onClick={() => handleStatusToggle(u.id)}
                       className="btn-ghost"
-                      style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: u.is_active ? '#dc2626' : '#16a34a' }}
+                      style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', marginRight: '0.4rem', color: u.is_active ? '#d97706' : '#16a34a' }}
                     >
                       {u.is_active ? 'Deactivate' : 'Activate'}
                     </button>
+
+                    {isSuperAdmin && u.id !== user?.id && (
+                      <button
+                        onClick={() => setDeleteTarget({ id: u.id, name: u.name })}
+                        className="btn-ghost"
+                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#dc2626' }}
+                        title="Delete User Account"
+                      >
+                        Delete User
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -221,6 +248,15 @@ export const UsersManager: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        title="Delete User Account"
+        itemTitle={deleteTarget?.name}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteUser}
+        loading={isDeleting}
+      />
     </div>
   );
 };

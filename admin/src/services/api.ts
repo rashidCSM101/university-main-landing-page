@@ -117,6 +117,8 @@ export const api = {
     apiFetch<any>(`/admin/users/${id}/role`, { method: 'PUT', body: JSON.stringify({ role }) }),
   toggleUserStatus: (id: string) =>
     apiFetch<any>(`/admin/users/${id}/toggle-status`, { method: 'PUT' }),
+  deleteUser: (id: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' }),
 
   // Audit Logs (Super Admin Only)
   getAuditLogs: (params?: { action?: string }) => {

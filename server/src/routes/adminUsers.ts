@@ -16,12 +16,22 @@ const createUserSchema = z.object({
   role: z.enum(['super_admin', 'admin', 'member', 'editor']),
 });
 
+async function ensureUsersTableSchema() {
+  try {
+    await query('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+    await query('ALTER TABLE users ALTER COLUMN role TYPE VARCHAR(50)');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 /**
  * GET /api/v1/admin/users
  * List all registered platform users
  */
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureUsersTableSchema();
     if (req.user?.role !== 'super_admin' && req.user?.role !== 'admin') {
       return res.status(403).json({ error: 'Permission denied. Only Super Admin or Admin can access user management.' });
     }
@@ -113,6 +123,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.put('/:id/role', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureUsersTableSchema();
     if (req.user?.role !== 'super_admin') {
       return res.status(403).json({ error: 'Permission denied. Only Super Admin can modify user roles.' });
     }
@@ -153,7 +164,7 @@ router.put('/:id/toggle-status', async (req: AuthenticatedRequest, res: Response
 
     const { id } = req.params;
     const existing = await query('SELECT is_active, email FROM users WHERE id = $1', [id]);
-    if (existing.rows.length > 0) {
+    if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'User not found.' });
     }
 
@@ -168,6 +179,51 @@ router.put('/:id/toggle-status', async (req: AuthenticatedRequest, res: Response
     return res.json(result.rows[0]);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to toggle user status.' });
+  }
+});
+
+/**
+ * DELETE /api/v1/admin/users/:id
+ * Delete user account and associated team member record (Super Admin Only)
+ */
+router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Permission denied. Only Super Admin can delete user accounts.' });
+    }
+
+    const { id } = req.params;
+
+    // Prevent Super Admin from deleting their own active logged-in account!
+    if (id === req.user.id) {
+      return res.status(400).json({ error: 'You cannot delete your own active Super Admin account.' });
+    }
+
+    const existing = await query('SELECT name, email FROM users WHERE id = $1', [id]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ error: 'User account not found.' });
+    }
+
+    const targetUser = existing.rows[0];
+
+    // Delete user from users table
+    await query('DELETE FROM users WHERE id = $1', [id]);
+
+    // Also delete matching record in team_members table
+    try {
+      await query(
+        "DELETE FROM team_members WHERE LOWER(name) = LOWER($1) OR social_links->>'email' = $2",
+        [targetUser.name, targetUser.email]
+      );
+    } catch (err) {
+      console.warn('Matching team member deletion warning:', err);
+    }
+
+    await logAudit(req.user, 'DELETE_USER', 'users', id, req.ip || '127.0.0.1', { name: targetUser.name, email: targetUser.email });
+
+    return res.json({ message: 'User account deleted successfully.' });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to delete user account: ' + (error?.message || 'Server error') });
   }
 });
 

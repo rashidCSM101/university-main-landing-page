@@ -6,8 +6,17 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
+async function ensureProjectsTableSchema() {
+  try {
+    await query('ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_status_check');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureProjectsTableSchema();
     const result = await query('SELECT * FROM projects ORDER BY created_at DESC');
     return res.json(result.rows);
   } catch (error) {
@@ -17,6 +26,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureProjectsTableSchema();
     const parseResult = projectSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -39,8 +49,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.services || [],
       item.images || [],
       item.status,
-      item.start_date || null,
-      item.end_date || null,
+      (item.start_date && item.start_date.trim() !== '' ? item.start_date : null),
+      (item.end_date && item.end_date.trim() !== '' ? item.end_date : null),
     ];
 
     const result = await query(text, params);

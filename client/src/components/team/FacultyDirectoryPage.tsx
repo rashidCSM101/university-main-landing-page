@@ -74,7 +74,7 @@ export const FacultyDirectoryPage = () => {
           role: item.role || 'Climate Research Specialist',
           team: item.team || 'Atmospheric & Attribution Science',
           bio: item.bio || item.social_links?.bio || 'Scientific researcher at Weather and Climate Services (WenClims), contributing to climate modeling and attribution research.',
-          image: item.image || item.photo_url || item.social_links?.image || null,
+          image: item.photo || item.image || item.photo_url || item.social_links?.photo || item.social_links?.image || null,
           experience: item.experience || 'Research Fellow',
           social_links: item.social_links || {},
         }));
