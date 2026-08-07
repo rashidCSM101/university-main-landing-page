@@ -17,7 +17,7 @@ const divisions = [
     name: 'Atmospheric & Attribution Science',
     projects: '12 Active Models',
     desc: 'High-resolution WRF atmospheric simulations and ERA5 extreme event attribution.',
-    color: 'bg-[#008B8B]',
+    color: 'bg-[#48b302]',
   },
   {
     icon: ShieldAlert,
@@ -81,12 +81,12 @@ const Departments = () => {
       <div className="container-custom">
         {/* Section Header */}
         <div className="departments-header text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#008B8B]/10 text-[#008B8B] text-xs font-bold uppercase tracking-wider border border-[#008B8B]/30">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#48b302]/10 text-[#48b302] text-xs font-bold uppercase tracking-wider border border-[#48b302]/30">
             <Globe2 className="w-4 h-4" />
             <span>Multidisciplinary Research Structure</span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900">
-            Core Research <span className="text-[#008B8B]">Divisions</span>
+            Core Research <span className="text-[#48b302]">Divisions</span>
           </h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
             Four specialized scientific laboratories advancing extreme weather attribution, water security, and clean energy transition across South Asia.
@@ -100,16 +100,16 @@ const Departments = () => {
             return (
               <div
                 key={idx}
-                className="department-card group bg-gray-50 border border-gray-200/80 rounded-3xl p-6 hover:shadow-xl hover:bg-white hover:border-[#008B8B] transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
+                className="department-card group bg-gray-50 border border-gray-200/80 rounded-3xl p-6 hover:shadow-xl hover:bg-white hover:border-[#48b302] transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
               >
                 <div>
                   <div className={`w-12 h-12 rounded-2xl ${div.color} text-white flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-2 group-hover:text-[#008B8B] transition-colors leading-snug">
+                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-2 group-hover:text-[#48b302] transition-colors leading-snug">
                     {div.name}
                   </h3>
-                  <div className="text-xs font-bold text-[#008B8B] mb-3">
+                  <div className="text-xs font-bold text-[#48b302] mb-3">
                     {div.projects}
                   </div>
                   <p className="text-gray-500 text-xs leading-relaxed">

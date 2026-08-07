@@ -336,12 +336,12 @@ const Tools = () => {
           {/* Header & Sector Tabs */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#008B8B] mb-2">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#48b302] mb-2">
                 <Layers className="w-4 h-4" />
                 <span>Dynamic Sector Catalog</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900">
-                Explore Available <span className="text-[#008B8B]">Platforms</span>
+                Explore Available <span className="text-[#48b302]">Platforms</span>
               </h2>
             </div>
 
@@ -356,7 +356,7 @@ const Tools = () => {
                     onClick={() => setSelectedSector(sec)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                       isActive
-                        ? 'bg-[#008B8B] text-white shadow-md'
+                        ? 'bg-[#48b302] text-white shadow-md'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
@@ -381,7 +381,7 @@ const Tools = () => {
             </div>
             <button
               onClick={fetchToolsData}
-              className="inline-flex items-center gap-1.5 text-[#008B8B] hover:text-teal-700 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 text-[#48b302] hover:text-teal-700 font-semibold transition-colors"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh Data</span>
@@ -435,7 +435,7 @@ const Tools = () => {
 
                       {/* Content */}
                       <div className="p-6">
-                        <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#008B8B] transition-colors leading-snug">
+                        <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#48b302] transition-colors leading-snug">
                           {tool.title}
                         </h3>
                         <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
@@ -450,7 +450,7 @@ const Tools = () => {
                         href={tool.external_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-2 bg-teal-50 hover:bg-[#008B8B] text-[#008B8B] hover:text-white font-bold py-3 px-5 rounded-2xl transition-all duration-300 border border-teal-200 group-hover:border-[#008B8B] text-sm shadow-sm"
+                        className="w-full inline-flex items-center justify-center gap-2 bg-teal-50 hover:bg-[#48b302] text-[#48b302] hover:text-white font-bold py-3 px-5 rounded-2xl transition-all duration-300 border border-teal-200 group-hover:border-[#48b302] text-sm shadow-sm"
                       >
                         <span>Launch Platform</span>
                         <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

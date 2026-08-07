@@ -316,7 +316,7 @@ const TeamMemberBio = () => {
             <div className="lg:col-span-8 space-y-12">
               {/* Full Bio */}
               <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-4">
-                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] uppercase tracking-wider">
                   <GraduationCap className="w-4 h-4" />
                   <span>Scientific Biography</span>
                 </div>
@@ -339,7 +339,7 @@ const TeamMemberBio = () => {
               {/* Research Publications */}
               {member.publications && member.publications.length > 0 && (
                 <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-6">
-                  <div className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] uppercase tracking-wider">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] uppercase tracking-wider">
                     <FileText className="w-4 h-4" />
                     <span>Peer-Reviewed Literature</span>
                   </div>
@@ -349,7 +349,7 @@ const TeamMemberBio = () => {
                       <div key={i} className="p-5 rounded-2xl bg-gray-50 border border-gray-100 space-y-2">
                         <div className="flex items-center justify-between text-xs text-gray-500 font-mono">
                           <span>{pub.journal}</span>
-                          <span className="font-bold text-[#008B8B]">{pub.year}</span>
+                          <span className="font-bold text-[#48b302]">{pub.year}</span>
                         </div>
                         <h4 className="font-bold text-gray-900 text-sm leading-snug">{pub.title}</h4>
                         {pub.doi && <p className="text-xs text-gray-400 font-mono">DOI: {pub.doi}</p>}
@@ -414,7 +414,7 @@ const TeamMemberBio = () => {
                 <div className="pt-2">
                   <a
                     href="/contact"
-                    className="w-full flex items-center justify-center gap-2 py-3 px-5 bg-[#008B8B] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-5 bg-[#48b302] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md"
                   >
                     <span>Request Scientific Advisory</span>
                     <ArrowRight className="w-4 h-4" />

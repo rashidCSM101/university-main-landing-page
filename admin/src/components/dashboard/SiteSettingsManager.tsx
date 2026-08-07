@@ -48,7 +48,7 @@ export const SiteSettingsManager: React.FC = () => {
       </div>
 
       {saved && (
-        <div style={{ background: 'rgba(0,200,200,0.12)', border: '1px solid #00C8C8', color: '#008B8B', padding: '0.875rem 1.25rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+        <div style={{ background: 'rgba(0,200,200,0.12)', border: '1px solid #00C8C8', color: '#48b302', padding: '0.875rem 1.25rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
           <CheckCircle2 size={18} /> Settings successfully updated and applied!
         </div>
       )}

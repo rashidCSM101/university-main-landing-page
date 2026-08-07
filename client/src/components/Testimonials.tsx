@@ -79,7 +79,7 @@ const Testimonials = () => {
 
             <h2 className="section-title mb-6">
               Impact Endorsements &amp;{' '}
-              <span className="text-[#008B8B]">Partner Feedback</span>
+              <span className="text-[#48b302]">Partner Feedback</span>
             </h2>
 
             {/* Testimonial Card */}

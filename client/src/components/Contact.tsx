@@ -9,7 +9,6 @@ import {
   Phone,
   Mail,
   Clock,
-  Sparkles,
   Send,
   MessageSquare,
   User,
@@ -85,13 +84,13 @@ const Contact = () => {
         '88, Lane 2, Lake View Lanes (LVL)',
         'Korang Road, Bani Gala, Islamabad',
       ],
-      gradient: 'from-[#008B8B] to-teal-900',
+      gradient: 'from-[#48b302] to-teal-900',
     },
     {
       icon: Phone,
       title: 'Phone',
       lines: ['+92-333-5672483', '+92 51 9260100'],
-      gradient: 'from-[#00C8C8] to-[#008B8B]',
+      gradient: 'from-[#00C8C8] to-[#48b302]',
     },
     {
       icon: Mail,
@@ -194,13 +193,13 @@ const Contact = () => {
               <div className="grid lg:grid-cols-5 gap-10 items-start">
                 {/* Left Side: Contact Form */}
                 <div className="lg:col-span-3 bg-white rounded-3xl p-8 md:p-10 shadow-lg border border-gray-200/80">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#008B8B]/10 text-[#008B8B] text-xs font-bold uppercase tracking-wider mb-4 border border-[#008B8B]/30">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#48b302]/10 text-[#48b302] text-xs font-bold uppercase tracking-wider mb-4 border border-[#48b302]/30">
                     <MessageSquare className="w-4 h-4" />
                     <span>Send Message</span>
                   </div>
 
                   <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 mb-3">
-                    Write to Our <span className="text-[#008B8B]">Scientific Team</span>
+                    Write to Our <span className="text-[#48b302]">Scientific Team</span>
                   </h2>
                   <p className="text-gray-600 text-sm leading-relaxed mb-8">
                     Submit your data inquiry, research proposal, or partnership query below. Our team reviews all messages promptly.
@@ -219,7 +218,7 @@ const Contact = () => {
                             required
                             value={contactForm.name}
                             onChange={handleContactChange}
-                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008B8B]/30 focus:border-[#008B8B] transition-all font-medium"
+                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#48b302]/30 focus:border-[#48b302] transition-all font-medium"
                           />
                         </div>
                       </div>
@@ -235,7 +234,7 @@ const Contact = () => {
                             required
                             value={contactForm.email}
                             onChange={handleContactChange}
-                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008B8B]/30 focus:border-[#008B8B] transition-all font-medium"
+                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#48b302]/30 focus:border-[#48b302] transition-all font-medium"
                           />
                         </div>
                       </div>
@@ -252,7 +251,7 @@ const Contact = () => {
                             placeholder="+92 300 1234567"
                             value={contactForm.phone}
                             onChange={handleContactChange}
-                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008B8B]/30 focus:border-[#008B8B] transition-all font-medium"
+                            className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#48b302]/30 focus:border-[#48b302] transition-all font-medium"
                           />
                         </div>
                       </div>
@@ -264,7 +263,7 @@ const Contact = () => {
                           required
                           value={contactForm.subject}
                           onChange={handleContactChange}
-                          className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#008B8B]/30 focus:border-[#008B8B] transition-all font-medium appearance-none"
+                          className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#48b302]/30 focus:border-[#48b302] transition-all font-medium appearance-none"
                         >
                           <option value="">Select subject category</option>
                           <option value="climate-data">Climate &amp; Reanalysis Data Request</option>
@@ -286,14 +285,14 @@ const Contact = () => {
                         required
                         value={contactForm.message}
                         onChange={handleContactChange}
-                        className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008B8B]/30 focus:border-[#008B8B] transition-all resize-none font-medium"
+                        className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#48b302]/30 focus:border-[#48b302] transition-all resize-none font-medium"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={formStatus === 'sending'}
-                      className={`w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#008B8B] hover:bg-[#007474] text-white font-bold text-sm flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 ${
+                      className={`w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#48b302] hover:bg-[#007474] text-white font-bold text-sm flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5 ${
                         formStatus === 'sending' ? 'opacity-75 cursor-wait' : ''
                       }`}
                     >
@@ -358,7 +357,7 @@ const Contact = () => {
                   {/* Social Channels */}
                   <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200/80">
                     <h3 className="font-heading font-bold text-gray-900 mb-2 flex items-center gap-2">
-                      <Globe2 className="w-4 h-4 text-[#008B8B]" />
+                      <Globe2 className="w-4 h-4 text-[#48b302]" />
                       <span>Official Network</span>
                     </h3>
                     <p className="text-xs text-gray-600 mb-5 leading-relaxed">

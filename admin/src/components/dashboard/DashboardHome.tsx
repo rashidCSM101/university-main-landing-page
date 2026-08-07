@@ -215,11 +215,11 @@ export const DashboardHome: React.FC = () => {
       change: '+12% this month',
       isUp: true,
       icon: FileText,
-      iconBg: 'linear-gradient(135deg, #00C8C8 0%, #008B8B 100%)',
+      iconBg: 'linear-gradient(135deg, #00C8C8 0%, #48b302 100%)',
       iconColor: '#FFFFFF',
       accentColor: '#00C8C8',
       badgeBg: 'rgba(0,200,200,0.12)',
-      badgeColor: '#008B8B',
+      badgeColor: '#48b302',
       link: `${OBFUSCATED_ADMIN_PATH}/media`,
     },
     {
@@ -517,7 +517,7 @@ export const DashboardHome: React.FC = () => {
                     padding: '0.2rem 0.5rem',
                     borderRadius: '999px',
                     background: act.status === 'published' ? 'rgba(0,200,200,0.12)' : 'rgba(232,197,71,0.2)',
-                    color: act.status === 'published' ? '#008B8B' : '#B58D00',
+                    color: act.status === 'published' ? '#48b302' : '#B58D00',
                     flexShrink: 0,
                   }}
                 >

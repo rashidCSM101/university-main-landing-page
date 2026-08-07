@@ -37,7 +37,7 @@ export const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Vision', href: '/vision' },
+    { name: 'Services', href: '/vision' },
     { name: 'Tools', href: '/tools' },
     { name: 'Projects', href: '/projects' },
     {
@@ -81,7 +81,7 @@ export const Navbar = () => {
             <div className="flex flex-col">
               <span
                 className={`font-heading text-lg font-bold transition-colors leading-tight ${
-                  isScrolled ? 'text-gray-900 group-hover:text-[#008B8B]' : 'text-white group-hover:text-[#00C8C8]'
+                  isScrolled ? 'text-gray-900 group-hover:text-[#48b302]' : 'text-white group-hover:text-[#00C8C8]'
                 }`}
               >
                 WenClims
@@ -108,7 +108,7 @@ export const Navbar = () => {
                   to={link.href}
                   className={`flex items-center space-x-1 text-xs md:text-sm font-semibold transition-colors py-2 ${
                     isScrolled
-                      ? 'text-gray-700 hover:text-[#008B8B]'
+                      ? 'text-gray-700 hover:text-[#48b302]'
                       : 'text-gray-100 hover:text-[#00C8C8]'
                   }`}
                 >
@@ -116,7 +116,7 @@ export const Navbar = () => {
                   {link.hasDropdown && (
                     <ChevronDown
                       className={`w-3.5 h-3.5 transition-transform group-hover:rotate-180 ${
-                        isScrolled ? 'text-gray-400 group-hover:text-[#008B8B]' : 'text-gray-300 group-hover:text-[#00C8C8]'
+                        isScrolled ? 'text-gray-400 group-hover:text-[#48b302]' : 'text-gray-300 group-hover:text-[#00C8C8]'
                       }`}
                     />
                   )}
@@ -140,7 +140,7 @@ export const Navbar = () => {
                         to={item.href}
                         className={`block px-4 py-2.5 text-xs font-semibold transition-colors ${
                           isScrolled
-                            ? 'text-gray-600 hover:text-[#008B8B] hover:bg-gray-50'
+                            ? 'text-gray-600 hover:text-[#48b302] hover:bg-gray-50'
                             : 'text-gray-300 hover:text-[#00C8C8] hover:bg-gray-800/80'
                         }`}
                       >
@@ -158,7 +158,7 @@ export const Navbar = () => {
               to="/contact"
               className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-md ${
                 isScrolled
-                  ? 'bg-[#008B8B] text-white hover:bg-teal-700'
+                  ? 'bg-[#48b302] text-white hover:bg-teal-700'
                   : 'bg-[#00C8C8] text-gray-950 hover:bg-teal-400 shadow-teal-900/30'
               }`}
             >

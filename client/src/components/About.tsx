@@ -50,7 +50,7 @@ const values = [
     icon: Heart,
     title: 'Our Values',
     description: 'We uphold scientific integrity, open-access research, and climate resilience across South Asia, providing independent data to safeguard vulnerable communities.',
-    gradient: 'from-[#008B8B] to-teal-600',
+    gradient: 'from-[#48b302] to-teal-600',
     bg: 'bg-teal-50',
   },
 ];

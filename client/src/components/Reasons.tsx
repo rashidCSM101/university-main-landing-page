@@ -25,7 +25,7 @@ const climatePillars = [
     thumbnail: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=800&q=80',
     link: '/vision',
     badgeColor: 'bg-emerald-500/90 text-white',
-    accentColor: '#008B8B',
+    accentColor: '#48b302',
   },
   {
     number: '02',
@@ -55,7 +55,7 @@ const climatePillars = [
     thumbnail: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=800&q=80',
     link: '/projects',
     badgeColor: 'bg-teal-600/90 text-white',
-    accentColor: '#008B8B',
+    accentColor: '#48b302',
   },
 ];
 
@@ -103,20 +103,20 @@ const Reasons = () => {
   return (
     <section ref={sectionRef} className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
       {/* Background Decorative Blur Circles */}
-      <div className="absolute top-10 left-10 w-96 h-96 bg-[#008B8B]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-10 w-96 h-96 bg-[#48b302]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#00C8C8]/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="reasons-title text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 bg-[#008B8B]/10 border border-[#008B8B]/20 rounded-full px-4 py-1.5 mb-4">
-            <Sparkles className="w-4 h-4 text-[#008B8B]" />
-            <span className="text-[#008B8B] font-bold uppercase tracking-widest text-xs">
+          <div className="inline-flex items-center gap-2 bg-[#48b302]/10 border border-[#48b302]/20 rounded-full px-4 py-1.5 mb-4">
+            <Sparkles className="w-4 h-4 text-[#48b302]" />
+            <span className="text-[#48b302] font-bold uppercase tracking-widest text-xs">
               The WenClims Advantage
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-gray-900 mb-5 leading-tight">
-            Why Partner With <span className="text-[#008B8B]">WenClims</span>
+            Why Partner With <span className="text-[#48b302]">WenClims</span>
           </h2>
           <p className="text-base md:text-lg text-gray-600 leading-relaxed mx-auto max-w-2xl">
             South Asia&apos;s premier science-based platform delivering high-resolution weather telemetry, extreme event attribution, and actionable climate risk advisory.
@@ -164,12 +164,12 @@ const Reasons = () => {
                 <div className="p-6 sm:p-7">
                   {/* Location Scope */}
                   <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2 font-medium">
-                    <Globe2 className="w-3.5 h-3.5 text-[#008B8B]" />
+                    <Globe2 className="w-3.5 h-3.5 text-[#48b302]" />
                     <span>{pillar.location}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#008B8B] transition-colors leading-snug">
+                  <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#48b302] transition-colors leading-snug">
                     {pillar.title}
                   </h3>
 
@@ -185,7 +185,7 @@ const Reasons = () => {
                       <span className="text-[10px] text-gray-500">{pillar.stats1.label}</span>
                     </div>
                     <div className="flex flex-col border-l border-gray-200 pl-3">
-                      <span className="text-sm font-bold text-[#008B8B] font-heading">{pillar.stats2.value}</span>
+                      <span className="text-sm font-bold text-[#48b302] font-heading">{pillar.stats2.value}</span>
                       <span className="text-[10px] text-gray-500">{pillar.stats2.label}</span>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ const Reasons = () => {
               </div>
 
               {/* Card Footer Link */}
-              <div className="px-6 pb-6 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#008B8B] group-hover:text-teal-700">
+              <div className="px-6 pb-6 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#48b302] group-hover:text-teal-700">
                 <span>Explore Science Pillar</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </div>
@@ -208,7 +208,7 @@ const Reasons = () => {
           </p>
           <Link
             to="/projects"
-            className="inline-flex items-center justify-center px-6 py-3 bg-[#008B8B] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md group"
+            className="inline-flex items-center justify-center px-6 py-3 bg-[#48b302] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md group"
           >
             <span>Explore Funded Projects &amp; Advisory</span>
             <ArrowUpRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

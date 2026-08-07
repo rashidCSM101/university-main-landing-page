@@ -384,7 +384,7 @@ export const TeamManager: React.FC = () => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 {/* Device Upload Button */}
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #00C8C8, #008B8B)', color: '#0B1E3D', fontWeight: 800, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 2px 8px rgba(0,200,200,0.3)' }}>
+                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #00C8C8, #48b302)', color: '#0B1E3D', fontWeight: 800, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 2px 8px rgba(0,200,200,0.3)' }}>
                   <Upload size={16} />
                   <span>Choose Image from Computer / Device</span>
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
@@ -524,7 +524,7 @@ export const TeamManager: React.FC = () => {
                 id="show_on_home"
                 checked={formData.show_on_home || false}
                 onChange={(e) => setFormData({ ...formData, show_on_home: e.target.checked })}
-                style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#008B8B' }}
+                style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#48b302' }}
               />
               <div>
                 <label htmlFor="show_on_home" style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F766E', cursor: 'pointer', display: 'block' }}>

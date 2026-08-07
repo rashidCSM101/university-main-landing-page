@@ -12,6 +12,7 @@ import { EmergencyBanner } from './components/layout/EmergencyBanner';
 
 // ─── Home page sections (lazy-loaded below fold) ───────────────────────────
 const Introduction  = lazy(() => import('./components/Introduction'));
+const ServicesSlider = lazy(() => import('./components/home/ServicesSlider'));
 const Stats         = lazy(() => import('./components/Stats'));
 const Reasons       = lazy(() => import('./components/Reasons'));
 const Courses       = lazy(() => import('./components/Courses'));        // repurposed → Sectors / Tools preview
@@ -68,7 +69,7 @@ const PageSpinner = () => (
       <div className="absolute w-36 h-36 rounded-full border border-[#00C8C8]/30 animate-ping opacity-30" />
       
       {/* Spinning Teal Orbital Ring */}
-      <div className="absolute w-32 h-32 rounded-full border-2 border-t-[#00C8C8] border-r-transparent border-b-[#008B8B] border-l-transparent animate-spin duration-1000" />
+      <div className="absolute w-32 h-32 rounded-full border-2 border-t-[#00C8C8] border-r-transparent border-b-[#48b302] border-l-transparent animate-spin duration-1000" />
       
       {/* Reverse Outer Ring */}
       <div className="absolute w-24 h-24 rounded-full border border-teal-500/20 border-dashed animate-[spin_4s_linear_infinite_reverse]" />
@@ -222,6 +223,7 @@ const HomePage = () => (
   <main id="main-content">
     <Hero />
     <Introduction />
+    <ServicesSlider />
     <ClimateMapChart />
     <Stats />
     <Reasons />

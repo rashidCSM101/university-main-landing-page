@@ -102,7 +102,7 @@ export const SystemHealthManager: React.FC = () => {
               <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0B1E3D' }}>{health?.latency_ms ?? 4} ms</div>
             </div>
           </div>
-          <div style={{ fontSize: '0.8rem', color: '#008B8B', fontWeight: 600 }}>PostgreSQL Connection Active</div>
+          <div style={{ fontSize: '0.8rem', color: '#48b302', fontWeight: 600 }}>PostgreSQL Connection Active</div>
         </div>
 
         {/* Server Uptime */}

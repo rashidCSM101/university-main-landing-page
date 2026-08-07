@@ -294,12 +294,12 @@ export const ProjectsCatalogPage = () => {
           {/* Header Controls & Filter */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#008B8B] mb-1">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#48b302] mb-1">
                 <FolderKanban className="w-4 h-4" />
                 <span>Active &amp; Completed Research Portfolio</span>
               </div>
               <h2 className="text-3xl font-heading font-bold text-gray-900">
-                Grant <span className="text-[#008B8B]">Initiatives</span>
+                Grant <span className="text-[#48b302]">Initiatives</span>
               </h2>
             </div>
 
@@ -313,7 +313,7 @@ export const ProjectsCatalogPage = () => {
                     onClick={() => setSelectedStatus(st)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all ${
                       isActive
-                        ? 'bg-[#008B8B] text-white shadow-md'
+                        ? 'bg-[#48b302] text-white shadow-md'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
@@ -337,7 +337,7 @@ export const ProjectsCatalogPage = () => {
             </div>
             <button
               onClick={fetchProjectsData}
-              className="inline-flex items-center gap-1.5 text-[#008B8B] hover:text-teal-700 font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 text-[#48b302] hover:text-teal-700 font-semibold transition-colors"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh Catalog</span>
@@ -387,21 +387,21 @@ export const ProjectsCatalogPage = () => {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#008B8B] transition-colors leading-snug">
+                    <h3 className="text-xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#48b302] transition-colors leading-snug">
                       {project.title}
                     </h3>
 
                     {/* Funder & Region */}
                     <div className="space-y-1.5 mb-6 text-xs text-gray-600">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-[#008B8B] flex-shrink-0" />
+                        <Building2 className="w-4 h-4 text-[#48b302] flex-shrink-0" />
                         <span>
                           Funder: <strong className="text-gray-800">{project.funder_name}</strong>
                           {project.funder_code && ` (${project.funder_code})`}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Globe2 className="w-4 h-4 text-[#008B8B] flex-shrink-0" />
+                        <Globe2 className="w-4 h-4 text-[#48b302] flex-shrink-0" />
                         <span>
                           Region: <strong className="text-gray-800">{project.region}</strong>
                         </span>
@@ -416,7 +416,7 @@ export const ProjectsCatalogPage = () => {
                       <ul className="space-y-2">
                         {project.objectives.map((obj, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
-                            <CheckCircle2 className="w-4 h-4 text-[#008B8B] flex-shrink-0 mt-0.5" />
+                            <CheckCircle2 className="w-4 h-4 text-[#48b302] flex-shrink-0 mt-0.5" />
                             <span>{obj}</span>
                           </li>
                         ))}
@@ -431,7 +431,7 @@ export const ProjectsCatalogPage = () => {
                     </span>
                     <Link
                       to={`/projects/${project.id}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#008B8B] group-hover:text-teal-700 group-hover:translate-x-1 transition-all"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#48b302] group-hover:text-teal-700 group-hover:translate-x-1 transition-all"
                     >
                       <span>View Details &amp; Data</span>
                       <ArrowRight className="w-3.5 h-3.5" />

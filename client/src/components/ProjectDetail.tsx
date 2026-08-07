@@ -305,7 +305,7 @@ const ProjectDetail = () => {
             <div className="lg:col-span-8 space-y-12">
               {/* Executive Overview */}
               <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-4">
-                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] uppercase tracking-wider">
                   <FileText className="w-4 h-4" />
                   <span>Executive Overview</span>
                 </div>
@@ -325,7 +325,7 @@ const ProjectDetail = () => {
 
               {/* Research Objectives */}
               <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-6">
-                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] uppercase tracking-wider">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Core Research Objectives</span>
                 </div>
@@ -333,7 +333,7 @@ const ProjectDetail = () => {
                 <div className="space-y-4">
                   {project.objectives.map((obj, i) => (
                     <div key={i} className="flex items-start gap-3.5 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                      <div className="w-7 h-7 rounded-xl bg-[#008B8B]/10 text-[#008B8B] flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                      <div className="w-7 h-7 rounded-xl bg-[#48b302]/10 text-[#48b302] flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
                         0{i + 1}
                       </div>
                       <p className="text-gray-700 text-sm font-medium leading-relaxed">{obj}</p>
@@ -371,7 +371,7 @@ const ProjectDetail = () => {
                     Lead Research Institution
                   </span>
                   <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
-                    <Building2 className="w-4 h-4 text-[#008B8B]" />
+                    <Building2 className="w-4 h-4 text-[#48b302]" />
                     <span>{project.leadInstitution}</span>
                   </div>
                 </div>
@@ -399,7 +399,7 @@ const ProjectDetail = () => {
                 <div className="space-y-3 pt-2">
                   <a
                     href="/contact"
-                    className="w-full flex items-center justify-center gap-2 py-3 px-5 bg-[#008B8B] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md"
+                    className="w-full flex items-center justify-center gap-2 py-3 px-5 bg-[#48b302] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-sm shadow-md"
                   >
                     <span>Request Collaboration</span>
                     <ArrowRight className="w-4 h-4" />

@@ -304,7 +304,7 @@ export const MediaHubPage = () => {
                     onClick={() => setSelectedType(t.key)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                       isActive
-                        ? 'bg-[#008B8B] text-white shadow-md'
+                        ? 'bg-[#48b302] text-white shadow-md'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
@@ -323,7 +323,7 @@ export const MediaHubPage = () => {
                 placeholder="Search title, keyword, tag..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#008B8B] focus:bg-white transition-all"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#48b302] focus:bg-white transition-all"
               />
             </div>
           </div>
@@ -341,7 +341,7 @@ export const MediaHubPage = () => {
                   setSelectedType('all');
                   setSearch('');
                 }}
-                className="px-4 py-2 bg-[#008B8B] text-white font-bold text-xs rounded-xl hover:bg-[#007373] transition-all shadow-md"
+                className="px-4 py-2 bg-[#48b302] text-white font-bold text-xs rounded-xl hover:bg-[#007373] transition-all shadow-md"
               >
                 Reset Filters
               </button>
@@ -351,7 +351,7 @@ export const MediaHubPage = () => {
               {filteredMedia.map((m) => (
                 <div
                   key={m.id}
-                  className="media-card group bg-white border border-gray-200/80 hover:border-[#008B8B]/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                  className="media-card group bg-white border border-gray-200/80 hover:border-[#48b302]/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                 >
                   <div>
                     {/* Card Thumbnail Container */}
@@ -364,7 +364,7 @@ export const MediaHubPage = () => {
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-gray-100 to-teal-50 flex items-center justify-center">
-                          <Sparkles className="w-10 h-10 text-[#008B8B]/40" />
+                          <Sparkles className="w-10 h-10 text-[#48b302]/40" />
                         </div>
                       )}
 
@@ -386,7 +386,7 @@ export const MediaHubPage = () => {
                     {/* Card Body */}
                     <div className="p-6 space-y-3">
                       <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
-                        <Calendar className="w-3.5 h-3.5 text-[#008B8B]" />
+                        <Calendar className="w-3.5 h-3.5 text-[#48b302]" />
                         <span>{m.published_at ? new Date(m.published_at).toLocaleDateString() : '2025'}</span>
                         {m.author_name && (
                           <>
@@ -396,7 +396,7 @@ export const MediaHubPage = () => {
                         )}
                       </div>
 
-                      <h3 className="text-lg font-heading font-bold text-gray-900 group-hover:text-[#008B8B] transition-colors leading-snug line-clamp-2">
+                      <h3 className="text-lg font-heading font-bold text-gray-900 group-hover:text-[#48b302] transition-colors leading-snug line-clamp-2">
                         {m.title}
                       </h3>
 
@@ -413,7 +413,7 @@ export const MediaHubPage = () => {
                     {m.embed_url ? (
                       <button
                         onClick={() => setActiveItem(m)}
-                        className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] hover:text-[#006666] transition-colors"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] hover:text-[#006666] transition-colors"
                       >
                         <Play className="w-3.5 h-3.5" />
                         <span>Watch &amp; Read</span>
@@ -421,7 +421,7 @@ export const MediaHubPage = () => {
                     ) : (
                       <Link
                         to={`/media/blogs/${m.slug || m.id}`}
-                        className="inline-flex items-center gap-2 text-xs font-bold text-[#008B8B] hover:text-[#006666] transition-colors"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-[#48b302] hover:text-[#006666] transition-colors"
                       >
                         <span>Read Full Article</span>
                         <ArrowRight className="w-3.5 h-3.5" />

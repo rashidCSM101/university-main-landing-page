@@ -131,7 +131,7 @@ export const AuditLogsManager: React.FC = () => {
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78', textTransform: 'capitalize' }}>
                     {log.entity || 'general'}
                   </td>
-                  <td style={{ padding: '0.875rem 1rem', fontFamily: 'monospace', color: '#008B8B', fontWeight: 600 }}>
+                  <td style={{ padding: '0.875rem 1rem', fontFamily: 'monospace', color: '#48b302', fontWeight: 600 }}>
                     {log.ip_address || '127.0.0.1'}
                   </td>
                   <td style={{ padding: '0.875rem 1rem', color: '#6B7A95', fontSize: '0.775rem' }}>
