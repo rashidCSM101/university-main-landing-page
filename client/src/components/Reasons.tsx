@@ -23,7 +23,7 @@ const climatePillars = [
     stats1: { value: '40+ Yrs', label: 'ERA5 Reanalysis' },
     stats2: { value: '7 Days', label: 'Rapid Attribution' },
     thumbnail: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=800&q=80',
-    link: '/vision',
+    link: '/services',
     badgeColor: 'bg-emerald-500/90 text-white',
     accentColor: '#48b302',
   },

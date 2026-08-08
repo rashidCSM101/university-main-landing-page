@@ -309,8 +309,9 @@ function AppContent() {
           {/* ── Home ─────────────────────────────────────── */}
           <Route path="/" element={<HomePage />} />
 
-          {/* ── Vision ───────────────────────────────────── */}
-          <Route path="/vision" element={<main><VisionPage /></main>} />
+          {/* ── Services & Solutions ───────────────────── */}
+          <Route path="/services" element={<main><VisionPage /></main>} />
+          <Route path="/vision" element={<Navigate to="/services" replace />} />
 
           {/* ── Tools ────────────────────────────────────── */}
           <Route path="/tools" element={<main><ToolsPage /></main>} />
