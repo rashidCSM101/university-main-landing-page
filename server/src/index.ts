@@ -31,7 +31,9 @@ app.use(helmet({
 const allowedOrigins = [
   'http://localhost:5173', // Public Vite app
   'http://localhost:5174', // Admin SPA app
-];
+  'https://hex-byte.tech', // Production custom domain
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
 
 app.use(cors({
   origin: (origin, callback) => {
