@@ -17,7 +17,7 @@ const servicesData = [
     description:
       'Quantitative climate vulnerability mapping, flood hydrographs, atmospheric WRF simulations, and extreme event attribution across South Asian river basins.',
     pills: ['WRF Modeling', 'Indus Hydrographs'],
-    link: '/tools',
+    link: '/services',
   },
   {
     id: 'service-2',
@@ -29,7 +29,7 @@ const servicesData = [
     description:
       'Wet-bulb temperature (TW > 35°C) threshold tracking, urban heat island monitoring, thermal infrared satellite analysis, and municipal cooling protocols.',
     pills: ['Wet-Bulb TW > 35°C', 'Thermal Infrared'],
-    link: '/tools',
+    link: '/services',
   },
   {
     id: 'service-3',
@@ -41,7 +41,7 @@ const servicesData = [
     description:
       'Formulating evidence-based climate policy, national adaptation plans, loss and damage frameworks, and environmental governance guidance for governments.',
     pills: ['Adaptation Plans', 'Loss & Damage'],
-    link: '/publications',
+    link: '/services',
   },
   {
     id: 'service-4',
@@ -53,7 +53,7 @@ const servicesData = [
     description:
       'Fostering collaborative climate workshops, multi-sectoral stakeholder consultations, local community resilience building, and technical training.',
     pills: ['Consultations', 'Resilience Training'],
-    link: '/contact',
+    link: '/services',
   },
 ];
 

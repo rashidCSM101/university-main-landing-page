@@ -84,7 +84,7 @@ export const Navbar = () => {
                   isScrolled ? 'text-gray-900 group-hover:text-[#48b302]' : 'text-white group-hover:text-[#00C8C8]'
                 }`}
               >
-                WenClims
+                WCS
               </span>
               <span
                 className={`text-[10px] font-semibold tracking-wider uppercase transition-colors ${

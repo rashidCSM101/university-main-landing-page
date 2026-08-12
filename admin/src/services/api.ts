@@ -1,15 +1,4 @@
-const getBaseUrl = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
-  if (typeof window !== 'undefined' && window.location.origin.includes('localhost')) {
-    return 'http://localhost:5000/api/v1';
-  }
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/api/v1`;
-  }
-  return '/api/v1';
-};
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 /**
  * Custom Fetch API Client with JWT Bearer Interceptor & Error Handling
@@ -26,8 +15,7 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const baseUrl = getBaseUrl();
-  const response = await fetch(`${baseUrl}${endpoint}`, {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
     credentials: 'include', // Send httpOnly refresh cookies
@@ -145,5 +133,5 @@ export const api = {
     apiFetch<any>('/system/banner'),
   updateEmergencyBanner: (banner: any) =>
     apiFetch<any>('/admin/system/banner', { method: 'PUT', body: JSON.stringify(banner) }),
-  downloadDbBackupUrl: () => `${getBaseUrl()}/admin/system/backup`,
+  downloadDbBackupUrl: () => `${API_BASE_URL}/admin/system/backup`,
 };

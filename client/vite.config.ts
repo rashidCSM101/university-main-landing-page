@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
 
-  // WenClims custom domain — root base path
-  // (old gh-pages base /university-main-landing-page/ removed)
+  // Custom domain base path (hex-byte.tech)
   base: '/',
 
   server: {
