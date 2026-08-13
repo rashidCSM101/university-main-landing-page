@@ -40,10 +40,7 @@ Thumbs.db
 # Lock file - use npm (package-lock.json will stay, yarn.lock removed)
 yarn.lock
 db.sql
-admin/.env.production
-admin/.env
-admin/.env.example
-admin/jest-config.js
+
 client/.env.production
 client/.env
 client/.env.example
