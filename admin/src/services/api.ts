@@ -1,17 +1,4 @@
-const getBaseUrl = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
-  if (typeof window !== 'undefined' && window.location.origin.includes('localhost')) {
-    return 'http://localhost:5000/api/v1';
-  }
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/api/v1`;
-  }
-  return '/api/v1';
-};
-
-const API_BASE_URL = getBaseUrl();
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 /**
  * Custom Fetch API Client with JWT Bearer Interceptor & Error Handling

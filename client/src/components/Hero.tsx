@@ -269,9 +269,9 @@ const Hero = () => {
       {/* ── Main Content ────────────────────────────────────────────────── */}
       <div className="container-custom relative z-10 pt-28 md:pt-32 lg:pt-36 pb-24 w-full">
         {/* Live Attribution Data Ticker */}
-        <div className="mb-6 rounded-2xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-md">
+        {/* <div className="mb-6 rounded-2xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-md">
           <DataTicker />
-        </div>
+        </div> */}
 
         <div ref={contentRef} className="w-full max-w-[68rem]">
 

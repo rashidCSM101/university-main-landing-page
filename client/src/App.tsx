@@ -225,15 +225,15 @@ const HomePage = () => (
     <Introduction />
     <ServicesSlider />
     <ClimateMapChart />
-    <Stats />
-    <Reasons />
-    <Courses />
+    {/* <Stats /> */}
+    {/* <Reasons /> */}
+    {/* <Courses /> */}
     <Events />
-    <Departments />
+    {/* <Departments /> */}
     <VideoTour />
     <Instructors />
     <Testimonials />
-    <Admission />
+    {/* <Admission /> */}
     <Blog />
   </main>
 );
