@@ -9,8 +9,8 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 
 const router = Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'wenclims_super_secret_jwt_access_key_2026_x9k2';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'wenclims_super_secret_jwt_refresh_key_2026_p4m8';
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_only_insecure_fallback_jwt_secret_do_not_use';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'dev_only_insecure_fallback_refresh_secret_do_not_use';
 
 /**
  * POST /api/v1/auth/login
@@ -41,14 +41,19 @@ router.post('/login', authRateLimiter, async (req: Request, res: Response) => {
     }
 
     // Verify TOTP 2FA if user has totp_secret configured
-    if (user.totp_secret && totp) {
+    if (user.totp_secret) {
+      // totp field is REQUIRED when 2FA is enabled — do not allow bypass by omitting it
+      if (!totp) {
+        return res.status(401).json({ error: '2FA code is required for this account. Please enter your authenticator app code.' });
+      }
       const verified = speakeasy.totp.verify({
         secret: user.totp_secret,
         encoding: 'base32',
         token: totp,
+        window: 1, // Allow 1 step tolerance for clock drift
       });
       if (!verified) {
-        return res.status(401).json({ error: 'Invalid 2FA code.' });
+        return res.status(401).json({ error: 'Invalid 2FA code. Please check your authenticator app.' });
       }
     }
 
@@ -62,8 +67,8 @@ router.post('/login', authRateLimiter, async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    // Long-lived Access Token (7 days)
-    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
+    // Short-lived Access Token (15 minutes) — refresh endpoint issues new tokens
+    const accessToken = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '15m' });
 
     // Long-lived Refresh Token (7 days)
     const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '7d' });

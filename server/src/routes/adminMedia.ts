@@ -148,14 +148,6 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-async function ensureMediaTableSchema() {
-  try {
-    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_type_check');
-    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_status_check');
-  } catch (err) {
-    // Safe catch
-  }
-}
 
 /**
  * DELETE /api/v1/admin/media/:id
@@ -163,7 +155,6 @@ async function ensureMediaTableSchema() {
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureMediaTableSchema();
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
       return res.status(403).json({ error: 'Permission denied. Members cannot delete posts. Only Admin or Super Admin can delete content.' });

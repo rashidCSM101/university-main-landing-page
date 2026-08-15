@@ -12,18 +12,10 @@ router.use(authenticateToken);
 const createUserSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
+  password: z.string().min(10, 'Password must be at least 10 characters long'),
   role: z.enum(['super_admin', 'admin', 'member', 'editor']),
 });
 
-async function ensureUsersTableSchema() {
-  try {
-    await query('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
-    await query('ALTER TABLE users ALTER COLUMN role TYPE VARCHAR(50)');
-  } catch (err) {
-    // Safe catch
-  }
-}
 
 /**
  * GET /api/v1/admin/users
@@ -31,7 +23,6 @@ async function ensureUsersTableSchema() {
  */
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureUsersTableSchema();
     if (req.user?.role !== 'super_admin' && req.user?.role !== 'admin') {
       return res.status(403).json({ error: 'Permission denied. Only Super Admin or Admin can access user management.' });
     }
@@ -123,7 +114,6 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.put('/:id/role', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureUsersTableSchema();
     if (req.user?.role !== 'super_admin') {
       return res.status(403).json({ error: 'Permission denied. Only Super Admin can modify user roles.' });
     }

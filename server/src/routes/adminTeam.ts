@@ -6,22 +6,9 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
-async function ensureTeamTableSchema() {
-  try {
-    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
-    await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
-    await query('ALTER TABLE team_members ALTER COLUMN photo TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN role TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN team TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN bio TYPE TEXT');
-  } catch (err) {
-    // Column type alter safe catch
-  }
-}
 
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -31,7 +18,6 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -71,7 +57,6 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const { id } = req.params;
 
     // Power users (super_admin and admin) can update any team member. Member role can only update their own personal bio.

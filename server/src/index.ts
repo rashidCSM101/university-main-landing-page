@@ -1,10 +1,12 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import { apiRateLimiter } from './middleware/rateLimiter';
+import { runStartupMigrations } from './db/startup-migration';
 import authRoutes from './routes/auth';
 import publicRoutes from './routes/public';
 import adminMediaRoutes from './routes/adminMedia';
@@ -20,28 +22,41 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Security HTTP Headers via Helmet
 app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production', // Strict CSP in production
+  contentSecurityPolicy: isProduction, // Strict CSP in production only
   crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
 
+// Request Logging (Morgan) — 'combined' in production for full log detail, 'dev' in development
+app.use(morgan(isProduction ? 'combined' : 'dev'));
+
 // CORS Configuration — allow admin & public client origins
 const allowedOrigins = [
-  'http://localhost:5173', // Public Vite app
-  'http://localhost:5174', // Admin SPA app
-  'https://hex-byte.tech', // Production custom domain
-  process.env.CLIENT_URL,
+  'http://localhost:5173', // Public Vite app (dev)
+  'http://localhost:5174', // Admin SPA app (dev)
+  'https://hex-byte.tech', // Production public site
+  process.env.CLIENT_URL,  // Production public site URL (from env)
+  process.env.ADMIN_URL,   // Production admin panel URL (from env)
 ].filter(Boolean) as string[];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow dev tools / postman
+    // Allow requests with no origin (server-to-server, mobile apps, curl in dev)
+    if (!origin) {
+      return callback(null, true);
     }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // In development: allow all origins (Postman, browser dev tools, etc.)
+    if (!isProduction) {
+      return callback(null, true);
+    }
+    // In production: reject unlisted origins — this is the security gate
+    return callback(new Error(`CORS: Origin '${origin}' is not allowed.`));
   },
   credentials: true,
 }));
@@ -64,10 +79,9 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-// API Routes (v1)
+// Public API Routes (v1) — all public routes registered under /api/v1/*
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/public', publicRoutes);
-app.use('/api/v1', publicRoutes); // Direct shorthand fallback
+app.use('/api/v1', publicRoutes); // Handles /api/v1/media, /api/v1/team, /api/v1/projects, etc.
 
 // Protected Admin API Routes (v1)
 app.use('/api/v1/admin/media', adminMediaRoutes);
@@ -92,7 +106,9 @@ app.use((err: any, req: Request, res: Response, next: any) => {
 export default app;
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`🚀 WenClims Express Server running on http://localhost:${PORT}`);
+    // Run one-time startup schema migrations (replaces per-request DDL calls in routes)
+    await runStartupMigrations();
   });
 }

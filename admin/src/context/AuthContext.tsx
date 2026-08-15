@@ -32,6 +32,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null;
   });
 
+  // Listen for token expiry events dispatched by the API client
+  useEffect(() => {
+    const handleSessionExpired = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setUser(null);
+      localStorage.removeItem('wenclims_admin_user');
+      localStorage.removeItem('wenclims_admin_token');
+      // Redirect to login — use replace so back-button doesn't return to expired session
+      window.location.replace(`${OBFUSCATED_ADMIN_PATH}/login`);
+      console.warn('Session expired:', detail?.message);
+    };
+    window.addEventListener('sessionExpired', handleSessionExpired);
+    return () => window.removeEventListener('sessionExpired', handleSessionExpired);
+  }, []);
+
   const login = async (email: string, password?: string, totp?: string): Promise<User> => {
     if (!email || !password) {
       throw new Error('Please enter both email and password.');

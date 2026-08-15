@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+// Use VITE_API_BASE_URL from .env / .env.production — fallback to localhost for dev
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
 /**
  * Custom Fetch API Client with JWT Bearer Interceptor & Error Handling
@@ -28,8 +29,10 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
       if (data.error && data.error.toLowerCase().includes('token')) {
         localStorage.removeItem('wenclims_admin_user');
         localStorage.removeItem('wenclims_admin_token');
-        alert('Your admin session has expired. Please log in again to continue.');
-        window.location.href = '/admin--wensclims-xk9f2m/login';
+        // Dispatch a custom event instead of alert() — AuthContext listens and redirects cleanly
+        window.dispatchEvent(new CustomEvent('sessionExpired', {
+          detail: { message: 'Your admin session has expired. Please log in again.' },
+        }));
       }
     }
     throw new Error(data.error || 'API Request failed');
@@ -120,10 +123,10 @@ export const api = {
   deleteUser: (id: string) =>
     apiFetch<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' }),
 
-  // Audit Logs (Super Admin Only)
-  getAuditLogs: (params?: { action?: string }) => {
-    const query = new URLSearchParams(params as any).toString();
-    return apiFetch<any[]>(`/admin/system/audit${query ? `?${query}` : ''}`);
+  // Audit Logs (Super Admin Only) — uses canonical /admin/audit-logs endpoint with pagination
+  getAuditLogs: (params?: { action?: string; limit?: number; offset?: number }) => {
+    const queryStr = new URLSearchParams(params as any).toString();
+    return apiFetch<any[]>(`/admin/audit-logs${queryStr ? `?${queryStr}` : ''}`);
   },
 
   // System Health & DB Backup (Super Admin Only)

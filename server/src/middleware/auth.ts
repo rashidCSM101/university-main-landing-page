@@ -6,14 +6,21 @@ export interface AuthenticatedUser {
   id: string;
   name: string;
   email: string;
-  role: 'super_admin' | 'editor';
+  role: 'super_admin' | 'admin' | 'editor' | 'member';
 }
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'wenclims_super_secret_jwt_access_key_2026_x9k2';
+if (!process.env.JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start in production without a secure secret.');
+  } else {
+    console.warn('⚠️  WARNING: JWT_SECRET is not set. Using an insecure default — do NOT use in production.');
+  }
+}
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_only_insecure_fallback_jwt_secret_do_not_use';
 
 /**
  * Verify JWT Access Token Middleware

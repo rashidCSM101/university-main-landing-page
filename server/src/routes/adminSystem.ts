@@ -10,14 +10,6 @@ const router = Router();
  */
 router.get('/banner', async (req, res: Response) => {
   try {
-    await query(`
-      CREATE TABLE IF NOT EXISTS system_settings (
-        key VARCHAR(255) PRIMARY KEY,
-        value JSONB NOT NULL,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
     const result = await query("SELECT value FROM system_settings WHERE key = 'emergency_banner'");
     if (result.rows.length === 0) {
       const defaultPayload = {
@@ -148,28 +140,13 @@ router.put('/banner', requireRole('super_admin'), async (req: AuthenticatedReque
       url: url || '/publications',
     };
 
-    // Ensure system_settings table exists
-    await query(`
-      CREATE TABLE IF NOT EXISTS system_settings (
-        key VARCHAR(255) PRIMARY KEY,
-        value JSONB NOT NULL,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Safely update or insert
-    const existing = await query("SELECT key FROM system_settings WHERE key = 'emergency_banner'");
-    if (existing.rows.length > 0) {
-      await query(
-        "UPDATE system_settings SET value = $1, updated_at = NOW() WHERE key = 'emergency_banner'",
-        [JSON.stringify(payload)]
-      );
-    } else {
-      await query(
-        "INSERT INTO system_settings (key, value, updated_at) VALUES ('emergency_banner', $1, NOW())",
-        [JSON.stringify(payload)]
-      );
-    }
+    // UPSERT — atomic insert-or-update eliminates race condition
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at)
+       VALUES ('emergency_banner', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()`,
+      [JSON.stringify(payload)]
+    );
 
     await logAudit(req.user, 'UPDATE_EMERGENCY_BANNER', 'system', 'emergency_banner', req.ip || '127.0.0.1', payload);
 

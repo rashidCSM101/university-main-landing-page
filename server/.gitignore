@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+
+server/.env.production
+server/.env
+server/.env.example
+server/jest-config.js

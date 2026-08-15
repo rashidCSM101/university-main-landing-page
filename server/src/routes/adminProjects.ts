@@ -6,17 +6,9 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
-async function ensureProjectsTableSchema() {
-  try {
-    await query('ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_status_check');
-  } catch (err) {
-    // Safe catch
-  }
-}
 
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureProjectsTableSchema();
     const result = await query('SELECT * FROM projects ORDER BY created_at DESC');
     return res.json(result.rows);
   } catch (error) {
@@ -26,7 +18,6 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureProjectsTableSchema();
     const parseResult = projectSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -111,6 +102,12 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    // Only Super Admin and Admin can delete projects
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission denied. Only Admin or Super Admin can delete projects.' });
+    }
+
     const { id } = req.params;
     const result = await query('DELETE FROM projects WHERE id = $1 RETURNING title', [id]);
     if (result.rows.length === 0) {

@@ -97,8 +97,6 @@ router.get('/projects', async (req: Request, res: Response) => {
 router.get('/team', async (req: Request, res: Response) => {
   try {
     const { home } = req.query;
-    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
-    await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
 
     if (home === 'true') {
       const homeResult = await query(

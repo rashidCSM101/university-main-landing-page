@@ -6,20 +6,9 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
-async function ensureToolsTableSchema() {
-  try {
-    await query('ALTER TABLE tools DROP CONSTRAINT IF EXISTS tools_sector_check');
-    await query('ALTER TABLE tools ALTER COLUMN thumbnail TYPE TEXT');
-    await query('ALTER TABLE tools ALTER COLUMN external_url TYPE TEXT');
-    await query('ALTER TABLE tools ALTER COLUMN sector TYPE TEXT');
-  } catch (err) {
-    // Safe catch
-  }
-}
 
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureToolsTableSchema();
     const result = await query('SELECT * FROM tools ORDER BY sort_order ASC, title ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -100,6 +89,12 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    // Only Super Admin and Admin can delete tools
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission denied. Only Admin or Super Admin can delete tools.' });
+    }
+
     const { id } = req.params;
     const result = await query('DELETE FROM tools WHERE id = $1 RETURNING title', [id]);
     if (result.rows.length === 0) {

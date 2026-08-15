@@ -33,10 +33,8 @@ const ToolsPage     = lazy(() => import('./components/tools/ToolsPage'));
 const ProjectsPage      = lazy(() => import('./components/projects/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('./components/projects/ProjectDetail'));
 
-// Publications
+// Publications (all three routes use PublicationsHub — wrapper components provide unique meta/noindex)
 const PublicationsHub    = lazy(() => import('./components/publications/PublicationsHub'));
-const ResearchPage       = lazy(() => import('./components/publications/PublicationsHub'));
-const ReportsPage        = lazy(() => import('./components/publications/PublicationsHub'));
 
 // Media
 const MediaHub           = lazy(() => import('./components/media/MediaHub'));

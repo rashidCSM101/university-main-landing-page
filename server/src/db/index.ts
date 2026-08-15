@@ -10,9 +10,13 @@ export const pool = new Pool({
   database: process.env.DB_NAME || 'wenclims_db',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
-  max: 20,
+  max: 10,                         // Reduced from 20 — safe for 2GB VPS
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
+  // SSL required in production; disabled locally
+  ssl: process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false }  // Set to true + supply CA cert for stricter SSL
+    : false,
 });
 
 pool.on('error', (err) => {

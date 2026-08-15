@@ -6,6 +6,7 @@ export const SystemHealthManager: React.FC = () => {
   const [health, setHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [backupError, setBackupError] = useState<string | null>(null);
 
   const loadHealth = async () => {
     setLoading(true);
@@ -31,6 +32,7 @@ export const SystemHealthManager: React.FC = () => {
 
   const handleDownloadBackup = () => {
     setDownloading(true);
+    setBackupError(null);
     const backupUrl = api.downloadDbBackupUrl();
     const token = localStorage.getItem('wenclims_admin_token');
 
@@ -48,8 +50,9 @@ export const SystemHealthManager: React.FC = () => {
         document.body.appendChild(a);
         a.click();
         a.remove();
+        window.URL.revokeObjectURL(url);
       })
-      .catch((err) => alert('Failed to download database backup: ' + err.message))
+      .catch((err) => setBackupError('Failed to download backup: ' + (err?.message || 'Server error')))
       .finally(() => setDownloading(false));
   };
 
@@ -74,6 +77,12 @@ export const SystemHealthManager: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {backupError && (
+        <div style={{ padding: '0.875rem 1.25rem', marginBottom: '1rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '12px', color: '#b91c1c', fontWeight: 600, fontSize: '0.875rem' }}>
+          ⚠️ {backupError}
+        </div>
+      )}
 
       {/* Grid Status Widgets */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
