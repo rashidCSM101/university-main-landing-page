@@ -123,10 +123,10 @@ export const api = {
   deleteUser: (id: string) =>
     apiFetch<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' }),
 
-  // Audit Logs (Super Admin Only) — uses canonical /admin/audit-logs endpoint with pagination
-  getAuditLogs: (params?: { action?: string; limit?: number; offset?: number }) => {
-    const queryStr = new URLSearchParams(params as any).toString();
-    return apiFetch<any[]>(`/admin/audit-logs${queryStr ? `?${queryStr}` : ''}`);
+  // Audit Logs (Super Admin Only)
+  getAuditLogs: (params?: { action?: string }) => {
+    const query = new URLSearchParams(params as any).toString();
+    return apiFetch<any[]>(`/admin/audit-logs${query ? `?${query}` : ''}`);
   },
 
   // System Health & DB Backup (Super Admin Only)

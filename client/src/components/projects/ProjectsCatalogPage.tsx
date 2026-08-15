@@ -159,24 +159,37 @@ export const ProjectsCatalogPage = () => {
     fetchProjectsData();
   }, []);
 
-  // GSAP Animations
+  // GSAP Animations & Parallax
   useEffect(() => {
     if (!pageRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         contentRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.2 }
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.2 }
       );
+
+      // Hero background parallax
+      gsap.to('.projects-hero-bg', {
+        yPercent: 18,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.projects-hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6,
+        },
+      });
 
       if (gridRef.current && projects.length > 0) {
         gsap.fromTo(
           gridRef.current.children,
-          { opacity: 0, y: 25 },
+          { opacity: 0, y: 35, scale: 0.96 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            scale: 1,
+            duration: 0.7,
             stagger: 0.1,
             ease: 'power2.out',
             scrollTrigger: {
@@ -185,6 +198,20 @@ export const ProjectsCatalogPage = () => {
             },
           }
         );
+
+        // Project thumbnails parallax
+        gsap.utils.toArray('.project-card-thumb').forEach((img: any) => {
+          gsap.to(img, {
+            yPercent: -10,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: img,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6,
+            },
+          });
+        });
       }
     }, pageRef);
 
@@ -209,14 +236,14 @@ export const ProjectsCatalogPage = () => {
 
       <div ref={pageRef} className="min-h-screen bg-gray-50 font-sans">
         {/* ═══ HERO SECTION ═══ */}
-        <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
+        <section className="projects-hero-section relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
           {/* Hero Background Image */}
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 overflow-hidden">
             <img
               src={bgImage}
               alt="WenClims Projects Background"
               onError={() => setBgImage(heroBgFallback)}
-              className="w-full h-full object-cover opacity-25 filter contrast-125 brightness-90"
+              className="projects-hero-bg w-full h-full object-cover opacity-25 filter contrast-125 brightness-90 will-change-transform scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-transparent to-gray-900/90" />

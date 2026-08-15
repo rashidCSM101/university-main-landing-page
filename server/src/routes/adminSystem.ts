@@ -17,10 +17,6 @@ router.get('/banner', async (req, res: Response) => {
         message: '🔴 Emergency Alert: Indus Basin Flash Flood & Precipitation Attribution Study 2026 Released',
         url: '/publications',
       };
-      await query(
-        "INSERT INTO system_settings (key, value, updated_at) VALUES ('emergency_banner', $1, NOW())",
-        [JSON.stringify(defaultPayload)]
-      );
       return res.json(defaultPayload);
     }
     const stored = result.rows[0].value;
@@ -43,13 +39,23 @@ router.use(authenticateToken);
 
 /**
  * GET /api/v1/admin/system/audit
- * Fetch real-time security audit trail
+ * Fetch real-time security audit trail (supports ?action=, ?limit=, ?offset=)
  */
 router.get('/audit', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const result = await query(
-      'SELECT id, user_id, user_email, action, entity, entity_id, ip_address, details, created_at FROM audit_logs ORDER BY created_at DESC LIMIT 100'
-    );
+    const { action, limit = '100', offset = '0' } = req.query;
+    let text = 'SELECT id, user_id, user_email, action, entity, entity_id, ip_address, details, created_at FROM audit_logs WHERE 1=1';
+    const params: any[] = [];
+
+    if (action && action !== 'all') {
+      params.push(action);
+      text += ` AND action ILIKE '%' || $${params.length} || '%'`;
+    }
+
+    text += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
+
+    const result = await query(text, params);
     return res.json(result.rows);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to fetch audit trail logs.' });
@@ -140,13 +146,28 @@ router.put('/banner', requireRole('super_admin'), async (req: AuthenticatedReque
       url: url || '/publications',
     };
 
-    // UPSERT — atomic insert-or-update eliminates race condition
-    await query(
-      `INSERT INTO system_settings (key, value, updated_at)
-       VALUES ('emergency_banner', $1, NOW())
-       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()`,
-      [JSON.stringify(payload)]
-    );
+    // Ensure system_settings table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(255) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Safely update or insert
+    const existing = await query("SELECT key FROM system_settings WHERE key = 'emergency_banner'");
+    if (existing.rows.length > 0) {
+      await query(
+        "UPDATE system_settings SET value = $1, updated_at = NOW() WHERE key = 'emergency_banner'",
+        [JSON.stringify(payload)]
+      );
+    } else {
+      await query(
+        "INSERT INTO system_settings (key, value, updated_at) VALUES ('emergency_banner', $1, NOW())",
+        [JSON.stringify(payload)]
+      );
+    }
 
     await logAudit(req.user, 'UPDATE_EMERGENCY_BANNER', 'system', 'emergency_banner', req.ip || '127.0.0.1', payload);
 

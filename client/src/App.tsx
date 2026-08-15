@@ -13,15 +13,15 @@ import { EmergencyBanner } from './components/layout/EmergencyBanner';
 // ─── Home page sections (lazy-loaded below fold) ───────────────────────────
 const Introduction  = lazy(() => import('./components/Introduction'));
 const ServicesSlider = lazy(() => import('./components/home/ServicesSlider'));
-const Stats         = lazy(() => import('./components/Stats'));
-const Reasons       = lazy(() => import('./components/Reasons'));
-const Courses       = lazy(() => import('./components/Courses'));        // repurposed → Sectors / Tools preview
+// const Stats         = lazy(() => import('./components/Stats'));
+// const Reasons       = lazy(() => import('./components/Reasons'));
+// const Courses       = lazy(() => import('./components/Courses'));        // repurposed → Sectors / Tools preview
 const Events        = lazy(() => import('./components/Events'));          // repurposed → Featured Projects
-const Departments   = lazy(() => import('./components/Departments'));     // repurposed → Focus Areas
+// const Departments   = lazy(() => import('./components/Departments'));     // repurposed → Focus Areas
 const VideoTour     = lazy(() => import('./components/VideoTour'));       // repurposed → Interactive Map placeholder
 const Instructors   = lazy(() => import('./components/Instructors'));     // repurposed → Featured Team
 const Testimonials  = lazy(() => import('./components/Testimonials'));    // repurposed → Partners / Quotes
-const Admission     = lazy(() => import('./components/Admission'));       // repurposed → CTA / Latest Reports
+// const Admission     = lazy(() => import('./components/Admission'));       // repurposed → CTA / Latest Reports
 const Blog          = lazy(() => import('./components/Blog'));            // repurposed → Latest Blogs
 
 // ─── Full Domain Pages ──────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ const ResearchPageWrapped = () => (
       <meta name="robots" content="noindex, follow" />
       <link rel="canonical" href="https://wenclims.org/publications/research" />
     </Helmet>
-    <ResearchPage />
+    <PublicationsHub />
   </>
 );
 
@@ -138,7 +138,7 @@ const ReportsPageWrapped = () => (
       <meta name="robots" content="noindex, follow" />
       <link rel="canonical" href="https://wenclims.org/publications/reports" />
     </Helmet>
-    <ReportsPage />
+    <PublicationsHub />
   </>
 );
 

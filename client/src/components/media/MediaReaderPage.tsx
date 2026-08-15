@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Tv,
 } from 'lucide-react';
+import { fetchMediaItems, fetchMediaItemBySlug } from '../../services/api';
 
 export const MediaReaderPage = () => {
   const { slug, id } = useParams<{ slug?: string; id?: string }>();
@@ -44,15 +45,13 @@ export const MediaReaderPage = () => {
     }
 
     // Try direct item endpoint first, then list endpoint
-    fetch(`/api/v1/media/${identifier}`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchMediaItemBySlug(identifier)
       .then((singleData) => {
         if (singleData && singleData.id) {
           setItem(singleData);
           setLoading(false);
           // Fetch list for recent items
-          fetch('/api/v1/media')
-            .then((r) => r.json())
+          fetchMediaItems()
             .then((list) => {
               if (Array.isArray(list)) {
                 setRecentItems(list.filter((m) => String(m.id) !== identifier && m.slug !== identifier).slice(0, 3));
@@ -61,8 +60,7 @@ export const MediaReaderPage = () => {
             .catch(() => {});
         } else {
           // Fallback to searching all media list
-          fetch('/api/v1/media')
-            .then((res) => res.json())
+          fetchMediaItems()
             .then((data) => {
               if (Array.isArray(data) && data.length > 0) {
                 const found = data.find(

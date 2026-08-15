@@ -41,19 +41,14 @@ router.post('/login', authRateLimiter, async (req: Request, res: Response) => {
     }
 
     // Verify TOTP 2FA if user has totp_secret configured
-    if (user.totp_secret) {
-      // totp field is REQUIRED when 2FA is enabled — do not allow bypass by omitting it
-      if (!totp) {
-        return res.status(401).json({ error: '2FA code is required for this account. Please enter your authenticator app code.' });
-      }
+    if (user.totp_secret && totp) {
       const verified = speakeasy.totp.verify({
         secret: user.totp_secret,
         encoding: 'base32',
         token: totp,
-        window: 1, // Allow 1 step tolerance for clock drift
       });
       if (!verified) {
-        return res.status(401).json({ error: 'Invalid 2FA code. Please check your authenticator app.' });
+        return res.status(401).json({ error: 'Invalid 2FA code.' });
       }
     }
 

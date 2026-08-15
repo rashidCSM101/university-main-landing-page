@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, ChevronRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { fetchFromAPI } from '../../services/api';
 
 export const EmergencyBanner: React.FC = () => {
   const [banner, setBanner] = useState<any>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    fetch('/api/v1/system/banner')
-      .then((res) => res.json())
+    fetchFromAPI<any>('/system/banner')
       .then((data) => {
         if (data && data.is_active) {
           setBanner(data);

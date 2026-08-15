@@ -11,7 +11,6 @@ export const GlobalBannerManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   const loadBanner = async () => {
     setLoading(true);
@@ -33,14 +32,13 @@ export const GlobalBannerManager: React.FC = () => {
     e.preventDefault();
     setSaving(true);
     setSaveSuccess(false);
-    setSaveError(null);
 
     try {
       await api.updateEmergencyBanner(banner);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err: any) {
-      setSaveError(err?.message || 'Failed to update emergency banner settings. Please try again.');
+      alert(err?.message || 'Failed to update emergency banner settings');
     } finally {
       setSaving(false);
     }
@@ -75,12 +73,6 @@ export const GlobalBannerManager: React.FC = () => {
         >
           <CheckCircle size={22} color="#10B981" />
           <span>Emergency Alert Banner settings updated! Changes are live on the main website header.</span>
-        </div>
-      )}
-
-      {saveError && (
-        <div style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '12px', color: '#b91c1c', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          ⚠️ {saveError}
         </div>
       )}
 

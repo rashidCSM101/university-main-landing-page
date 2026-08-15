@@ -13,12 +13,7 @@ router.use(requireRole('super_admin'));
  */
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const rawLimit = parseInt(req.query.limit as string || '50', 10);
-    const rawOffset = parseInt(req.query.offset as string || '0', 10);
-    // Cap limit to prevent full-table dumps from large ?limit= values
-    const limit = Math.min(isNaN(rawLimit) ? 50 : rawLimit, 200);
-    const offset = isNaN(rawOffset) ? 0 : rawOffset;
-    const { action } = req.query;
+    const { action, limit = '50', offset = '0' } = req.query;
     let text = 'SELECT * FROM audit_logs WHERE 1=1';
     const params: any[] = [];
 
@@ -28,7 +23,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     text += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(limit, offset);
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
 
     const result = await query(text, params);
     return res.json(result.rows);

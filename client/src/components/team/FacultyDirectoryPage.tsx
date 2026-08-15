@@ -56,13 +56,76 @@ export const FacultyDirectoryPage = () => {
   const [isUsingFallback, setIsUsingFallback] = useState(false);
   const [bgImage, setBgImage] = useState<string>('/assets/images/team-hero.png');
 
-  // Helper to generate 2-letter initials for avatar fallback
-  const getInitials = (name: string) => {
-    if (!name) return 'WC';
-    const parts = name.replace(/^(Dr\.|Prof\.|Mr\.|Mrs\.|Ms\.)\s+/i, '').trim().split(' ');
-    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    return name.substring(0, 2).toUpperCase();
-  };
+// Helper to generate 2-letter initials for avatar fallback
+const getInitials = (name: string) => {
+  if (!name) return 'WC';
+  const parts = name.replace(/^(Dr\.|Prof\.|Mr\.|Mrs\.|Ms\.)\s+/i, '').trim().split(' ');
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+};
+
+const FacultyCard = ({ member }: { member: TeamMemberItem }) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div className="team-card group relative bg-white p-2.5 rounded-[30px] border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-col justify-between hover:-translate-y-2 opacity-100">
+      {/* Image Container with Studio Background & Gradient Overlay */}
+      <div className="relative h-[340px] w-full rounded-[24px] overflow-hidden bg-[#D2DCDD] flex flex-col justify-end">
+        {member.image && !imgError ? (
+          <img
+            src={member.image}
+            alt={member.name}
+            onError={() => setImgError(true)}
+            className="faculty-portrait-img absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 filter brightness-95 group-hover:brightness-100 will-change-transform"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#48b302] to-teal-900 text-white font-bold text-4xl flex items-center justify-center">
+            {getInitials(member.name)}
+          </div>
+        )}
+
+        {/* Soft Gradient Overlay at Bottom of Portrait */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#D2DCDD] via-[#D2DCDD]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity" />
+
+        {/* Text Overlay Section */}
+        <div className="relative z-10 p-5 pt-12">
+          <div className="flex items-center gap-1.5 mb-1">
+            <h3 className="text-lg font-heading font-bold text-gray-950 leading-snug group-hover:text-[#48b302] transition-colors">
+              {member.name}
+            </h3>
+            <CheckCircle2 className="w-4 h-4 text-[#22c55e] fill-[#22c55e] stroke-white flex-shrink-0" />
+          </div>
+
+          <p className="text-xs text-gray-700 font-medium leading-relaxed line-clamp-2">
+            {member.role}
+          </p>
+        </div>
+      </div>
+
+      {/* Bottom Bar: Stats & View Bio Pill Button */}
+      <div className="p-3 pt-4 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-3 text-xs text-gray-600 font-semibold px-1">
+          <span className="flex items-center gap-1">
+            <User className="w-3.5 h-3.5 text-gray-500" />
+            <span>{member.citations}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <FileText className="w-3.5 h-3.5 text-gray-500" />
+            <span>{member.papers}</span>
+          </span>
+        </div>
+
+        <Link
+          to={`/team/${member.slug}`}
+          className="px-4 py-2 rounded-full bg-[#DFE7EA] hover:bg-[#48b302] text-gray-950 hover:text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1 group/btn"
+        >
+          <span>View Bio</span>
+          <span className="text-sm font-bold group-hover/btn:translate-x-0.5 transition-transform">+</span>
+        </Link>
+      </div>
+    </div>
+  );
+};
 
   // Fetch dynamic team members data from Express backend API
   const fetchTeamData = async () => {
@@ -102,24 +165,37 @@ export const FacultyDirectoryPage = () => {
     fetchTeamData();
   }, []);
 
-  // GSAP Animations
+  // GSAP Animations & Parallax
   useEffect(() => {
     if (!pageRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         contentRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.2 }
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.2 }
       );
+
+      // Hero background parallax
+      gsap.to('.faculty-hero-bg', {
+        yPercent: 18,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.faculty-hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6,
+        },
+      });
 
       if (gridRef.current && members.length > 0) {
         gsap.fromTo(
           gridRef.current.children,
-          { opacity: 0, y: 25 },
+          { opacity: 0, y: 35, scale: 0.96 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            scale: 1,
+            duration: 0.7,
             stagger: 0.08,
             ease: 'power2.out',
             scrollTrigger: {
@@ -128,6 +204,20 @@ export const FacultyDirectoryPage = () => {
             },
           }
         );
+
+        // Portrait parallax scrub
+        gsap.utils.toArray('.faculty-portrait-img').forEach((img: any) => {
+          gsap.to(img, {
+            yPercent: -8,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: img,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6,
+            },
+          });
+        });
       }
     }, pageRef);
 
@@ -165,14 +255,14 @@ export const FacultyDirectoryPage = () => {
 
       <div ref={pageRef} className="min-h-screen bg-gray-50 font-sans">
         {/* ═══ HERO SECTION ═══ */}
-        <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
+        <section className="faculty-hero-section relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
           {/* Hero Background Image */}
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 overflow-hidden">
             <img
               src={bgImage}
               alt="WenClims Team Background"
               onError={() => setBgImage(heroBgFallback)}
-              className="w-full h-full object-cover opacity-25 filter contrast-125 brightness-90"
+              className="faculty-hero-bg w-full h-full object-cover opacity-25 filter contrast-125 brightness-90 will-change-transform scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-transparent to-gray-900/90" />
@@ -319,70 +409,7 @@ export const FacultyDirectoryPage = () => {
           ) : filteredMembers.length > 0 ? (
             <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-7">
               {filteredMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="team-card group relative bg-white p-2.5 rounded-[30px] border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-col justify-between hover:-translate-y-2 opacity-100"
-                >
-                  {/* Image Container with Studio Background & Gradient Overlay */}
-                  <div className="relative h-[340px] w-full rounded-[24px] overflow-hidden bg-[#D2DCDD] flex flex-col justify-end">
-                    {member.image ? (
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        onError={(e) => {
-                          (e.currentTarget as HTMLElement).style.display = 'none';
-                          if (e.currentTarget.parentElement) {
-                            e.currentTarget.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-[#48b302] to-teal-900 text-white font-bold text-4xl flex items-center justify-center">${getInitials(member.name)}</div>`;
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 filter brightness-95 group-hover:brightness-100"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#48b302] to-teal-900 text-white font-bold text-4xl flex items-center justify-center">
-                        {getInitials(member.name)}
-                      </div>
-                    )}
-
-                    {/* Soft Gradient Overlay at Bottom of Portrait */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#D2DCDD] via-[#D2DCDD]/60 to-transparent opacity-95 group-hover:opacity-90 transition-opacity" />
-
-                    {/* Text Overlay Section */}
-                    <div className="relative z-10 p-5 pt-12">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <h3 className="text-lg font-heading font-bold text-gray-950 leading-snug group-hover:text-[#48b302] transition-colors">
-                          {member.name}
-                        </h3>
-                        <CheckCircle2 className="w-4 h-4 text-[#22c55e] fill-[#22c55e] stroke-white flex-shrink-0" />
-                      </div>
-
-                      <p className="text-xs text-gray-700 font-medium leading-relaxed line-clamp-2">
-                        {member.role}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bottom Bar: Stats & View Bio Pill Button */}
-                  <div className="p-3 pt-4 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 text-xs text-gray-600 font-semibold px-1">
-                      <span className="flex items-center gap-1">
-                        <User className="w-3.5 h-3.5 text-gray-500" />
-                        <span>{member.citations || 340}</span>
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <FileText className="w-3.5 h-3.5 text-gray-500" />
-                        <span>{member.papers || 14}</span>
-                      </span>
-                    </div>
-
-                    <Link
-                      to={`/team/${member.slug}`}
-                      className="px-4 py-2 rounded-full bg-[#DFE7EA] hover:bg-[#48b302] text-gray-950 hover:text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1 group/btn"
-                    >
-                      <span>View Bio</span>
-                      <span className="text-sm font-bold group-hover/btn:translate-x-0.5 transition-transform">+</span>
-                    </Link>
-                  </div>
-                </div>
+                <FacultyCard key={member.id} member={member} />
               ))}
             </div>
           ) : (

@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import { apiRateLimiter } from './middleware/rateLimiter';
-import { runStartupMigrations } from './db/startup-migration';
 import authRoutes from './routes/auth';
 import publicRoutes from './routes/public';
 import adminMediaRoutes from './routes/adminMedia';
@@ -79,9 +78,10 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-// Public API Routes (v1) — all public routes registered under /api/v1/*
+// API Routes (v1)
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1', publicRoutes); // Handles /api/v1/media, /api/v1/team, /api/v1/projects, etc.
+app.use('/api/v1/public', publicRoutes);
+app.use('/api/v1', publicRoutes); // Direct shorthand fallback
 
 // Protected Admin API Routes (v1)
 app.use('/api/v1/admin/media', adminMediaRoutes);
@@ -106,9 +106,7 @@ app.use((err: any, req: Request, res: Response, next: any) => {
 export default app;
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, async () => {
+  app.listen(PORT, () => {
     console.log(`🚀 WenClims Express Server running on http://localhost:${PORT}`);
-    // Run one-time startup schema migrations (replaces per-request DDL calls in routes)
-    await runStartupMigrations();
   });
 }

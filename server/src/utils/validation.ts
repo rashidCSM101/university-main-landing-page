@@ -72,8 +72,7 @@ export const toolSchema = z.object({
   title: z.string().min(2, 'Title is required'),
   sector: z.string().min(1, 'Sector is required'),
   description: z.string().optional().nullable(),
-  // external_url is required — DB schema has NOT NULL constraint
-  external_url: z.string().min(1, 'Tool URL is required'),
+  external_url: z.string().optional().nullable().or(z.literal('')),
   thumbnail: z.string().optional().nullable().or(z.literal('')),
   sort_order: z.number().int().optional().nullable(),
   is_active: z.boolean().default(true),

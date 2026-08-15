@@ -58,26 +58,49 @@ const About = () => {
       // Hero entrance
       gsap.fromTo(
         '.anim-hero > *',
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out' }
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.85, stagger: 0.1, ease: 'power3.out' }
       );
 
+      // Hero background image parallax scrub
+      gsap.to('.vision-hero-bg', {
+        yPercent: 18,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.anim-hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6,
+        },
+      });
+
+      // Continuous subtle float on floating contact button
+      gsap.to('.floating-contact-btn', {
+        y: -6,
+        duration: 2.4,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
+
       // Section blocks entrance
-      gsap.fromTo(
-        '.anim-block',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.anim-content-area',
-            start: 'top 85%',
-          },
-        }
-      );
+      gsap.utils.toArray('.anim-block').forEach((block: any) => {
+        gsap.fromTo(
+          block,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.75,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: block,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
     }, pageRef);
 
     return () => ctx.revert();
@@ -100,7 +123,7 @@ const About = () => {
         {/* ═══ FLOATING CONTACT BUTTON (Fixed Bottom-Right) ═══ */}
         <Link
           to="/contact"
-          className="fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-full bg-[#48b302] hover:bg-[#3ea002] text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 border-2 border-white group"
+          className="floating-contact-btn fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-full bg-[#48b302] hover:bg-[#3ea002] text-gray-950 font-extrabold text-xs uppercase tracking-wider shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 border-2 border-white group"
           title="Get in Touch with WCS Experts"
         >
           <PhoneCall className="w-4 h-4 text-gray-950 animate-bounce" />
@@ -109,13 +132,13 @@ const About = () => {
         </Link>
 
         {/* ═══ HERO BANNER ═══ */}
-        <section className="relative pt-36 md:pt-44 pb-20 overflow-hidden bg-[#071328] text-white border-b border-gray-800">
-          <div className="absolute inset-0 z-0">
+        <section className="anim-hero-section relative pt-36 md:pt-44 pb-20 overflow-hidden bg-[#071328] text-white border-b border-gray-800">
+          <div className="absolute inset-0 z-0 overflow-hidden">
             <img
               src={bgImage}
               alt="Services Background"
               onError={() => setBgImage(visionHeroImg)}
-              className="w-full h-full object-cover filter brightness-40 contrast-125 scale-105 transition-transform duration-1000"
+              className="vision-hero-bg w-full h-full object-cover filter brightness-40 contrast-125 scale-105 will-change-transform"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#071328]/95 via-[#071328]/85 to-[#071328]" />
             <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-[#48b302]/20 blur-3xl" />

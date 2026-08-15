@@ -5,29 +5,30 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 export async function fetchFromAPI<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
-  // In development (Vite proxy mode), try relative path first; in production go direct.
-  // This avoids a double-fetch (failed proxy + retry) for every production user.
-  const url = import.meta.env.DEV
-    ? `/api/v1${cleanEndpoint}`
-    : `${API_BASE_URL}${cleanEndpoint}`;
-
+  // Try relative endpoint first if running in Vite proxy dev mode
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`/api/v1${cleanEndpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      ...options,
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (_e) {
+    // Silently proceed to absolute fallback
+  }
+
+  // Fallback to absolute API_BASE_URL
+  try {
+    const res = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
       headers: {
         'Content-Type': 'application/json',
       },
       ...options,
     });
     if (!res.ok) {
-      // In dev, fall back to absolute URL if proxy is not configured
-      if (import.meta.env.DEV && url.startsWith('/api/v1')) {
-        const absoluteRes = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
-          headers: { 'Content-Type': 'application/json' },
-          ...options,
-        });
-        if (!absoluteRes.ok) throw new Error(`API ${cleanEndpoint} responded with ${absoluteRes.status}`);
-        return await absoluteRes.json();
-      }
       throw new Error(`API ${cleanEndpoint} responded with status ${res.status}`);
     }
     return await res.json();
@@ -36,7 +37,6 @@ export async function fetchFromAPI<T>(endpoint: string, options?: RequestInit): 
     return null;
   }
 }
-
 
 // Media & Publications API
 export async function fetchMediaItems(type?: string) {

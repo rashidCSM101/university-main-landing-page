@@ -10,8 +10,6 @@ import img2 from '../../assets/images/2.webp?url';
 import img3 from '../../assets/images/3.webp?url';
 import img4 from '../../assets/images/4.webp?url';
 
-import { DataTicker } from './home/DataTicker';
-
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Carousel Slides ─────────────────────────────────────────────────────────
@@ -166,31 +164,62 @@ const Hero = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [next, prev]);
 
-  // ── Initial content entry animation ────────────────────────────────────
+  // ── Initial content entry animation & Parallax ──────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(Array.from(contentRef.current?.children ?? []) as HTMLElement[], {
-        y: 60,
+        y: 50,
         opacity: 0,
         duration: 1,
-        stagger: 0.15,
+        stagger: 0.12,
         ease: 'power3.out',
-        delay: 0.3,
+        delay: 0.2,
       });
 
-      // Subtle Ken Burns scale on initial background
-      gsap.fromTo(
-        trackRef.current,
-        { scale: 1.08 },
-        { scale: 1, duration: 1.8, ease: 'power2.out' }
-      );
+      // Parallax scroll on background image
+      if (trackRef.current) {
+        gsap.to(trackRef.current, {
+          yPercent: 18,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
+      }
 
-      // Scroll indicator fade
+      // Parallax fade on hero content as user scrolls down
+      if (contentRef.current) {
+        gsap.to(contentRef.current, {
+          yPercent: -10,
+          opacity: 0.25,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'center center',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
+      }
+
+      // Floating animation on hero badge
+      gsap.to('.hero-badge-float', {
+        y: -4,
+        duration: 2.2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
+
+      // Scroll indicator fade & pulse
       gsap.from('.hero-scroll-indicator', {
         opacity: 0,
         y: 10,
         duration: 1,
-        delay: 1.5,
+        delay: 1.2,
         ease: 'power2.out',
       });
     }, heroRef);
@@ -276,7 +305,7 @@ const Hero = () => {
         <div ref={contentRef} className="w-full max-w-[68rem]">
 
           {/* Tag pill */}
-          <div className="flex items-center space-x-3 mb-6">
+          <div className="hero-badge-float flex items-center space-x-3 mb-6">
             <span className="w-8 h-px" style={{ background: slide.accent }} />
             <span
               className="text-xs font-semibold uppercase tracking-[0.22em] px-3 py-1 rounded-full border"

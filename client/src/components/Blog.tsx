@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { fetchMediaItems } from '../services/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,8 +37,7 @@ const Blog = () => {
 
   useEffect(() => {
     // Dynamic Fetch from Express API Backend
-    fetch('/api/v1/media?type=blog')
-      .then((res) => res.json())
+    fetchMediaItems('blog')
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setBlogs(data);
@@ -51,9 +51,10 @@ const Blog = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.blog-header', {
-        y: 50,
+        y: 40,
         opacity: 0,
         duration: 0.8,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 80%',
@@ -62,16 +63,31 @@ const Blog = () => {
       });
 
       gsap.from('.blog-card', {
-        y: 50,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.2,
+        y: 45,
+        scale: 0.96,
+        opacity: 0,
+        duration: 0.75,
+        stagger: 0.15,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: cardsRef.current,
-          start: 'top 90%',
+          start: 'top 85%',
           toggleActions: 'play none none reverse',
         },
+      });
+
+      // Parallax scrub on blog thumbnails
+      gsap.utils.toArray('.blog-card img').forEach((img: any) => {
+        gsap.to(img, {
+          yPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
       });
     }, sectionRef);
 

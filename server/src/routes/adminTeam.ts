@@ -6,9 +6,22 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
+async function ensureTeamTableSchema() {
+  try {
+    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
+    await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
+    await query('ALTER TABLE team_members ALTER COLUMN photo TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN role TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN team TYPE TEXT');
+    await query('ALTER TABLE team_members ALTER COLUMN bio TYPE TEXT');
+  } catch (err) {
+    // Column type alter safe catch
+  }
+}
 
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureTeamTableSchema();
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -18,6 +31,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureTeamTableSchema();
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -57,6 +71,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureTeamTableSchema();
     const { id } = req.params;
 
     // Power users (super_admin and admin) can update any team member. Member role can only update their own personal bio.
@@ -68,8 +83,8 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
         const rowEmail = row.social_links?.email || '';
         const rowName = row.name || '';
         const isOwn =
-          rowName.toLowerCase().trim() === req.user.name?.toLowerCase().trim() ||
-          rowEmail.toLowerCase().trim() === req.user.email?.toLowerCase().trim();
+          Boolean(rowName && req.user?.name && rowName.toLowerCase().trim() === req.user.name.toLowerCase().trim()) ||
+          Boolean(rowEmail && req.user?.email && rowEmail.toLowerCase().trim() === req.user.email.toLowerCase().trim());
 
         if (!isOwn) {
           return res.status(403).json({ error: 'Permission denied. You can only edit your own personal bio.' });

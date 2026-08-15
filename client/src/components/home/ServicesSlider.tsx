@@ -60,13 +60,13 @@ const servicesData = [
 export const ServicesSlider = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // GSAP scroll animation on enter
+  // GSAP scroll animation on enter & Parallax
   useEffect(() => {
     if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.services-header-anim',
-        { opacity: 0, y: 25 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
@@ -74,26 +74,41 @@ export const ServicesSlider = () => {
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 90%',
+            start: 'top 85%',
           },
         }
       );
 
       gsap.fromTo(
         '.services-card-anim',
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 40, scale: 0.96 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
+          scale: 1,
+          duration: 0.75,
           stagger: 0.12,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 85%',
+            start: 'top 75%',
           },
         }
       );
+
+      // Subtle parallax on service card images
+      gsap.utils.toArray('.services-card-anim img').forEach((img: any) => {
+        gsap.to(img, {
+          yPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
+      });
     }, sectionRef);
 
     return () => ctx.revert();

@@ -22,12 +22,29 @@ import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 
 import { OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
+import { api } from '../../services/api';
 
 export const DashboardHome: React.FC = () => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const xyChartRef = useRef<HTMLDivElement>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
+  const [counts, setCounts] = React.useState<{
+    mediaCount?: number;
+    pubCount?: number;
+    projectCount?: number;
+    toolsCount?: number;
+  }>({});
+
+  useEffect(() => {
+    api.getSystemHealth()
+      .then((res) => {
+        if (res && res.stats) {
+          setCounts(res.stats);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -211,8 +228,8 @@ export const DashboardHome: React.FC = () => {
   const stats = [
     {
       label: 'Published Blogs & Media',
-      value: '48',
-      change: '+12% this month',
+      value: counts.mediaCount !== undefined ? String(counts.mediaCount) : '12',
+      change: 'Dynamic live items',
       isUp: true,
       icon: FileText,
       iconBg: 'linear-gradient(135deg, #00C8C8 0%, #48b302 100%)',
@@ -224,8 +241,8 @@ export const DashboardHome: React.FC = () => {
     },
     {
       label: 'Publications & Reports',
-      value: '24',
-      change: '+4 new research',
+      value: counts.pubCount !== undefined ? String(counts.pubCount) : '8',
+      change: 'Active research',
       isUp: true,
       icon: BookOpen,
       iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
@@ -237,8 +254,8 @@ export const DashboardHome: React.FC = () => {
     },
     {
       label: 'Active Projects & Grants',
-      value: '14',
-      change: '2 ongoing regional',
+      value: counts.projectCount !== undefined ? String(counts.projectCount) : '6',
+      change: 'Ongoing regional',
       isUp: true,
       icon: FolderKanban,
       iconBg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
@@ -250,7 +267,7 @@ export const DashboardHome: React.FC = () => {
     },
     {
       label: 'Sector Tools Active',
-      value: '8',
+      value: counts.toolsCount !== undefined ? String(counts.toolsCount) : '5',
       change: '100% operational',
       isUp: true,
       icon: Wrench,

@@ -148,7 +148,7 @@ const Tools = () => {
     fetchToolsData();
   }, []);
 
-  // GSAP Entrance Animations matching Home Hero
+  // GSAP Entrance Animations & Parallax matching Home Hero
   useEffect(() => {
     if (!pageRef.current) return;
 
@@ -157,28 +157,55 @@ const Tools = () => {
         const children = Array.from(contentRef.current.children) as HTMLElement[];
         gsap.fromTo(
           children,
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 35 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.85,
             stagger: 0.1,
             ease: 'power3.out',
           }
         );
       }
 
+      // Parallax scroll on tools hero background image
+      gsap.to('.tools-hero-track', {
+        yPercent: 18,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#tools-hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6,
+        },
+      });
+
       if (gridRef.current) {
         gsap.from('.tool-card', {
           opacity: 0,
           y: 40,
-          duration: 0.6,
+          scale: 0.96,
+          duration: 0.7,
           stagger: 0.1,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: gridRef.current,
             start: 'top 85%',
           },
+        });
+
+        // Parallax on card thumbnails
+        gsap.utils.toArray('.tool-card img').forEach((img: any) => {
+          gsap.to(img, {
+            yPercent: -10,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: img,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6,
+            },
+          });
         });
       }
     }, pageRef);
@@ -210,12 +237,12 @@ const Tools = () => {
       <div ref={pageRef} className="min-h-screen bg-gray-50">
         {/* ═══ HOME-STYLE HERO SECTION (Full Background Image Track + Overlay) ═══ */}
         <section
-          id="hero"
+          id="tools-hero"
           className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-gray-900"
           aria-label="Tools Hero"
         >
           {/* Background Image Track */}
-          <div className="absolute inset-0 w-full h-full will-change-transform">
+          <div className="tools-hero-track absolute inset-0 w-full h-full will-change-transform">
             <img
               src={bgImage}
               alt="WenClims Sector Tools Hero Background"

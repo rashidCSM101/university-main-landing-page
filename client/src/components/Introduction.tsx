@@ -37,43 +37,77 @@ const Introduction = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Image animation
+      // Image entry animation
       gsap.from(imageRef.current, {
-        x: -50,
-        duration: 1,
-        ease: 'power2.out',
+        x: -40,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 80%',
-          end: 'top 20%',
           toggleActions: 'play none none reverse',
         },
       });
 
-      // Parallax for image
+      // Smooth Parallax for image
       const imgElement = imageRef.current?.querySelector('img');
       if (imgElement) {
         gsap.to(imgElement, {
-          yPercent: -15,
+          yPercent: -12,
+          scale: 1.05,
           ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top bottom',
             end: 'bottom top',
-            scrub: true,
+            scrub: 0.6,
           },
         });
       }
 
-      // Content animation
-      gsap.from(contentRef.current?.children || [], {
-        x: 50,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power2.out',
+      // Parallax on decorative backdrop shapes
+      gsap.to('.intro-deco-orb-1', {
+        yPercent: -25,
+        ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      });
+
+      gsap.to('.intro-deco-orb-2', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      });
+
+      // Continuous smooth float on floating experience card
+      gsap.to('.intro-float-badge', {
+        y: -10,
+        duration: 2.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
+
+      // Content staggered entrance animation
+      gsap.from(contentRef.current?.children || [], {
+        x: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 75%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -88,18 +122,18 @@ const Introduction = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image Column */}
           <div ref={imageRef} className="relative">
-            <div className="relative overflow-hidden rounded-2xl">
+            <div className="relative overflow-hidden rounded-2xl shadow-xl">
               <img
                 src={introImage}
                 alt="WenClims climate science team at work"
                 loading="lazy"
                 width={800}
                 height={500}
-                className="w-full h-[500px] object-cover"
+                className="w-full h-[500px] object-cover will-change-transform"
               />
             </div>
             {/* Floating Card */}
-            <div className="absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-xl p-6 max-w-[200px] hidden md:block">
+            <div className="intro-float-badge absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-2xl p-6 max-w-[200px] hidden md:block border border-gray-100">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <Globe className="w-6 h-6 text-primary" />
@@ -111,8 +145,8 @@ const Introduction = () => {
               </div>
             </div>
             {/* Decorative Elements */}
-            <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full -z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-accent-gold/20 rounded-full -z-10"></div>
+            <div className="intro-deco-orb-1 absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full -z-10"></div>
+            <div className="intro-deco-orb-2 absolute -bottom-4 -left-4 w-16 h-16 bg-accent-gold/20 rounded-full -z-10"></div>
           </div>
 
           {/* Content Column */}

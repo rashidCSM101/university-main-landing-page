@@ -6,7 +6,7 @@ export interface AuthenticatedUser {
   id: string;
   name: string;
   email: string;
-  role: 'super_admin' | 'admin' | 'editor' | 'member';
+  role: 'super_admin' | 'admin' | 'member' | 'editor';
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -45,9 +45,9 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
 
 /**
  * Server-Side Role Enforcement Middleware
- * Ensures user has required role (e.g. 'super_admin') before accessing route.
+ * Ensures user has required role before accessing route.
  */
-export function requireRole(allowedRole: 'super_admin' | 'editor') {
+export function requireRole(allowedRole: 'super_admin' | 'admin' | 'member' | 'editor') {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized.' });
@@ -55,6 +55,10 @@ export function requireRole(allowedRole: 'super_admin' | 'editor') {
 
     if (allowedRole === 'super_admin' && req.user.role !== 'super_admin') {
       return res.status(403).json({ error: 'Forbidden. Super Admin permissions required.' });
+    }
+
+    if (allowedRole === 'admin' && req.user.role !== 'super_admin' && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden. Admin permissions required.' });
     }
 
     next();

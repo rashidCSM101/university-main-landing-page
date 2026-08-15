@@ -71,10 +71,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
             </div>
             <div className="topbar-user-role" style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', justifyContent: 'flex-end' }}>
               <ShieldCheck size={12} color="#009A9A" />
-              {user?.role === 'super_admin' ? 'Super Admin'
-                : user?.role === 'admin' ? 'Admin'
-                : user?.role === 'member' ? 'Member'
-                : 'Editor'}
+              {user?.role === 'super_admin' ? 'Super Admin' : 'Editor'}
             </div>
           </div>
           <div className="topbar-avatar" style={{ background: 'linear-gradient(135deg, #00C8C8, #0B1E3D)', color: '#fff', fontWeight: 700 }}>
