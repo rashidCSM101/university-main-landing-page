@@ -167,7 +167,7 @@ const Instructors = () => {
   }, [scientists, loading]);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-gray-50/70 font-sans border-t border-gray-100">
+    <section ref={sectionRef} className="py-24 bg-slate-50 font-sans border-t border-gray-200">
       <div className="container-custom">
         {/* Section Header */}
         <div className="instructors-header text-center max-w-3xl mx-auto mb-16 space-y-3">
