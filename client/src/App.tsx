@@ -234,9 +234,9 @@ const HomePage = () => (
     <Instructors />
     <Testimonials />
     {/* <Admission /> */}
+    <Blog />
     {/* Quote Section */}
     <QuoteSection />
-    <Blog />
   </main>
 );
 
