@@ -44,23 +44,38 @@ const Contact = () => {
     window.scrollTo(0, 0);
 
     const ctx = gsap.context(() => {
+      // Hero content entry
       gsap.fromTo(
         contentRef.current,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.2 }
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.15 }
       );
 
-      gsap.from('.contact-card-anim', {
-        y: 35,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: 'power2.out',
+      // Hero background image parallax scrub
+      gsap.to('.contact-hero-bg', {
+        yPercent: 18,
+        ease: 'none',
         scrollTrigger: {
-          trigger: '.contact-grid-wrapper',
-          start: 'top 85%',
+          trigger: '.contact-hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6,
         },
       });
+
+      // Contact info cards entry (immediate on mount with clearProps to prevent opacity glitches)
+      gsap.fromTo(
+        '.contact-card-item',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          stagger: 0.1,
+          ease: 'power2.out',
+          clearProps: 'opacity,transform',
+        }
+      );
     }, pageRef);
 
     return () => ctx.revert();
@@ -84,25 +99,29 @@ const Contact = () => {
         '88, Lane 2, Lake View Lanes (LVL)',
         'Korang Road, Bani Gala, Islamabad',
       ],
-      gradient: 'from-[#48b302] to-teal-900',
+      gradient: 'from-[#48b302] to-emerald-800',
+      iconColor: 'text-white',
     },
     {
       icon: Phone,
       title: 'Phone',
       lines: ['+92-333-5672483', '+92 51 9260100'],
       gradient: 'from-[#00C8C8] to-[#48b302]',
+      iconColor: 'text-white',
     },
     {
       icon: Mail,
       title: 'Email Inquiries',
       lines: ['wenclims@gmail.com', 'admin@wenclims.org'],
-      gradient: 'from-sky-600 to-teal-800',
+      gradient: 'from-blue-600 to-teal-700',
+      iconColor: 'text-white',
     },
     {
       icon: Clock,
       title: 'Office Hours',
       lines: ['Mon – Fri: 9:00 AM – 5:00 PM (PKT)', 'Sat–Sun: Urgent Telemetry Only'],
-      gradient: 'from-slate-700 to-slate-900',
+      gradient: 'from-indigo-600 to-teal-800',
+      iconColor: 'text-white',
     },
   ];
 
@@ -117,16 +136,16 @@ const Contact = () => {
         <link rel="canonical" href="https://wenclims.org/contact" />
       </Helmet>
 
-      <div ref={pageRef} className="min-h-screen bg-white font-sans">
+      <div ref={pageRef} className="min-h-screen bg-slate-50 font-sans">
         {/* ═══ HERO SECTION ═══ */}
-        <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
+        <section className="contact-hero-section relative pt-32 pb-24 md:pt-40 md:pb-32 bg-gray-900 text-white overflow-hidden">
           {/* Background Image & Overlays */}
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 overflow-hidden">
             <img
               src={bgImage}
               alt="WenClims Contact Hero"
               onError={() => setBgImage(heroBgFallback)}
-              className="w-full h-full object-cover opacity-20 filter contrast-125 brightness-90"
+              className="contact-hero-bg w-full h-full object-cover opacity-25 filter contrast-125 brightness-90 will-change-transform scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-transparent to-gray-900/90" />
@@ -143,10 +162,10 @@ const Contact = () => {
                 <span>Return to Overview</span>
               </Link>
 
-              {/* Category Pill */}
+              {/* Tag Pill */}
               <div className="flex items-center space-x-3 mb-6">
                 <span className="w-8 h-px bg-[#00C8C8]" />
-                <span className="text-xs font-semibold uppercase tracking-[0.22em] px-3.5 py-1.5 rounded-full border border-[#00C8C8]/50 text-[#00C8C8] bg-[#00C8C8]/10 backdrop-blur-md">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] px-3.5 py-1 rounded-full border border-[#00C8C8]/50 text-[#00C8C8] bg-[#00C8C8]/10 backdrop-blur-md">
                   Scientific Inquiries &amp; Collaborations
                 </span>
               </div>
@@ -157,7 +176,7 @@ const Contact = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed max-w-3xl mb-4">
+              <p className="text-lg md:text-xl text-gray-200 font-light leading-relaxed max-w-3xl mb-4">
                 Have a question about our extreme weather attribution models, high-resolution WRF data, or regional climate policy consulting?
                 Our scientific team is available for partnerships and technical inquiries.
               </p>
@@ -166,7 +185,7 @@ const Contact = () => {
         </section>
 
         {/* ═══ CONTACT CARDS & FORM CONTAINER ═══ */}
-        <section className="bg-white relative z-20 pt-0 pb-20">
+        <section className="bg-slate-50 relative z-20 pt-0 pb-20">
           <div className="container-custom">
             <div className="max-w-6xl mx-auto">
               {/* 4 Top Info Cards (Overlapping Hero) */}
@@ -174,15 +193,15 @@ const Contact = () => {
                 {contactInfo.map((info, i) => (
                   <div
                     key={i}
-                    className="contact-card-anim group bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100/90 flex flex-col justify-between"
+                    className="contact-card-item group bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-200/90 flex flex-col justify-between"
                   >
                     <div>
-                      <div className={`w-12 h-12 bg-gradient-to-br ${info.gradient} rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <div className={`w-12 h-12 bg-gradient-to-br ${info.gradient} rounded-2xl flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                         <info.icon className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="font-heading font-bold text-lg text-gray-900 mb-2">{info.title}</h3>
+                      <h3 className="font-heading font-bold text-lg text-gray-950 mb-2">{info.title}</h3>
                       {info.lines.map((line, j) => (
-                        <p key={j} className="text-xs text-gray-600 font-medium leading-relaxed">{line}</p>
+                        <p key={j} className="text-xs text-gray-700 font-medium leading-relaxed">{line}</p>
                       ))}
                     </div>
                   </div>

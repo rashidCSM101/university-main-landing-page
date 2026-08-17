@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 INSERT INTO users (id, name, email, password_hash, role, is_active)
 VALUES (
   'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'Dr. Rashid',
+  'Mr. Rashid',
   'admin@wenclims.org',
   '$2b$12$wKORAT1STEOisgxGZX2wseIKSpdhogKYSTK7FgDhF8O8WjRxvHxfq',
   'super_admin',

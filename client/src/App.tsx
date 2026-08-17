@@ -9,6 +9,8 @@ import Header from './components/layout/Navbar';
 import Hero from './components/Hero';
 import Footer from './components/layout/Footer';
 import { EmergencyBanner } from './components/layout/EmergencyBanner';
+import { QuoteSection } from './components/QuoteSection';
+
 
 // ─── Home page sections (lazy-loaded below fold) ───────────────────────────
 const Introduction  = lazy(() => import('./components/Introduction'));
@@ -232,6 +234,8 @@ const HomePage = () => (
     <Instructors />
     <Testimonials />
     {/* <Admission /> */}
+    {/* Quote Section */}
+    <QuoteSection />
     <Blog />
   </main>
 );
