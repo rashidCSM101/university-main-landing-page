@@ -19,13 +19,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 const capabilitiesList = [
   'Multi-hazard climate risk assessments (heatwaves, flooding, droughts, extreme precipitation etc.)',
-  'Hazard, exposure, vulnerability analysis following IPCC methodology',
   'Heat stress assessments including wet-bulb temperatures etc',
   'Risk classification matrices for infrastructure and development projects',
   'Development of Climate Risk Management Frameworks',
   'National and Provincial Climate policies analysis',
   'Training workshops on risk assessment and adaptation planning',
-  'Hydrological modelling for glacier flow, river discharge, and flood hotspots',
 ];
 
 const climateDataSources = [
