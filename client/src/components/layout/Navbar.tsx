@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import logoImg from '../../../assets/images/logo.png';
 
@@ -7,13 +7,21 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const location = useLocation();
+
+  // Pages that have a full dark hero header at the top
+  const darkHeroRoutes = ['/', '/services', '/tools'];
+  const isDarkHeroPage = darkHeroRoutes.includes(location.pathname);
+
+  // If scrolled OR on a page with a light background, use the light navbar theme
+  const isLightNav = isScrolled || !isDarkHeroPage;
 
   useEffect(() => {
     let rafId: number;
     const handleScroll = () => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 50);
+        setIsScrolled(window.scrollY > 30);
       });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -69,8 +77,8 @@ export const Navbar = () => {
     <header
       style={{ top: isScrolled ? '0px' : 'var(--banner-height, 0px)' }}
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg py-3 border-b border-gray-200/80'
+        isLightNav
+          ? 'bg-white/95 backdrop-blur-md shadow-md py-3 border-b border-gray-200/80'
           : 'bg-transparent py-5 border-b border-white/10'
       }`}
     >
@@ -81,14 +89,14 @@ export const Navbar = () => {
             <div className="flex flex-col">
               <span
                 className={`font-heading text-lg font-bold transition-colors leading-tight ${
-                  isScrolled ? 'text-gray-900 group-hover:text-[#48b302]' : 'text-white group-hover:text-[#00C8C8]'
+                  isLightNav ? 'text-gray-950 group-hover:text-[#48b302]' : 'text-white group-hover:text-[#00C8C8]'
                 }`}
               >
                 WCS
               </span>
               <span
                 className={`text-[10px] font-semibold tracking-wider uppercase transition-colors ${
-                  isScrolled ? 'text-gray-500' : 'text-gray-300'
+                  isLightNav ? 'text-gray-500' : 'text-gray-300'
                 }`}
               >
                 Weather &amp; Climate Services
@@ -106,9 +114,9 @@ export const Navbar = () => {
               >
                 <Link
                   to={link.href}
-                  className={`flex items-center space-x-1 text-xs md:text-sm font-semibold transition-colors py-2 ${
-                    isScrolled
-                      ? 'text-gray-700 hover:text-[#48b302]'
+                  className={`flex items-center space-x-1 text-xs md:text-sm font-bold transition-colors py-2 ${
+                    isLightNav
+                      ? 'text-gray-800 hover:text-[#48b302]'
                       : 'text-gray-100 hover:text-[#00C8C8]'
                   }`}
                 >
@@ -116,7 +124,7 @@ export const Navbar = () => {
                   {link.hasDropdown && (
                     <ChevronDown
                       className={`w-3.5 h-3.5 transition-transform group-hover:rotate-180 ${
-                        isScrolled ? 'text-gray-400 group-hover:text-[#48b302]' : 'text-gray-300 group-hover:text-[#00C8C8]'
+                        isLightNav ? 'text-gray-500 group-hover:text-[#48b302]' : 'text-gray-300 group-hover:text-[#00C8C8]'
                       }`}
                     />
                   )}
@@ -125,8 +133,8 @@ export const Navbar = () => {
                 {link.hasDropdown && (
                   <div
                     className={`absolute top-full left-0 w-56 rounded-2xl shadow-2xl py-2 transition-all duration-200 ${
-                      isScrolled
-                        ? 'bg-white border border-gray-100 text-gray-800'
+                      isLightNav
+                        ? 'bg-white border border-gray-200 text-gray-900'
                         : 'bg-gray-900/95 border border-gray-800 backdrop-blur-xl text-gray-100'
                     } ${
                       activeDropdown === link.name
@@ -139,8 +147,8 @@ export const Navbar = () => {
                         key={item.name}
                         to={item.href}
                         className={`block px-4 py-2.5 text-xs font-semibold transition-colors ${
-                          isScrolled
-                            ? 'text-gray-600 hover:text-[#48b302] hover:bg-gray-50'
+                          isLightNav
+                            ? 'text-gray-700 hover:text-[#48b302] hover:bg-slate-50'
                             : 'text-gray-300 hover:text-[#00C8C8] hover:bg-gray-800/80'
                         }`}
                       >
@@ -156,9 +164,9 @@ export const Navbar = () => {
           <div className="hidden lg:flex items-center space-x-4">
             <Link
               to="/contact"
-              className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-md ${
-                isScrolled
-                  ? 'bg-[#48b302] text-white hover:bg-teal-700'
+              className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md ${
+                isLightNav
+                  ? 'bg-[#48b302] text-gray-950 hover:bg-[#3ea002]'
                   : 'bg-[#00C8C8] text-gray-950 hover:bg-teal-400 shadow-teal-900/30'
               }`}
             >
@@ -169,7 +177,7 @@ export const Navbar = () => {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`lg:hidden p-2 rounded-xl transition-colors ${
-              isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
+              isLightNav ? 'text-gray-800 hover:bg-gray-100' : 'text-white hover:bg-white/10'
             }`}
             aria-label="Toggle Menu"
           >
@@ -179,24 +187,24 @@ export const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-x-0 top-[73px] bg-gray-900/95 backdrop-blur-xl border-b border-gray-800 p-6 shadow-2xl max-h-[calc(100vh-73px)] overflow-y-auto space-y-4 text-white">
+          <div className="lg:hidden fixed inset-x-0 top-[73px] bg-white border-b border-gray-200 p-6 shadow-2xl max-h-[calc(100vh-73px)] overflow-y-auto space-y-4 text-gray-900">
             {navLinks.map((link) => (
               <div key={link.name} className="space-y-2">
                 <Link
                   to={link.href}
                   onClick={closeMenu}
-                  className="block text-base font-bold text-white hover:text-[#00C8C8] transition-colors"
+                  className="block text-base font-bold text-gray-900 hover:text-[#48b302] transition-colors"
                 >
                   {link.name}
                 </Link>
                 {link.hasDropdown && (
-                  <div className="pl-4 space-y-2 border-l-2 border-gray-800">
+                  <div className="pl-4 space-y-2 border-l-2 border-gray-200">
                     {link.dropdownItems?.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
                         onClick={closeMenu}
-                        className="block text-sm text-gray-300 hover:text-[#00C8C8] transition-colors"
+                        className="block text-sm text-gray-600 hover:text-[#48b302] transition-colors"
                       >
                         {item.name}
                       </Link>
@@ -209,7 +217,7 @@ export const Navbar = () => {
               <Link
                 to="/contact"
                 onClick={closeMenu}
-                className="block w-full py-3 text-center bg-[#00C8C8] text-gray-950 font-bold text-sm rounded-xl hover:bg-teal-400 transition-all shadow-lg"
+                className="block w-full py-3 text-center bg-[#48b302] text-gray-950 font-bold text-sm rounded-xl hover:bg-[#3ea002] transition-all shadow-md"
               >
                 Get in Touch
               </Link>
