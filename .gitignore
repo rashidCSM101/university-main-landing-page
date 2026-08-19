@@ -44,3 +44,6 @@ db.sql
 client/.env.production
 client/.env
 client/.env.example
+
+
+docs/*
