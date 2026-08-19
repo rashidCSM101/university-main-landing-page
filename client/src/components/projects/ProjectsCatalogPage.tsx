@@ -351,26 +351,6 @@ export const ProjectsCatalogPage = () => {
             </div>
           </div>
 
-          {/* Sync Status Bar */}
-          <div className="flex items-center justify-between bg-white rounded-2xl p-4 mb-8 border border-gray-200/80 shadow-sm text-xs text-gray-600">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>
-                Data source:{' '}
-                <strong className="text-gray-900">
-                  {isUsingFallback ? 'Express Seed Data' : 'Live Express REST API (/api/v1/projects)'}
-                </strong>
-              </span>
-            </div>
-            <button
-              onClick={fetchProjectsData}
-              className="inline-flex items-center gap-1.5 text-[#48b302] hover:text-teal-700 font-semibold transition-colors"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              <span>Refresh Catalog</span>
-            </button>
-          </div>
-
           {/* Projects Cards Grid */}
           {loading ? (
             <div className="grid md:grid-cols-2 gap-8">

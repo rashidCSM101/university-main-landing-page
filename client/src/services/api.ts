@@ -1,6 +1,6 @@
 // Centralized API Service for WenClims REST API endpoints
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 export async function fetchFromAPI<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
