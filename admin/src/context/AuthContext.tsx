@@ -8,7 +8,7 @@ export interface User {
   role: 'super_admin' | 'admin' | 'member' | 'editor';
 }
 
-export const OBFUSCATED_ADMIN_PATH = '/admin--wensclims-xk9f2m';
+export const OBFUSCATED_ADMIN_PATH = '';
 
 interface AuthContextType {
   user: User | null;

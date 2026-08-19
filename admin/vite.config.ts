@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
-  base: '/',
+  base: '/admin/',
   build: {
     chunkSizeWarningLimit: 1000,
     rollupOptions: {

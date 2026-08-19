@@ -46,14 +46,14 @@ export function App() {
 
   return (
     <AuthProvider>
-      <Router>
+      <Router basename="/admin">
         <Routes>
         {/* Obfuscated Login Route */}
         <Route path={loginPath} element={<LoginPage />} />
 
         {/* Protected Dashboard Overview */}
         <Route
-          path={OBFUSCATED_ADMIN_PATH}
+          path={OBFUSCATED_ADMIN_PATH || '/'}
           element={
             <ProtectedRoute>
               <AdminLayout title="System Overview">
