@@ -19,7 +19,7 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(OBFUSCATED_ADMIN_PATH, { replace: true });
+      navigate(OBFUSCATED_ADMIN_PATH || '/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -51,7 +51,7 @@ export const LoginPage: React.FC = () => {
       if (email && password) {
         await login(email, password, totp);
         setIsLoading(false);
-        navigate(OBFUSCATED_ADMIN_PATH, { replace: true });
+        navigate(OBFUSCATED_ADMIN_PATH || '/', { replace: true });
       } else {
         setIsLoading(false);
         setError('Please enter valid credentials.');
