@@ -466,3 +466,46 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* Animated Expanding Sparkle/Frame Border Hover Effect */
+.capability-sparkle-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.capability-sparkle-card::before,
+.capability-sparkle-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* border-radius: 1rem; */
+  transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Horizontal Top & Bottom Borders */
+.capability-sparkle-card::before {
+  border-top: 3px solid  var(--primary);
+  border-bottom: 3px solid var(--primary);
+  transform: scaleX(0);
+  transform-origin: center;
+}
+
+/* Vertical Left & Right Borders */
+.capability-sparkle-card::after {
+  border-left: 3px solid var(--primary);
+  border-right: 3px solid var(--primary);
+  transform: scaleY(0);
+  transform-origin: center;
+}
+
+/* On Hover: Expand both borders to create the full frame */
+.capability-sparkle-card:hover::before {
+  transform: scaleX(1);
+}
+
+.capability-sparkle-card:hover::after {
+  transform: scaleY(1);
+}
+

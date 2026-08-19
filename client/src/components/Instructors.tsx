@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { GraduationCap, User, FileText, CheckCircle2, ArrowRight } from 'lucide-react';
+import { GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetchTeamMembers } from '../services/api';
 
@@ -56,17 +56,36 @@ const ScientistCard = ({ sc, getInitials }: { sc: any; getInitials: (name: strin
         </div>
       </div>
 
-      {/* Bottom Bar: Stats & View Bio Pill Button */}
+      {/* Bottom Bar: LinkedIn, X (Twitter) Glowing Buttons & View Bio Pill Button */}
       <div className="p-3 pt-4 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-3 text-xs text-gray-600 font-semibold px-1">
-          <span className="flex items-center gap-1">
-            <User className="w-3.5 h-3.5 text-gray-500" />
-            <span>{sc.citations}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <FileText className="w-3.5 h-3.5 text-gray-500" />
-            <span>{sc.papers}</span>
-          </span>
+        <div className="flex items-center gap-2.5 px-1">
+          {/* LinkedIn Glow Button */}
+          {/* LinkedIn Glow Button */}
+          <a
+            href={sc.linkedin || 'https://linkedin.com'}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="LinkedIn Profile"
+            className="group/li relative w-8 h-8 rounded-full bg-[#DFE7EA] flex items-center justify-center transition-all duration-300 hover:bg-[#0077b5] hover:scale-110 hover:shadow-[0_0_12px_#0077b5]"
+          >
+            <svg className="w-4 h-4 fill-current text-gray-700 group-hover/li:text-white transition-colors" viewBox="0 0 24 24">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+            </svg>
+          </a>
+
+          {/* X (Twitter) Glow Button */}
+          <a
+            href={sc.twitter || 'https://x.com'}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="X (Twitter) Profile"
+            className="group/x relative w-8 h-8 rounded-full bg-[#DFE7EA] flex items-center justify-center transition-all duration-300 hover:bg-gray-950 hover:scale-110 hover:shadow-[0_0_12px_rgba(0,0,0,0.5)]"
+          >
+            <svg className="w-3.5 h-3.5 fill-current text-gray-700 group-hover/x:text-white transition-colors" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+          </a>
+
         </div>
 
         <Link
@@ -93,15 +112,15 @@ const Instructors = () => {
     fetchTeamMembers(true)
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.slice(0, 4).map((item: any, idx: number) => ({
+          const mapped = data.slice(0, 4).map((item: any) => ({
             id: item.id?.toString() || Math.random().toString(),
             name: item.name || 'Scientific Research Member',
             role: item.role || 'Climate Research Specialist',
             division: item.team || 'Atmospheric & Attribution Science',
             bio: item.bio || item.social_links?.bio || 'Focuses on extreme weather attribution, convection-permitting WRF regional modeling, and water security.',
             image: item.photo || item.image || item.photo_url || item.social_links?.photo || item.social_links?.image || null,
-            citations: item.citations || (300 + idx * 85),
-            papers: item.papers || (12 + idx * 4),
+            linkedin: item.social_links?.linkedin || item.linkedin || 'https://linkedin.com',
+            twitter: item.social_links?.twitter || item.social_links?.x || item.twitter || item.x || 'https://x.com',
             slug: item.slug || (item.name ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'team-member'),
           }));
           setScientists(mapped);
