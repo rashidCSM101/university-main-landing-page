@@ -16,6 +16,7 @@ import { AuditLogsManager } from './components/dashboard/AuditLogsManager';
 import { SystemHealthManager } from './components/dashboard/SystemHealthManager';
 import { GlobalBannerManager } from './components/dashboard/GlobalBannerManager';
 import { SiteSettingsManager } from './components/dashboard/SiteSettingsManager';
+import { MyProfileSettings } from './components/dashboard/MyProfileSettings';
 
 const AdminLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ children, title }) => {
   const [collapsed, setCollapsed] = React.useState(() => {
@@ -166,6 +167,18 @@ export function App() {
             <ProtectedRoute>
               <AdminLayout title="Emergency Website Banner">
                 <GlobalBannerManager />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* My Profile Settings — All authenticated users */}
+        <Route
+          path={`${OBFUSCATED_ADMIN_PATH}/my-profile`}
+          element={
+            <ProtectedRoute>
+              <AdminLayout title="My Profile Settings">
+                <MyProfileSettings />
               </AdminLayout>
             </ProtectedRoute>
           }

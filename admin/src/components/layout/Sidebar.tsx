@@ -9,13 +9,13 @@ import {
   Wrench,
   UserCheck,
   ShieldAlert,
-  Settings,
   LogOut,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
   Activity,
   Megaphone,
+  UserCircle,
+  KeyRound,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 import logoImg from '../../assets/logo.png';
@@ -29,33 +29,63 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  const navItems = [
-    { label: 'Overview', path: OBFUSCATED_ADMIN_PATH, icon: LayoutDashboard, exact: true },
-    { label: 'My Bio Settings', path: `${OBFUSCATED_ADMIN_PATH}/team`, icon: UserCheck },
-    { label: 'Blogs & Media', path: `${OBFUSCATED_ADMIN_PATH}/media`, icon: FileText, badge: '12' },
-    { label: 'Publications', path: `${OBFUSCATED_ADMIN_PATH}/publications`, icon: BookOpen },
-    { label: 'Projects', path: `${OBFUSCATED_ADMIN_PATH}/projects`, icon: FolderKanban },
-    { label: 'Our Team', path: `${OBFUSCATED_ADMIN_PATH}/team`, icon: Users },
-    { label: 'Sector Tools', path: `${OBFUSCATED_ADMIN_PATH}/tools`, icon: Wrench },
+  const isSuperAdmin = user?.role === 'super_admin';
+  const isAdmin      = user?.role === 'admin';
+  const isMember     = user?.role === 'member' || user?.role === 'editor';
+  const isPowerUser  = isSuperAdmin || isAdmin;
+
+  // ── Navigation items visible to ALL logged-in users ──────────────────────
+  const commonItems = [
+    { label: 'Overview',       path: OBFUSCATED_ADMIN_PATH,             icon: LayoutDashboard, exact: true },
+    { label: 'My Profile',     path: `${OBFUSCATED_ADMIN_PATH}/my-profile`, icon: UserCircle },
+    { label: 'Blogs & Media',  path: `${OBFUSCATED_ADMIN_PATH}/media`,  icon: FileText },
+    { label: 'Publications',   path: `${OBFUSCATED_ADMIN_PATH}/publications`, icon: BookOpen },
   ];
 
-  const adminOnlyItems = [
-    { label: 'User Roles', path: `${OBFUSCATED_ADMIN_PATH}/users`, icon: UserCheck },
-    { label: 'Audit Logs', path: `${OBFUSCATED_ADMIN_PATH}/audit`, icon: ShieldAlert },
-    { label: 'System Health & Backup', path: `${OBFUSCATED_ADMIN_PATH}/health`, icon: Activity },
-    { label: 'Emergency Banner', path: `${OBFUSCATED_ADMIN_PATH}/banner`, icon: Megaphone },
+  // ── Extra items visible only to Super Admin / Admin ───────────────────────
+  const powerItems = [
+    { label: 'Projects',       path: `${OBFUSCATED_ADMIN_PATH}/projects`, icon: FolderKanban },
+    { label: 'Our Team',       path: `${OBFUSCATED_ADMIN_PATH}/team`,   icon: Users },
+    { label: 'Sector Tools',   path: `${OBFUSCATED_ADMIN_PATH}/tools`,  icon: Wrench },
   ];
+
+  // ── System Admin items (Super Admin / Admin only) ─────────────────────────
+  const adminOnlyItems = [
+    { label: 'User Roles',          path: `${OBFUSCATED_ADMIN_PATH}/users`,   icon: UserCheck },
+    { label: 'Audit Logs',          path: `${OBFUSCATED_ADMIN_PATH}/audit`,   icon: ShieldAlert },
+    { label: 'System Health',       path: `${OBFUSCATED_ADMIN_PATH}/health`,  icon: Activity },
+    { label: 'Emergency Banner',    path: `${OBFUSCATED_ADMIN_PATH}/banner`,  icon: Megaphone },
+  ];
+
+  const renderLink = (item: { label: string; path: string; icon: any; exact?: boolean; badge?: string }) => {
+    const Icon = item.icon;
+    const isActive = item.exact
+      ? location.pathname === item.path
+      : location.pathname.startsWith(item.path) && item.path !== OBFUSCATED_ADMIN_PATH;
+
+    const exactActive = item.exact && location.pathname === item.path;
+    const active = item.exact ? exactActive : isActive;
+
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        className={`sidebar-link ${active ? 'active' : ''}`}
+        title={collapsed ? item.label : undefined}
+      >
+        <Icon className="sidebar-link-icon" />
+        {!collapsed && <span>{item.label}</span>}
+        {!collapsed && item.badge && <span className="sidebar-link-badge">{item.badge}</span>}
+      </NavLink>
+    );
+  };
 
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       {/* Brand Header */}
       <div className="sidebar-brand">
         <div className="sidebar-brand-logo">
-          <img
-            src={logoImg}
-            alt="WenClims Logo"
-            style={{ height: '34px', width: 'auto', objectFit: 'contain', flexShrink: 0 }}
-          />
+          <img src={logoImg} alt="WenClims" style={{ height: '34px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
           {!collapsed && (
             <div className="sidebar-brand-text">
               <div className="sidebar-brand-name">WenClims</div>
@@ -63,13 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             </div>
           )}
         </div>
-
-        {/* Collapse Toggle Button */}
-        <button
-          onClick={onToggle}
-          className="sidebar-toggle-btn"
-          title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-        >
+        <button onClick={onToggle} className="sidebar-toggle-btn" title={collapsed ? 'Expand' : 'Collapse'}>
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
@@ -77,88 +101,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       {/* Nav Menu */}
       <nav className="sidebar-nav">
         {!collapsed && <div className="sidebar-section-label">Main Management</div>}
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.exact
-            ? location.pathname === item.path
-            : location.pathname.startsWith(item.path);
 
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={`sidebar-link ${isActive ? 'active' : ''}`}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className="sidebar-link-icon" />
-              {!collapsed && <span>{item.label}</span>}
-              {!collapsed && item.badge && <span className="sidebar-link-badge">{item.badge}</span>}
-            </NavLink>
-          );
-        })}
+        {/* Common items (all users) */}
+        {commonItems.map(renderLink)}
 
-        {(user?.role === 'super_admin' || user?.role === 'admin') && (
+        {/* Power users also see Projects, Our Team, Tools */}
+        {isPowerUser && powerItems.map(renderLink)}
+
+        {/* System Admin section */}
+        {isPowerUser && (
           <>
             {!collapsed && <div className="sidebar-section-label">System Admin</div>}
-            {adminOnlyItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname.startsWith(item.path);
-
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={`sidebar-link ${isActive ? 'active' : ''}`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <Icon className="sidebar-link-icon" />
-                  {!collapsed && <span>{item.label}</span>}
-                </NavLink>
-              );
-            })}
+            {adminOnlyItems.map(renderLink)}
           </>
         )}
-
       </nav>
 
-      {/* Footer / User Profile Card */}
+      {/* Footer */}
       <div className="sidebar-footer">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.875rem' }}>
           <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #00C8C8, #1A3461)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#0B1E3D',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              flexShrink: 0,
-            }}
-            title={user?.name || 'Administrator'}
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}
+            title={user?.name || 'User'}
           >
-            {user?.name?.charAt(0) || 'A'}
+            {user?.name?.charAt(0) || 'U'}
           </div>
           {!collapsed && (
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.name || 'Administrator'}
+                {user?.name || 'User'}
               </div>
               <div style={{ fontSize: '0.65rem', color: '#00C8C8', fontWeight: 700, textTransform: 'uppercase' }}>
-                {user?.role === 'super_admin' ? 'Super Admin' : 'Editor'}
+                {isSuperAdmin ? 'Super Admin' : isAdmin ? 'Admin' : 'Member'}
               </div>
             </div>
           )}
         </div>
 
         <button
-          onClick={async () => {
-            await logout();
-            window.location.href = `${OBFUSCATED_ADMIN_PATH}/login`;
-          }}
+          onClick={async () => { await logout(); window.location.href = `${OBFUSCATED_ADMIN_PATH}/login`; }}
           className="sidebar-link"
           style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)' }}
           title={collapsed ? 'Sign Out' : undefined}

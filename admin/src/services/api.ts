@@ -122,6 +122,10 @@ export const api = {
     apiFetch<any>(`/admin/users/${id}/toggle-status`, { method: 'PUT' }),
   deleteUser: (id: string) =>
     apiFetch<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' }),
+  resetUserPassword: (id: string) =>
+    apiFetch<{ temp_password: string; email: string; name: string }>(`/admin/users/${id}/reset-password`, { method: 'PUT' }),
+  changeOwnPassword: (current_password: string, new_password: string) =>
+    apiFetch<{ message: string }>('/admin/users/me/change-password', { method: 'PUT', body: JSON.stringify({ current_password, new_password }) }),
 
   // Audit Logs (Super Admin Only)
   getAuditLogs: (params?: { action?: string }) => {
