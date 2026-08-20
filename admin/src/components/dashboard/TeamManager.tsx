@@ -1,9 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, Upload, Image as ImageIcon, UserCheck, CheckCircle, Save, ShieldCheck } from 'lucide-react';
+import { Plus, Edit2, Trash2, Upload, Image as ImageIcon, UserCheck, CheckCircle, Save, ShieldCheck, KeyRound, Copy, CheckCheck } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
+// ─── Credentials Popup Modal ──────────────────────────────────────────────────
+interface CredentialsModalProps {
+  isOpen: boolean;
+  name: string;
+  email: string;
+  password: string;
+  onClose: () => void;
+}
+
+const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email, password, onClose }) => {
+  const [copied, setCopied] = useState(false);
+  if (!isOpen) return null;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(`Team Member Account Created!\n\nName: ${name}\nLogin URL: https://hex-byte.tech/admin/\nEmail: ${email}\nTemporary Password: ${password}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(11,30,61,0.75)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ background: '#fff', borderRadius: '20px', padding: '2rem', width: '100%', maxWidth: '460px', boxShadow: '0 25px 60px rgba(0,0,0,0.3)', border: '2px solid #00C8C8' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
+            <KeyRound size={26} color="#fff" />
+          </div>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.3rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
+            Member Account &amp; Login Credentials
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: '#6B7A95', marginTop: '0.4rem' }}>
+            A login account has been created for <strong>{name}</strong>! Share these credentials with them.
+          </p>
+        </div>
+
+        <div style={{ background: '#F0F9F9', border: '1.5px solid #00C8C8', borderRadius: '14px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+          <div style={{ marginBottom: '0.85rem' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#6B7A95', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Admin Portal URL</div>
+            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D' }}>https://hex-byte.tech/admin/</div>
+          </div>
+          <div style={{ marginBottom: '0.85rem' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#6B7A95', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Login Email</div>
+            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0B1E3D', fontFamily: 'monospace' }}>{email}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#6B7A95', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Auto-Generated Password</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#00C8C8', fontFamily: 'monospace', letterSpacing: '1px' }}>{password}</div>
+          </div>
+        </div>
+
+        <p style={{ fontSize: '0.75rem', color: '#d97706', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.6rem 0.875rem', marginBottom: '1.25rem' }}>
+          ⚠️ Copy and send this password to the member. They can change their password anytime after logging in via <strong>My Profile Settings</strong>.
+        </p>
+
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button onClick={handleCopy} className="btn-teal" style={{ flex: 1, padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 800 }}>
+            {copied ? <><CheckCheck size={18} /> Copied to Clipboard!</> : <><Copy size={18} /> Copy Credentials</>}
+          </button>
+          <button onClick={onClose} className="btn-ghost" style={{ padding: '0.75rem 1.25rem' }}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export const TeamManager: React.FC = () => {
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'super_admin';
@@ -15,7 +80,11 @@ export const TeamManager: React.FC = () => {
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Form State (Initialized to Logged In User)
+  // Credentials Modal State
+  const [credModal, setCredModal] = useState<{ open: boolean; name: string; email: string; password: string }>({
+    open: false, name: '', email: '', password: '',
+  });
+
   const [formData, setFormData] = useState<any>({
     id: null,
     name: user?.name || '',
@@ -44,7 +113,6 @@ export const TeamManager: React.FC = () => {
       const data = await api.getAdminTeam();
       setItems(data);
 
-      // Match logged in user's profile from server
       if (user && Array.isArray(data)) {
         const myProfile = data.find(
           (m: any) =>
@@ -101,13 +169,12 @@ export const TeamManager: React.FC = () => {
     });
   };
 
-  // Image upload from device -> Base64
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size exceeds 5MB limit. Please choose a smaller image.');
+      alert('File size exceeds 5MB limit.');
       return;
     }
 
@@ -147,6 +214,7 @@ export const TeamManager: React.FC = () => {
       team: formData.team,
       photo: formData.photo,
       bio: formData.bio,
+      email: formData.email,
       social_links,
       show_on_home: formData.show_on_home ?? false,
       is_active: formData.is_active,
@@ -160,7 +228,18 @@ export const TeamManager: React.FC = () => {
         if (created?.id) {
           setFormData((prev: any) => ({ ...prev, id: created.id }));
         }
+
+        // If backend auto-generated a password and user email for new member, pop up credentials modal!
+        if (created?.temp_password && created?.user_email) {
+          setCredModal({
+            open: true,
+            name: created.name,
+            email: created.user_email,
+            password: created.temp_password,
+          });
+        }
       }
+
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
       loadData();
@@ -173,7 +252,6 @@ export const TeamManager: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!deleteTarget || !isSuperAdmin) return;
-
     setIsDeleting(true);
     try {
       await api.deleteTeamMember(deleteTarget.id);
@@ -219,16 +297,15 @@ export const TeamManager: React.FC = () => {
         <div>
           <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <UserCheck size={28} color="#00C8C8" />
-            <span>My Personal Profile &amp; Bio Settings</span>
+            <span>Our Team &amp; Faculty Manager</span>
           </h1>
           <p className="page-subtitle">
             {isSuperAdmin
-              ? 'Super Admin Mode: Edit your bio settings and manage the organization faculty directory'
-              : 'Editor Profile Mode: Update your personal scientist biography, credentials, photo, and contacts'}
+              ? 'Super Admin Mode: Add new scientists/members — auto-generates login account and temporary password!'
+              : 'Editor Profile Mode: Update your scientist biography and credentials'}
           </p>
         </div>
 
-        {/* ONLY Super Admin can see "Add New Team Member" button */}
         {isSuperAdmin && (
           <button onClick={openNewBlankMember} className="btn-teal">
             <Plus size={18} /> Add New Team Member
@@ -236,33 +313,20 @@ export const TeamManager: React.FC = () => {
         )}
       </div>
 
-      {/* Save Success Alert Banner */}
+      {/* Save Success Alert */}
       {saveSuccess && (
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            marginBottom: '1.5rem',
-            background: 'rgba(16, 185, 129, 0.12)',
-            border: '1px solid #10B981',
-            borderRadius: '12px',
-            color: '#065F46',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}
-        >
+        <div style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid #10B981', borderRadius: '12px', color: '#065F46', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <CheckCircle size={22} color="#10B981" />
-          <span>Your Profile &amp; Bio settings have been saved successfully! Changes are live on the website.</span>
+          <span>Profile &amp; Bio settings saved successfully! Changes are live on the website.</span>
         </div>
       )}
 
-      {/* PERSONAL PROFILE & BIO SETTINGS FORM (ALWAYS VISIBLE FOR LOGGED IN USER) */}
+      {/* FORM */}
       <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2.5rem', background: '#ffffff', border: '2px solid #00C8C8', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,200,200,0.08)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #E2E8F4', paddingBottom: '1rem' }}>
           <div>
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.4rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
-              Edit My Personal Bio: {formData.name || user?.name}
+              {formData.id ? `Edit Member: ${formData.name}` : 'Add New Team Member'}
             </h2>
             <span style={{ fontSize: '0.8rem', color: '#009A9A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
               <ShieldCheck size={14} /> Logged in as: {user?.name} ({isSuperAdmin ? 'Super Admin' : 'Editor Profile'})
@@ -276,29 +340,24 @@ export const TeamManager: React.FC = () => {
         </div>
 
         <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
-          {/* 1. Full Name */}
+          {/* Full Name */}
           <div>
             <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Full Name *</label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Ali"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
+            <input type="text" required placeholder="e.g. Dr. Ayesha Khan" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
-          {/* 2. Position / Post Designation (Dropdown with fixed allowed posts) */}
+          {/* Official Email (Triggers auto-login creation) */}
+          <div>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>
+              Official Email Address * <span style={{ color: '#00C8C8', fontWeight: 600 }}>(Creates Login Account)</span>
+            </label>
+            <input type="email" required placeholder="ayesha@wenclims.org" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+          </div>
+
+          {/* Post Designation */}
           <div>
             <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Post / Designation *</label>
-            <select
-              value={formData.role || 'Research Associate'}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            >
+            <select value={formData.role || 'Research Associate'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
               <option value="Chief Executive Officer">Chief Executive Officer</option>
               <option value="Chief Operating Officer">Chief Operating Officer</option>
               <option value="Team Lead">Team Lead</option>
@@ -309,15 +368,10 @@ export const TeamManager: React.FC = () => {
             </select>
           </div>
 
-          {/* 3. Division / Department */}
+          {/* Division */}
           <div>
             <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Division / Department</label>
-            <select
-              value={formData.team}
-              onChange={(e) => setFormData({ ...formData, team: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            >
+            <select value={formData.team} onChange={(e) => setFormData({ ...formData, team: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
               <option value="Leadership">Leadership &amp; Directorate</option>
               <option value="Atmospheric & Attribution Science">Atmospheric &amp; Attribution Science</option>
               <option value="Hydrology & Indus Basin Risk">Hydrology &amp; Indus Basin Risk</option>
@@ -326,228 +380,73 @@ export const TeamManager: React.FC = () => {
             </select>
           </div>
 
-          {/* 4. Years of Experience */}
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Years of Experience (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. 15+ Years"
-              value={formData.experience}
-              onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          {/* 5. Qualification / Academic Credentials */}
+          {/* Academic Qualification */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Ph.D. Degrees (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. Ph.D. Atmospheric Physics & Attribution Science"
-              value={formData.qualification}
-              onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Degrees (Optional)</label>
+            <input type="text" placeholder="e.g. Ph.D. Atmospheric Physics & Attribution Science" value={formData.qualification} onChange={(e) => setFormData({ ...formData, qualification: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
-          {/* 6. Specialization / Expertise */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Specialization &amp; Research Focus Domain (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. Extreme Event Attribution, Convective Monsoon Modeling & IPCC Assessment (or leave empty)"
-              value={formData.specialization}
-              onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          {/* 7. Image Upload from Device / Web URL */}
+          {/* Image Upload */}
           <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1.25rem', borderRadius: '1rem', border: '1px solid #E2E8F4' }}>
             <label style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0B1E3D', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Upload size={18} color="#00C8C8" />
-              <span>Profile Photo Settings (Device Upload or Web Link - Optional)</span>
+              <span>Profile Photo (Device Upload or Image Link)</span>
             </label>
-
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1.25rem', alignItems: 'center' }}>
-              {/* Image Preview Box */}
-              <div style={{ width: '90px', height: '90px', borderRadius: '1.25rem', overflow: 'hidden', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #00C8C8', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                {formData.photo ? (
-                  <img src={formData.photo} alt="Profile Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <ImageIcon size={32} color="#94A3B8" />
-                )}
+              <div style={{ width: '80px', height: '80px', borderRadius: '1rem', overflow: 'hidden', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #00C8C8' }}>
+                {formData.photo ? <img src={formData.photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={28} color="#94A3B8" />}
               </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                {/* Device Upload Button */}
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #00C8C8, #48b302)', color: '#0B1E3D', fontWeight: 800, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 2px 8px rgba(0,200,200,0.3)' }}>
-                  <Upload size={16} />
-                  <span>Choose Image from Computer / Device</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', color: '#fff', fontWeight: 700, padding: '0.55rem 1.1rem', borderRadius: '0.6rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content' }}>
+                  <Upload size={15} />
+                  <span>Choose Photo from Device</span>
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
                 </label>
-
-                {/* Web Link Input */}
-                <input
-                  type="text"
-                  placeholder="Or paste web image URL (https://...) - Optional"
-                  value={formData.photo}
-                  onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
-                  className="input-field"
-                  style={{ paddingLeft: '0.75rem', fontSize: '0.8rem' }}
-                />
+                <input type="text" placeholder="Or paste web image URL (https://...)" value={formData.photo} onChange={(e) => setFormData({ ...formData, photo: e.target.value })} className="input-field" style={{ paddingLeft: '0.75rem', fontSize: '0.8rem' }} />
               </div>
             </div>
           </div>
 
-          {/* 8. Contact Info: Email & Phone */}
+          {/* Social Links */}
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Official Email Address (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. rashid@wenclims.org"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn URL (Optional)</label>
+            <input type="text" placeholder="https://linkedin.com/in/..." value={formData.linkedin} onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Phone / Contact Number (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. +92 51 9260100"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Google Scholar URL (Optional)</label>
+            <input type="text" placeholder="https://scholar.google.com/..." value={formData.google_scholar} onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
-          {/* 9. Office Address */}
+          {/* Bio Text */}
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Office Address / Location (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. WenClims Research HQ, Sector H-8/4, Islamabad, Pakistan"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Bio Text)</label>
+            <textarea rows={3} placeholder="Write academic background and research summary..." value={formData.bio || ''} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} className="input-field" style={{ paddingLeft: '1rem', height: 'auto' }} />
           </div>
 
-          {/* 10. Social & Academic URLs (All Optional) */}
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Google Scholar Profile URL (Optional)</label>
-            <input
-              type="text"
-              placeholder="https://scholar.google.com/..."
-              value={formData.google_scholar}
-              onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>ORCID ID Link (Optional)</label>
-            <input
-              type="text"
-              placeholder="https://orcid.org/0000-..."
-              value={formData.orcid}
-              onChange={(e) => setFormData({ ...formData, orcid: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn Profile URL (Optional)</label>
-            <input
-              type="text"
-              placeholder="https://linkedin.com/in/..."
-              value={formData.linkedin}
-              onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>X (Twitter) Profile URL (Optional)</label>
-            <input
-              type="text"
-              placeholder="https://x.com/..."
-              value={formData.x_twitter}
-              onChange={(e) => setFormData({ ...formData, x_twitter: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem' }}
-            />
-          </div>
-
-          {/* 11. Scientific Biography (Bio) (Optional) */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Full Bio Text) (Optional)</label>
-            <textarea
-              rows={4}
-              placeholder="Write your academic background, research focus, IPCC contributions, and career summary (or leave empty)..."
-              value={formData.bio || ''}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem', height: 'auto', borderRadius: '1rem' }}
-            />
-          </div>
-
-          {/* 12. Key Research Publications (Optional) */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Key Research Papers / Publications List (Optional)</label>
-            <textarea
-              rows={3}
-              placeholder="List major published research papers and journal DOIs (or leave empty)..."
-              value={formData.publications || ''}
-              onChange={(e) => setFormData({ ...formData, publications: e.target.value })}
-              className="input-field"
-              style={{ paddingLeft: '1rem', height: 'auto', borderRadius: '1rem' }}
-            />
-          </div>
-
-          {/* 13. Super Admin Home Page Card Access Toggle */}
+          {/* Home Page Card Feature */}
           {isSuperAdmin && (
-            <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem', padding: '1rem 1.25rem', background: '#F0FDFA', border: '2px dashed #00C8C8', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-              <input
-                type="checkbox"
-                id="show_on_home"
-                checked={formData.show_on_home || false}
-                onChange={(e) => setFormData({ ...formData, show_on_home: e.target.checked })}
-                style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#48b302' }}
-              />
+            <div style={{ gridColumn: '1 / -1', padding: '1rem', background: '#F0FDFA', border: '2px dashed #00C8C8', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <input type="checkbox" id="show_on_home" checked={formData.show_on_home || false} onChange={(e) => setFormData({ ...formData, show_on_home: e.target.checked })} style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#00C8C8' }} />
               <div>
-                <label htmlFor="show_on_home" style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F766E', cursor: 'pointer', display: 'block' }}>
+                <label htmlFor="show_on_home" style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0F766E', cursor: 'pointer', display: 'block' }}>
                   ⭐ Feature Card on Home Page ("Meet Our Lead Climate Scientists")
                 </label>
-                <span style={{ fontSize: '0.78rem', color: '#6B7A95', display: 'block', marginTop: '2px' }}>
-                  Super Admin Privilege: Check this box to include this scientist in the featured 4 cards on the main Home Page. (On the Team page, all scientists appear automatically).
-                </span>
+                <span style={{ fontSize: '0.75rem', color: '#6B7A95' }}>Check this box to include this scientist on the featured home page cards.</span>
               </div>
             </div>
           )}
 
-          {/* Submit Action Button */}
-          <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+          <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
             <button type="submit" disabled={saving} className="btn-teal" style={{ padding: '0.75rem 2rem', fontSize: '0.95rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
               <Save size={18} />
-              <span>{saving ? 'Saving Settings...' : 'Save Profile & Bio Settings'}</span>
+              <span>{saving ? 'Saving...' : formData.id ? 'Update Team Member' : 'Add Team Member & Auto-Generate Password'}</span>
             </button>
           </div>
         </form>
       </div>
 
-      {/* SUPER ADMIN ONLY: Scientific Faculty Directory Table */}
+      {/* SUPER ADMIN TABLE */}
       {isSuperAdmin && (
         <div className="card">
           <div style={{ padding: '1.25rem 1rem 0.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -570,7 +469,7 @@ export const TeamManager: React.FC = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>Loading team directory...</td></tr>
+                <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>Loading directory...</td></tr>
               ) : items.length === 0 ? (
                 <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>No team members found.</td></tr>
               ) : (
@@ -603,21 +502,10 @@ export const TeamManager: React.FC = () => {
                       )}
                     </td>
                     <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                      <button
-                        onClick={() => populateForm(item)}
-                        className="topbar-btn"
-                        style={{ display: 'inline-flex', marginRight: '0.4rem' }}
-                        title="Load into Form"
-                      >
+                      <button onClick={() => populateForm(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Load into Form">
                         <Edit2 size={15} />
                       </button>
-
-                      <button
-                        onClick={() => setDeleteTarget({ id: item.id, title: item.name })}
-                        className="topbar-btn"
-                        style={{ display: 'inline-flex', color: '#dc2626' }}
-                        title="Delete Member"
-                      >
+                      <button onClick={() => setDeleteTarget({ id: item.id, title: item.name })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete Member">
                         <Trash2 size={15} />
                       </button>
                     </td>
@@ -628,6 +516,15 @@ export const TeamManager: React.FC = () => {
           </table>
         </div>
       )}
+
+      {/* Credentials Modal */}
+      <CredentialsModal
+        isOpen={credModal.open}
+        name={credModal.name}
+        email={credModal.email}
+        password={credModal.password}
+        onClose={() => setCredModal({ open: false, name: '', email: '', password: '' })}
+      />
 
       <DeleteConfirmModal
         isOpen={!!deleteTarget}

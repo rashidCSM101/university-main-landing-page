@@ -1,10 +1,22 @@
 import { Router, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { query } from '../db/index';
 import { teamMemberSchema } from '../utils/validation';
 import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticateToken);
+
+/** Generates a secure random temporary password */
+function generateTempPassword(): string {
+  const adjectives = ['Blue', 'Swift', 'Bold', 'Bright', 'Clear', 'Deep', 'Fair', 'Gold', 'Green', 'High', 'Keen', 'Kind', 'Light', 'Prime', 'Safe', 'Sharp', 'Soft', 'Star', 'Strong', 'True'];
+  const nouns      = ['Cloud', 'Coast', 'Field', 'Force', 'Grove', 'Lake', 'Land', 'Peak', 'River', 'Rock', 'Shore', 'Storm', 'Stream', 'Wave', 'Wind', 'Bridge', 'Crest', 'Dawn', 'Frost', 'Glow'];
+  const adj  = adjectives[crypto.randomInt(adjectives.length)];
+  const noun = nouns[crypto.randomInt(nouns.length)];
+  const num  = String(crypto.randomInt(1000, 9999));
+  return `${adj}${noun}${num}`;
+}
 
 async function ensureTeamTableSchema() {
   try {
@@ -38,6 +50,10 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const item = parseResult.data;
+    const socialLinks = item.social_links || {};
+    const memberEmail = (socialLinks.email || req.body.email || '').trim().toLowerCase();
+
+    // 1. Insert into team_members table
     const text = `
       INSERT INTO team_members (name, slug, role, team, photo, bio, social_links, sort_order, show_on_home, is_active)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -50,16 +66,39 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.team || null,
       item.photo || null,
       item.bio || null,
-      JSON.stringify(item.social_links || {}),
+      JSON.stringify(socialLinks),
       item.sort_order || 0,
       item.show_on_home ?? false,
       item.is_active,
     ];
 
     const result = await query(text, params);
-    await logAudit(req.user, 'CREATE_TEAM_MEMBER', 'team_members', result.rows[0].id, req.ip || '127.0.0.1', { name: item.name });
+    const createdTeamMember = result.rows[0];
 
-    return res.status(201).json(result.rows[0]);
+    // 2. Auto-create matching user login account in users table if email is provided
+    let tempPassword = '';
+    if (memberEmail) {
+      const existingUser = await query('SELECT id FROM users WHERE LOWER(email) = $1', [memberEmail]);
+      if (existingUser.rows.length === 0) {
+        tempPassword = generateTempPassword();
+        const passwordHash = await bcrypt.hash(tempPassword, 12);
+        await query(
+          `INSERT INTO users (name, email, password_hash, role, is_active)
+           VALUES ($1, $2, $3, 'member', TRUE)
+           ON CONFLICT DO NOTHING`,
+          [item.name.trim(), memberEmail, passwordHash]
+        );
+      }
+    }
+
+    await logAudit(req.user, 'CREATE_TEAM_MEMBER', 'team_members', createdTeamMember.id, req.ip || '127.0.0.1', { name: item.name, email: memberEmail });
+
+    // Return team member + generated temporary password and email so UI can pop up credentials
+    return res.status(201).json({
+      ...createdTeamMember,
+      temp_password: tempPassword,
+      user_email: memberEmail,
+    });
   } catch (error: any) {
     console.error('Error creating team member:', error);
     if (error.code === '23505') {
@@ -74,7 +113,6 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     await ensureTeamTableSchema();
     const { id } = req.params;
 
-    // Power users (super_admin and admin) can update any team member. Member role can only update their own personal bio.
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
       const existing = await query('SELECT name, social_links FROM team_members WHERE id = $1', [id]);
@@ -138,12 +176,25 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const { id } = req.params;
-    const result = await query('DELETE FROM team_members WHERE id = $1 RETURNING name', [id]);
+    const result = await query('DELETE FROM team_members WHERE id = $1 RETURNING name, social_links', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Team member not found.' });
     }
 
-    await logAudit(req.user, 'DELETE_TEAM_MEMBER', 'team_members', id, req.ip || '127.0.0.1', { name: result.rows[0].name });
+    const deletedRow = result.rows[0];
+    const memberEmail = deletedRow.social_links?.email || '';
+
+    // Also delete matching user account from users table
+    try {
+      await query(
+        "DELETE FROM users WHERE LOWER(name) = LOWER($1) OR (LOWER(email) = LOWER($2) AND $2 != '')",
+        [deletedRow.name, memberEmail]
+      );
+    } catch (err) {
+      console.warn('Matching user account deletion warning:', err);
+    }
+
+    await logAudit(req.user, 'DELETE_TEAM_MEMBER', 'team_members', id, req.ip || '127.0.0.1', { name: deletedRow.name });
 
     return res.json({ message: 'Team member deleted.' });
   } catch (error) {
