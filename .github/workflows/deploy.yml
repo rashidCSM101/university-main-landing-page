@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - wethar-climate-dashbord # triggers on your working branch
+      - wethar-climate-dashbord
 
 jobs:
   deploy:
@@ -12,29 +12,17 @@ jobs:
 
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          port: 22
           script: |
             cd /var/www/lms
-            git pull origin $(git rev-parse --abbrev-ref HEAD)
-
-            # Build Client
-            cd /var/www/lms/client
-            npm install
-            npm run build
-
-            # Build Admin
-            cd /var/www/lms/admin
-            npm install
-            npm run build
-
-            # Restart Backend Server
-            cd /var/www/lms/server
-            npm install
-            npm run build
+            git reset --hard HEAD
+            git pull origin wethar-climate-dashbord
+            cd /var/www/lms/admin && npm install && npm run build
+            cd /var/www/lms/server && npm install && npm run build
             pm2 restart wcs-api || pm2 restart all
-
             echo "🚀 Deployment completed successfully!"
