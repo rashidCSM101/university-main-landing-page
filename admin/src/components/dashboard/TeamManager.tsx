@@ -3,6 +3,7 @@ import { api } from '../../services/api';
 import { Plus, Edit2, Trash2, Upload, Image as ImageIcon, UserCheck, CheckCircle, Save, ShieldCheck, KeyRound, Copy, CheckCheck, AlertTriangle } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../context/ToastContext';
 
 // ─── Credentials Popup Modal ──────────────────────────────────────────────────
 interface CredentialsModalProps {
@@ -68,9 +69,6 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
     </div>
   );
 };
-
-import { useAuth } from '../../hooks/useAuth';
-import { useToast } from '../../context/ToastContext';
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export const TeamManager: React.FC = () => {
