@@ -16,6 +16,7 @@ import {
   Megaphone,
   UserCircle,
   KeyRound,
+  Sliders,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 import logoImg from '../../assets/logo.png';
@@ -51,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   // ── System Admin items (Super Admin / Admin only) ─────────────────────────
   const adminOnlyItems = [
+    { label: 'Hero & Site Settings', path: `${OBFUSCATED_ADMIN_PATH}/settings`, icon: Sliders },
     { label: 'User Roles',          path: `${OBFUSCATED_ADMIN_PATH}/users`,   icon: UserCheck },
     { label: 'Audit Logs',          path: `${OBFUSCATED_ADMIN_PATH}/audit`,   icon: ShieldAlert },
     { label: 'System Health',       path: `${OBFUSCATED_ADMIN_PATH}/health`,  icon: Activity },
