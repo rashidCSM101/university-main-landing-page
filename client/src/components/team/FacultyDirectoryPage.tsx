@@ -8,7 +8,6 @@ import {
   Users,
   CheckCircle2,
   Search,
-  RefreshCw,
   Award,
   BookOpen,
   GraduationCap,
@@ -51,7 +50,6 @@ export const FacultyDirectoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDivision, setSelectedDivision] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isUsingFallback, setIsUsingFallback] = useState(false);
   const [bgImage, setBgImage] = useState<string>('/assets/images/team-hero.png');
 
 // Helper to generate 2-letter initials for avatar fallback

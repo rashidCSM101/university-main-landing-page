@@ -13,8 +13,6 @@ import {
   Zap,
   Droplets,
   Layers,
-  CheckCircle2,
-  RefreshCw,
   ArrowRight,
 } from 'lucide-react';
 
@@ -116,7 +114,6 @@ const Tools = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSector, setSelectedSector] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isUsingFallback, setIsUsingFallback] = useState(false);
   const [bgImage, setBgImage] = useState<string>(toolsHeroImg);
 
   const pageRef = useRef<HTMLDivElement>(null);

@@ -11,7 +11,6 @@ import {
   Globe2,
   Building2,
   ArrowRight,
-  RefreshCw,
   Award,
 } from 'lucide-react';
 
@@ -117,7 +116,6 @@ export const ProjectsCatalogPage = () => {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [isUsingFallback, setIsUsingFallback] = useState(false);
   const [bgImage, setBgImage] = useState<string>('/assets/images/projects-hero.png');
 
   // Fetch dynamic projects data from Express backend API

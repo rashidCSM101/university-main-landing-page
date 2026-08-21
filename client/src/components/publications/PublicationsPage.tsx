@@ -8,8 +8,6 @@ import {
   Search,
   Download,
   BookOpen,
-  CheckCircle2,
-  RefreshCw,
   Award,
   Copy,
 } from 'lucide-react';
@@ -118,7 +116,6 @@ export const PublicationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isUsingFallback, setIsUsingFallback] = useState(false);
   const [bgImage, setBgImage] = useState<string>('/assets/images/publications-hero.png');
   const [citationTarget, setCitationTarget] = useState<any>(null);
   const [pdfTarget, setPdfTarget] = useState<{ title: string; url: string } | null>(null);
