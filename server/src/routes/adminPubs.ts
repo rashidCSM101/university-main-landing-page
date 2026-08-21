@@ -15,6 +15,8 @@ async function ensurePubsTableSchema() {
     await query('ALTER TABLE publications ALTER COLUMN external_url TYPE TEXT');
     await query('ALTER TABLE publications ALTER COLUMN outlet_name TYPE TEXT');
     await query('ALTER TABLE publications ALTER COLUMN author_name TYPE TEXT');
+    // Ensure case-insensitive trimmed unique index on title
+    await query('CREATE UNIQUE INDEX IF NOT EXISTS idx_pubs_unique_title_ci ON publications (LOWER(TRIM(title)))');
   } catch (err) {
     // Safe catch
   }
@@ -39,8 +41,20 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const item = parseResult.data;
-    const isMember = req.user?.role === 'member' || req.user?.role === 'editor';
-    const finalStatus = isMember ? 'pending' : (item.status || 'published');
+
+    // ── 1. Duplicate Title Safety Check ──
+    const existingTitle = await query(
+      'SELECT id, title FROM publications WHERE LOWER(TRIM(title)) = LOWER(TRIM($1))',
+      [item.title]
+    );
+    if (existingTitle.rows.length > 0) {
+      return res.status(409).json({
+        error: `A publication or paper with the title "${existingTitle.rows[0].title}" already exists. Please choose a unique title.`
+      });
+    }
+
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    const finalStatus = isPowerUser ? (item.status || 'published') : 'pending';
 
     const text = `
       INSERT INTO publications (type, title, author_name, co_authors, outlet_name, external_url, published_date, abstract, thumbnail, tags, status, author_id)
@@ -49,7 +63,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     `;
     const params = [
       item.type,
-      item.title,
+      item.title.trim(),
       item.author_name || req.user?.name || null,
       item.co_authors || [],
       item.outlet_name || null,
@@ -62,34 +76,48 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       req.user?.id || null,
     ];
 
-    const result = await query(text, params);
-    const created = result.rows[0];
+    let created;
+    try {
+      const result = await query(text, params);
+      created = result.rows[0];
+    } catch (dbErr: any) {
+      if (dbErr.code === '23505') {
+        return res.status(409).json({ error: 'A publication with this title already exists.' });
+      }
+      throw dbErr;
+    }
 
-    const auditAction = isMember ? 'SUBMIT_PENDING_APPROVAL' : 'CREATE_PUBLICATION';
-    await logAudit(req.user, auditAction, 'publications', created.id, req.ip || '127.0.0.1', { title: item.title, author: req.user?.name, status: finalStatus });
+    const auditAction = isPowerUser ? 'CREATE_PUBLICATION' : 'SUBMIT_PENDING_APPROVAL';
+    await logAudit(req.user, auditAction, 'publications', created.id, req.ip || '127.0.0.1', {
+      title: item.title,
+      author: req.user?.name,
+      status: finalStatus
+    });
 
     return res.status(201).json(created);
-  } catch (error) {
-    return res.status(500).json({ error: 'Failed to create publication.' });
+  } catch (error: any) {
+    console.error('Create publication error:', error);
+    return res.status(500).json({ error: 'Failed to create publication: ' + (error.message || 'Server error') });
   }
 });
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensurePubsTableSchema();
     const { id } = req.params;
 
     // Fetch existing publication
-    const existing = await query('SELECT author_id, author_name FROM publications WHERE id = $1', [id]);
+    const existing = await query('SELECT * FROM publications WHERE id = $1', [id]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Publication not found.' });
     }
 
-    // Strict role check: Member can only edit their own publications
+    const existingRow = existing.rows[0];
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
       const isAuthor =
-        (existing.rows[0].author_id && existing.rows[0].author_id === req.user?.id) ||
-        (req.user?.name && existing.rows[0].author_name?.toLowerCase().trim() === req.user.name.toLowerCase().trim());
+        (existingRow.author_id && existingRow.author_id === req.user?.id) ||
+        (req.user?.name && existingRow.author_name?.toLowerCase().trim() === req.user.name.toLowerCase().trim());
       if (!isAuthor) {
         return res.status(403).json({ error: 'Permission denied. You can only edit your own submitted publications.' });
       }
@@ -101,6 +129,27 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const item = parseResult.data;
+
+    // ── 2. Duplicate Title Safety Check on Update ──
+    const duplicateCheck = await query(
+      'SELECT id, title FROM publications WHERE LOWER(TRIM(title)) = LOWER(TRIM($1)) AND id != $2',
+      [item.title, id]
+    );
+    if (duplicateCheck.rows.length > 0) {
+      return res.status(409).json({
+        error: `Another publication with the title "${duplicateCheck.rows[0].title}" already exists. Please choose a unique title.`
+      });
+    }
+
+    // ── 3. Role-Based Status & Re-Moderation Workflow ──
+    let finalStatus = item.status;
+    if (!isPowerUser) {
+      // Member edit to ANY paper reverts to pending review
+      finalStatus = 'pending';
+    }
+
+    const authorName = isPowerUser ? (item.author_name || existingRow.author_name) : existingRow.author_name;
+
     const text = `
       UPDATE publications 
       SET type=$1, title=$2, author_name=$3, co_authors=$4, outlet_name=$5, external_url=$6, published_date=$7, abstract=$8, thumbnail=$9, tags=$10, status=$11, updated_at=NOW()
@@ -109,24 +158,37 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     `;
     const params = [
       item.type,
-      item.title,
-      item.author_name || null,
+      item.title.trim(),
+      authorName,
       item.co_authors || [],
       item.outlet_name || null,
       item.external_url || null,
-      item.published_date || null,
+      (item.published_date && item.published_date.trim() !== '' ? item.published_date : null),
       item.abstract || null,
       item.thumbnail || null,
       item.tags || [],
-      item.status,
+      finalStatus,
       id,
     ];
 
     const result = await query(text, params);
-    await logAudit(req.user, 'UPDATE_PUBLICATION', 'publications', id, req.ip || '127.0.0.1', { title: item.title });
+    const updated = result.rows[0];
 
-    return res.json(result.rows[0]);
-  } catch (error) {
+    const auditAction = !isPowerUser && existingRow.status === 'published'
+      ? 'MEMBER_AMENDED_PUBLISHED_PUBLICATION'
+      : 'UPDATE_PUBLICATION';
+
+    await logAudit(req.user, auditAction, 'publications', id, req.ip || '127.0.0.1', {
+      title: item.title,
+      status: finalStatus,
+      previousStatus: existingRow.status,
+    });
+
+    return res.json(updated);
+  } catch (error: any) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'A publication with this title already exists.' });
+    }
     return res.status(500).json({ error: 'Failed to update publication.' });
   }
 });

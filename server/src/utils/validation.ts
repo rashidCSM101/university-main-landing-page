@@ -19,7 +19,7 @@ export const mediaItemSchema = z.object({
   cover_image: z.string().optional(),
   author_name: z.string().optional(),
   tags: z.array(z.string()).optional(),
-  status: z.enum(['draft', 'published']).default('published'),
+  status: z.enum(['draft', 'pending', 'published']).default('published'),
 });
 
 // Publication Validation Schema
