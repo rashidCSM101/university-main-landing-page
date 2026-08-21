@@ -178,4 +178,72 @@ router.put('/banner', requireRole('super_admin'), async (req: AuthenticatedReque
   }
 });
 
+/**
+ * GET /api/v1/admin/system/settings
+ * Fetch stored Site Settings & Hero Stat Bar custom overrides
+ */
+router.get('/settings', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    const result = await query("SELECT setting_key, setting_value FROM site_settings");
+    const settingsMap: Record<string, any> = {};
+    result.rows.forEach(r => {
+      settingsMap[r.setting_key] = typeof r.setting_value === 'string' ? JSON.parse(r.setting_value) : r.setting_value;
+    });
+
+    return res.json(settingsMap);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch site settings.' });
+  }
+});
+
+/**
+ * PUT /api/v1/admin/system/settings
+ * Update stored Site Settings & Hero Stat Bar custom overrides
+ */
+router.put('/settings', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    const { hero_stats, general_settings } = req.body;
+
+    if (hero_stats) {
+      await query(
+        `INSERT INTO site_settings (setting_key, setting_value, updated_at)
+         VALUES ('hero_stats', $1, NOW())
+         ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1, updated_at = NOW()`,
+        [JSON.stringify(hero_stats)]
+      );
+    }
+
+    if (general_settings) {
+      await query(
+        `INSERT INTO site_settings (setting_key, setting_value, updated_at)
+         VALUES ('general_settings', $1, NOW())
+         ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1, updated_at = NOW()`,
+        [JSON.stringify(general_settings)]
+      );
+    }
+
+    await logAudit(req.user, 'UPDATE_SITE_SETTINGS', 'system', 'site_settings', req.ip || '127.0.0.1');
+    return res.json({ message: 'Site settings saved successfully.' });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Failed to save site settings: ' + (error?.message || '') });
+  }
+});
+
 export default router;
+

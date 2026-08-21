@@ -141,4 +141,8 @@ export const api = {
   updateEmergencyBanner: (banner: any) =>
     apiFetch<any>('/admin/system/banner', { method: 'PUT', body: JSON.stringify(banner) }),
   downloadDbBackupUrl: () => `${API_BASE_URL}/admin/system/backup`,
+  getSiteSettings: () =>
+    apiFetch<any>('/admin/system/settings'),
+  updateSiteSettings: (data: any) =>
+    apiFetch<any>('/admin/system/settings', { method: 'PUT', body: JSON.stringify(data) }),
 };

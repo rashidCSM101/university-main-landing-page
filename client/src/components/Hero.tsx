@@ -56,14 +56,7 @@ const slides = [
   },
 ];
 
-// ─── Stats bar (shared across slides) ────────────────────────────────────────
-const stats = [
-  { value: '13+', label: 'Peer-Reviewed Papers' },
-  { value: '8+',  label: 'Funded Projects'      },
-  { value: '19',  label: 'Expert Team Members'  },
-  { value: 'ADB · EU', label: 'Major Funders'   },
-];
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 const AUTOPLAY_MS = 5500;
 
 const Hero = () => {
@@ -75,6 +68,33 @@ const Hero = () => {
   const [isHovered, setIsHovered] = useState(false);
   const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isAnimating = useRef(false);
+
+  // Dynamic stats state fetched from backend
+  const [heroStats, setHeroStats] = useState({
+    papers: '13+',
+    projects: '8+',
+    team: '19',
+    funders: 'ADB · EU',
+  });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/stats`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.papers) {
+          setHeroStats(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const stats = [
+    { value: heroStats.papers, label: 'Peer-Reviewed Papers' },
+    { value: heroStats.projects, label: 'Funded Projects' },
+    { value: heroStats.team, label: 'Expert Team Members' },
+    { value: heroStats.funders, label: 'Major Funders' },
+  ];
+
 
   // ── GSAP: entry animation for text content ──────────────────────────────
   const animateContent = useCallback((dir: 1 | -1 = 1) => {

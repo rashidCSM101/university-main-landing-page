@@ -188,18 +188,56 @@ router.get('/team/:identifier', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/v1/tools
- * Fetch Active Sector Tools
+ * GET /api/v1/stats
+ * Fetch Dynamic Homepage Hero Statistics & Major Funders
  */
-router.get('/tools', async (req: Request, res: Response) => {
+router.get('/stats', async (req: Request, res: Response) => {
   try {
-    const result = await query(
-      'SELECT * FROM tools WHERE is_active = TRUE ORDER BY sort_order ASC'
-    );
-    return res.json(result.rows);
+    // 1. Fetch real DB counts
+    const pubRes   = await query("SELECT COUNT(*) FROM publications WHERE status = 'published'");
+    const projRes  = await query("SELECT COUNT(*) FROM projects WHERE status = 'active' OR status IS NULL");
+    const teamRes  = await query("SELECT COUNT(*) FROM team_members WHERE is_active = TRUE");
+    const fundRes  = await query("SELECT DISTINCT funder_name FROM projects WHERE funder_name IS NOT NULL AND TRIM(funder_name) != ''");
+
+    const pubCount  = parseInt(pubRes.rows[0]?.count || '0', 10);
+    const projCount = parseInt(projRes.rows[0]?.count || '0', 10);
+    const teamCount = parseInt(teamRes.rows[0]?.count || '0', 10);
+
+    const fundersList = fundRes.rows
+      .map((r: any) => r.funder_name.trim())
+      .filter((name: string) => name.length > 0);
+
+    const defaultFunders = fundersList.length > 0 ? fundersList.join(' · ') : 'ADB · EU';
+
+    // 2. Fetch custom overrides if present in site_settings
+    let customSettings: any = {};
+    try {
+      const setRes = await query("SELECT setting_value FROM site_settings WHERE setting_key = 'hero_stats'");
+      if (setRes.rows.length > 0) {
+        customSettings = typeof setRes.rows[0].setting_value === 'string'
+          ? JSON.parse(setRes.rows[0].setting_value)
+          : setRes.rows[0].setting_value;
+      }
+    } catch {
+      // Table site_settings might not exist yet
+    }
+
+    return res.json({
+      papers: customSettings.papers || (pubCount > 0 ? `${pubCount}+` : '13+'),
+      projects: customSettings.projects || (projCount > 0 ? `${projCount}+` : '8+'),
+      team: customSettings.team || (teamCount > 0 ? `${teamCount}` : '19'),
+      funders: customSettings.funders || defaultFunders,
+    });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to fetch tools.' });
+    console.error('Error fetching public stats:', error);
+    return res.json({
+      papers: '13+',
+      projects: '8+',
+      team: '19',
+      funders: 'ADB · EU',
+    });
   }
 });
 
 export default router;
+
