@@ -21,10 +21,11 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 
-import { OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
+import { OBFUSCATED_ADMIN_PATH, useAuth } from '../../hooks/useAuth';
 import { api } from '../../services/api';
 
 export const DashboardHome: React.FC = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const xyChartRef = useRef<HTMLDivElement>(null);
@@ -320,7 +321,7 @@ export const DashboardHome: React.FC = () => {
               <Sparkles size={14} /> Control Dashboard
             </div>
             <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.85rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-              Welcome back, Mr. Rashid
+              Welcome back, {user?.name || 'Administrator'}
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', marginTop: '0.35rem', maxWidth: '600px' }}>
               All climate research feeds, media publications, and sector tools are currently synced and operational.
