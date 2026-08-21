@@ -141,15 +141,12 @@ export const PublicationsPage = () => {
           is_open_access: item.is_open_access ?? true,
         }));
         setPublications(mapped);
-        setIsUsingFallback(false);
       } else {
         setPublications(fallbackPublications);
-        setIsUsingFallback(true);
       }
     } catch (err) {
       console.warn('Backend API unreachable, using fallback publications data:', err);
       setPublications(fallbackPublications);
-      setIsUsingFallback(true);
     } finally {
       setLoading(false);
     }

@@ -160,15 +160,12 @@ const FacultyCard = ({ member }: { member: TeamMemberItem }) => {
           social_links: item.social_links || {},
         }));
         setMembers(mapped);
-        setIsUsingFallback(false);
       } else {
         setMembers(fallbackMembers);
-        setIsUsingFallback(true);
       }
     } catch (err) {
       console.warn('Backend API unreachable, using fallback team members data:', err);
       setMembers(fallbackMembers);
-      setIsUsingFallback(true);
     } finally {
       setLoading(false);
     }

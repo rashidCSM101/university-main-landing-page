@@ -139,15 +139,12 @@ export const ProjectsCatalogPage = () => {
           thumbnail: item.thumbnail || item.cover_image || 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80',
         }));
         setProjects(mapped);
-        setIsUsingFallback(false);
       } else {
         setProjects(fallbackProjects);
-        setIsUsingFallback(true);
       }
     } catch (err) {
       console.warn('Backend API unreachable, using fallback projects data:', err);
       setProjects(fallbackProjects);
-      setIsUsingFallback(true);
     } finally {
       setLoading(false);
     }

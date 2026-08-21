@@ -127,15 +127,12 @@ const Tools = () => {
       const data = await fetchTools();
       if (Array.isArray(data) && data.length > 0) {
         setTools(data);
-        setIsUsingFallback(false);
       } else {
         setTools(fallbackTools);
-        setIsUsingFallback(true);
       }
     } catch (err) {
       console.warn('Backend API unreachable, using fallback tools data:', err);
       setTools(fallbackTools);
-      setIsUsingFallback(true);
     } finally {
       setLoading(false);
     }
