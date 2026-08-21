@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Video, Image as ImageIcon, Upload, CheckCheck, Clock, CheckCircle2 } from 'lucide-react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Search,
+  Link as LinkIcon,
+  Video,
+  Image as ImageIcon,
+  Upload,
+  CheckCheck,
+  Clock,
+  CheckCircle2,
+  Users,
+  UserCheck,
+  UserPlus,
+} from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -8,6 +23,7 @@ export const MediaManager: React.FC = () => {
   const { user } = useAuth();
   const isPowerUser = user?.role === 'super_admin' || user?.role === 'admin';
   const [items, setItems] = useState<any[]>([]);
+  const [registeredMembers, setRegisteredMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [search, setSearch] = useState('');
@@ -32,12 +48,16 @@ export const MediaManager: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const data = await api.getAdminMedia(selectedType !== 'all' ? { type: selectedType } : undefined);
+      const [data, team] = await Promise.all([
+        api.getAdminMedia(selectedType !== 'all' ? { type: selectedType } : undefined),
+        api.getAdminTeam().catch(() => []),
+      ]);
       setItems(data);
+      setRegisteredMembers(team);
     } catch {
       setItems([
-        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid', created_at: new Date().toISOString() },
-        { id: '2', type: 'talkshow', title: 'Climate Resilience & Flood Warning Talkshow', slug: 'talkshow-climate-resilience', embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', status: 'published', author_name: 'Dr. Rashid', created_at: new Date().toISOString() },
+        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
+        { id: '2', type: 'talkshow', title: 'Climate Resilience & Flood Warning Talkshow', slug: 'talkshow-climate-resilience', embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
       ]);
     } finally {
       setLoading(false);
@@ -356,14 +376,45 @@ export const MediaManager: React.FC = () => {
               )}
             </div>
 
-            <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Author / Speaker Name</label>
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.4rem' }}>
+                <Users size={16} color="#00C8C8" /> Author / Speaker Name (Registered Member or Custom)
+              </label>
+
+              {/* Registered Team Members Pills */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.6rem' }}>
+                {registeredMembers.map((member) => (
+                  <button
+                    key={member.id || member.name}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, author_name: member.name })}
+                    style={{
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: '999px',
+                      border: formData.author_name === member.name ? '1.5px solid #00C8C8' : '1px solid #CBD5E1',
+                      background: formData.author_name === member.name ? 'rgba(0, 200, 200, 0.15)' : '#ffffff',
+                      color: formData.author_name === member.name ? '#007A7A' : '#334155',
+                      fontWeight: formData.author_name === member.name ? 700 : 500,
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                    }}
+                  >
+                    {formData.author_name === member.name && <UserCheck size={12} color="#00C8C8" />}
+                    <span>{member.name}</span>
+                  </button>
+                ))}
+              </div>
+
               <input
                 type="text"
                 value={formData.author_name}
                 onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
                 className="input-field"
-                style={{ paddingLeft: '1rem' }}
+                style={{ paddingLeft: '1rem', background: '#fff' }}
+                placeholder="Or type custom external author / speaker name..."
               />
             </div>
 
