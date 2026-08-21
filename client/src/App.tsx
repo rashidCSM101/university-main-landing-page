@@ -358,6 +358,8 @@ function AppContent() {
           <Route path="/grading-policy" element={<Navigate to="/publications" replace />} />
           <Route path="/course/:slug" element={<Navigate to="/media/blogs" replace />} />
           <Route path="/cookies"      element={<Navigate to="/privacy" replace />} />
+          <Route path="/login"        element={<Navigate to="/admin/login" replace />} />
+          <Route path="/signin"       element={<Navigate to="/admin/login" replace />} />
 
           {/* ── SEO Redirects: old WordPress URLs ─────────── */}
           <Route path="/peer-reviewed-research"   element={<main><ResearchPageWrapped /></main>} />

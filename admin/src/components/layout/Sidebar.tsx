@@ -141,9 +141,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         </div>
 
         <button
-          onClick={async () => { await logout(); window.location.href = `${OBFUSCATED_ADMIN_PATH}/login`; }}
-          className="sidebar-link"
-          style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)' }}
+          onClick={async () => { await logout(); window.location.href = '/admin/login'; }}
+          className="sidebar-link sidebar-logout"
           title={collapsed ? 'Sign Out' : undefined}
         >
           <LogOut className="sidebar-link-icon" />

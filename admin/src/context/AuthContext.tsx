@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('wenclims_admin_user');
       localStorage.removeItem('wenclims_admin_token');
       // Redirect to login — use replace so back-button doesn't return to expired session
-      window.location.replace(`${OBFUSCATED_ADMIN_PATH}/login`);
+      window.location.replace('/admin/login');
       console.warn('Session expired:', detail?.message);
     };
     window.addEventListener('sessionExpired', handleSessionExpired);
