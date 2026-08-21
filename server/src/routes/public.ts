@@ -193,6 +193,15 @@ router.get('/team/:identifier', async (req: Request, res: Response) => {
  */
 router.get('/stats', async (req: Request, res: Response) => {
   try {
+    // Ensure table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // 1. Fetch custom list if stored in site_settings
     let customList: any = null;
     try {
@@ -202,8 +211,8 @@ router.get('/stats', async (req: Request, res: Response) => {
           ? JSON.parse(setRes.rows[0].setting_value)
           : setRes.rows[0].setting_value;
       }
-    } catch {
-      // Table site_settings might not exist yet
+    } catch (e) {
+      console.warn('Error reading hero_stats_list:', e);
     }
 
     if (Array.isArray(customList) && customList.length > 0) {

@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { fetchFromAPI } from '../services/api';
 
 // Vite static asset imports — images in client/assets/images/
 import img1 from '../../assets/images/1.webp?url';
@@ -27,36 +28,35 @@ const slides = [
   {
     id: 2,
     image: img2,
-    tag: 'Mountain Ecosystems',
-    heading: 'Glaciers &',
-    highlight: 'Biodiversity',
-    sub: "The Hindu Kush Himalaya holds the world's largest ice reserve outside the poles. We measure what it's losing — and what we stand to lose.",
-    cta: { label: 'View Projects', to: '/projects' },
-    accent: '#4FC3F7',
+    tag: 'Attribution Science',
+    heading: 'Quantifying',
+    highlight: 'Climate Fingerprints',
+    sub: 'Using WWA-aligned statistical attribution methodologies to determine how much human-driven warming amplified extreme rainfall and heat.',
+    cta: { label: 'Attribution Studies', to: '/publications/research' },
+    accent: '#48b302',
   },
   {
     id: 3,
     image: img3,
-    tag: 'Clean Energy Transition',
-    heading: 'Renewables',
-    highlight: 'Power the Future',
-    sub: 'Floating solar and offshore wind are climate solutions — WenClims provides the climate data that makes them viable in South Asia.',
-    cta: { label: 'Our Tools', to: '/tools' },
-    accent: '#FDD835',
+    tag: 'Atmospheric Physics',
+    heading: 'Monsoon Dynamics',
+    highlight: '& Heat Stress',
+    sub: 'High-resolution ERA5 reanalysis and downscaled CMIP6 projections tailored to agricultural and urban vulnerabilities across the Indus basin.',
+    cta: { label: 'Interactive Climate Tools', to: '/tools' },
+    accent: '#26C6DA',
   },
   {
     id: 4,
     image: img4,
-    tag: 'Climate Resilience',
-    heading: 'Science-Driven',
-    highlight: 'Policy Change',
-    sub: 'From ADB to EU — we partner with global funders to translate atmospheric science into policies that protect lives and livelihoods.',
-    cta: { label: 'Meet Our Team', to: '/team' },
+    tag: 'Sector Solutions',
+    heading: 'Actionable Science',
+    highlight: 'for Resilient Sectors',
+    sub: 'Bridging peer-reviewed attribution research with practical decision-making frameworks for water management, disaster risk reduction, and agriculture.',
+    cta: { label: 'Our Projects', to: '/projects' },
     accent: '#81C784',
   },
 ];
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 const AUTOPLAY_MS = 5500;
 
 const Hero = () => {
@@ -78,8 +78,7 @@ const Hero = () => {
   ]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/stats`)
-      .then((r) => r.json())
+    fetchFromAPI<any>('/stats')
       .then((data) => {
         if (data && Array.isArray(data.stats) && data.stats.length > 0) {
           setStatsList(data.stats);
