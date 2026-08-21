@@ -225,7 +225,16 @@ router.put('/settings', async (req: AuthenticatedRequest, res: Response) => {
       )
     `);
 
-    const { hero_stats, general_settings } = req.body;
+    const { hero_stats, hero_stats_list, general_settings } = req.body;
+
+    if (hero_stats_list) {
+      await query(
+        `INSERT INTO site_settings (setting_key, setting_value, updated_at)
+         VALUES ('hero_stats_list', $1, NOW())
+         ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1, updated_at = NOW()`,
+        [JSON.stringify(hero_stats_list)]
+      );
+    }
 
     if (hero_stats) {
       await query(

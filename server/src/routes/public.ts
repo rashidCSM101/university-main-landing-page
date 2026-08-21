@@ -189,32 +189,16 @@ router.get('/team/:identifier', async (req: Request, res: Response) => {
 
 /**
  * GET /api/v1/stats
- * Fetch Dynamic Homepage Hero Statistics & Major Funders
+ * Fetch Dynamic Homepage Hero Statistics (Supports Publications, Blogs, Excerpts, Documentaries & Talk shows)
  */
 router.get('/stats', async (req: Request, res: Response) => {
   try {
-    // 1. Fetch real DB counts
-    const pubRes   = await query("SELECT COUNT(*) FROM publications WHERE status = 'published'");
-    const projRes  = await query("SELECT COUNT(*) FROM projects WHERE status = 'active' OR status IS NULL");
-    const teamRes  = await query("SELECT COUNT(*) FROM team_members WHERE is_active = TRUE");
-    const fundRes  = await query("SELECT DISTINCT funder_name FROM projects WHERE funder_name IS NOT NULL AND TRIM(funder_name) != ''");
-
-    const pubCount  = parseInt(pubRes.rows[0]?.count || '0', 10);
-    const projCount = parseInt(projRes.rows[0]?.count || '0', 10);
-    const teamCount = parseInt(teamRes.rows[0]?.count || '0', 10);
-
-    const fundersList = fundRes.rows
-      .map((r: any) => r.funder_name.trim())
-      .filter((name: string) => name.length > 0);
-
-    const defaultFunders = fundersList.length > 0 ? fundersList.join(' · ') : 'ADB · EU';
-
-    // 2. Fetch custom overrides if present in site_settings
-    let customSettings: any = {};
+    // 1. Fetch custom list if stored in site_settings
+    let customList: any = null;
     try {
-      const setRes = await query("SELECT setting_value FROM site_settings WHERE setting_key = 'hero_stats'");
+      const setRes = await query("SELECT setting_value FROM site_settings WHERE setting_key = 'hero_stats_list'");
       if (setRes.rows.length > 0) {
-        customSettings = typeof setRes.rows[0].setting_value === 'string'
+        customList = typeof setRes.rows[0].setting_value === 'string'
           ? JSON.parse(setRes.rows[0].setting_value)
           : setRes.rows[0].setting_value;
       }
@@ -222,19 +206,38 @@ router.get('/stats', async (req: Request, res: Response) => {
       // Table site_settings might not exist yet
     }
 
-    return res.json({
-      papers: customSettings.papers || (pubCount > 0 ? `${pubCount}+` : '13+'),
-      projects: customSettings.projects || (projCount > 0 ? `${projCount}+` : '8+'),
-      team: customSettings.team || (teamCount > 0 ? `${teamCount}` : '19'),
-      funders: customSettings.funders || defaultFunders,
-    });
+    if (Array.isArray(customList) && customList.length > 0) {
+      return res.json({ stats: customList });
+    }
+
+    // 2. Fetch real counts from DB as intelligent defaults
+    const pubRes   = await query("SELECT COUNT(*) FROM publications WHERE status = 'published'");
+    const blogRes  = await query("SELECT COUNT(*) FROM media_items WHERE type = 'blog' AND status = 'published'");
+    const excerptRes = await query("SELECT COUNT(*) FROM media_items WHERE type = 'excerpt' AND status = 'published'");
+    const videoRes = await query("SELECT COUNT(*) FROM media_items WHERE type IN ('video', 'talkshow', 'documentary') AND status = 'published'");
+
+    const pubCount   = parseInt(pubRes.rows[0]?.count || '0', 10);
+    const blogCount  = parseInt(blogRes.rows[0]?.count || '0', 10);
+    const excerptCount = parseInt(excerptRes.rows[0]?.count || '0', 10);
+    const videoCount = parseInt(videoRes.rows[0]?.count || '0', 10);
+
+    const defaultStats = [
+      { value: pubCount > 0 ? `${pubCount}` : '23', label: 'Publications' },
+      { value: blogCount > 0 ? `${blogCount}+` : '25+', label: 'Blogs' },
+      { value: excerptCount > 0 ? `${excerptCount}+` : '30+', label: 'Excerpts' },
+      { value: videoCount > 0 ? `${videoCount}+` : '20+', label: 'Documentaries & Talk shows' },
+    ];
+
+    return res.json({ stats: defaultStats });
   } catch (error) {
     console.error('Error fetching public stats:', error);
     return res.json({
-      papers: '13+',
-      projects: '8+',
-      team: '19',
-      funders: 'ADB · EU',
+      stats: [
+        { value: '23', label: 'Publications' },
+        { value: '25+', label: 'Blogs' },
+        { value: '30+', label: 'Excerpts' },
+        { value: '20+', label: 'Documentaries & Talk shows' },
+      ],
     });
   }
 });

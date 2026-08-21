@@ -70,30 +70,31 @@ const Hero = () => {
   const isAnimating = useRef(false);
 
   // Dynamic stats state fetched from backend
-  const [heroStats, setHeroStats] = useState({
-    papers: '13+',
-    projects: '8+',
-    team: '19',
-    funders: 'ADB · EU',
-  });
+  const [statsList, setStatsList] = useState([
+    { value: '23', label: 'Publications' },
+    { value: '25+', label: 'Blogs' },
+    { value: '30+', label: 'Excerpts' },
+    { value: '20+', label: 'Documentaries & Talk shows' },
+  ]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/stats`)
       .then((r) => r.json())
       .then((data) => {
-        if (data && data.papers) {
-          setHeroStats(data);
+        if (data && Array.isArray(data.stats) && data.stats.length > 0) {
+          setStatsList(data.stats);
+        } else if (data && data.papers) {
+          setStatsList([
+            { value: data.papers, label: 'Publications' },
+            { value: data.projects, label: 'Blogs' },
+            { value: data.team, label: 'Excerpts' },
+            { value: data.funders, label: 'Documentaries & Talk shows' },
+          ]);
         }
       })
       .catch(() => {});
   }, []);
 
-  const stats = [
-    { value: heroStats.papers, label: 'Peer-Reviewed Papers' },
-    { value: heroStats.projects, label: 'Funded Projects' },
-    { value: heroStats.team, label: 'Expert Team Members' },
-    { value: heroStats.funders, label: 'Major Funders' },
-  ];
 
 
   // ── GSAP: entry animation for text content ──────────────────────────────
@@ -383,20 +384,20 @@ const Hero = () => {
 
           {/* Stats bar */}
           <div className="flex flex-wrap items-center gap-6 md:gap-8 mt-12 pt-8 border-t border-white/20">
-            {stats.map((s, i) => (
+            {statsList.map((s, i) => (
               <div key={i} className="flex items-center gap-6 md:gap-8">
                 <div>
                   <div
-                    className="text-2xl md:text-3xl font-bold font-heading"
+                    className="text-2xl md:text-3xl font-bold font-heading tracking-tight"
                     style={{ color: i === 3 ? slide.accent : 'white' }}
                   >
                     {s.value}
                   </div>
-                  <div className="text-white/55 text-[11px] uppercase tracking-wider mt-0.5">
+                  <div className="text-white/70 text-[11px] font-semibold uppercase tracking-wider mt-0.5">
                     {s.label}
                   </div>
                 </div>
-                {i < stats.length - 1 && (
+                {i < statsList.length - 1 && (
                   <div className="w-px h-8 bg-white/20 hidden sm:block" />
                 )}
               </div>

@@ -8,6 +8,9 @@ import {
   CheckCircle2,
   Lock,
   BarChart2,
+  Plus,
+  Minus,
+  RotateCcw,
   Sparkles,
 } from 'lucide-react';
 import { api } from '../../services/api';
@@ -16,13 +19,13 @@ export const SiteSettingsManager: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Hero Stat Bar Overrides & Defaults
-  const [heroStats, setHeroStats] = useState({
-    papers: '13+',
-    projects: '8+',
-    team: '19',
-    funders: 'ADB · EU',
-  });
+  // 4-Slot Customizable Homepage Hero Stat Cards
+  const [heroStatsList, setHeroStatsList] = useState([
+    { value: '23', label: 'Publications' },
+    { value: '25+', label: 'Blogs' },
+    { value: '30+', label: 'Excerpts' },
+    { value: '20+', label: 'Documentaries & Talk shows' },
+  ]);
 
   // General Settings
   const [settings, setSettings] = useState({
@@ -43,8 +46,15 @@ export const SiteSettingsManager: React.FC = () => {
       setLoading(true);
       try {
         const data = await api.getSiteSettings();
-        if (data?.hero_stats) {
-          setHeroStats((prev) => ({ ...prev, ...data.hero_stats }));
+        if (data?.hero_stats_list && Array.isArray(data.hero_stats_list) && data.hero_stats_list.length > 0) {
+          setHeroStatsList(data.hero_stats_list);
+        } else if (data?.hero_stats) {
+          setHeroStatsList([
+            { value: data.hero_stats.papers || '23', label: 'Publications' },
+            { value: data.hero_stats.projects || '25+', label: 'Blogs' },
+            { value: data.hero_stats.team || '30+', label: 'Excerpts' },
+            { value: data.hero_stats.funders || '20+', label: 'Documentaries & Talk shows' },
+          ]);
         }
         if (data?.general_settings) {
           setSettings((prev) => ({ ...prev, ...data.general_settings }));
@@ -57,11 +67,31 @@ export const SiteSettingsManager: React.FC = () => {
     })();
   }, []);
 
+  const handleStatChange = (index: number, field: 'value' | 'label', val: string) => {
+    const updated = [...heroStatsList];
+    updated[index] = { ...updated[index], [field]: val };
+    setHeroStatsList(updated);
+  };
+
+  // Helper to increment numerical values (handles numbers with or without '+')
+  const handleAdjustValue = (index: number, delta: number) => {
+    const updated = [...heroStatsList];
+    const currentVal = updated[index].value;
+    const hasPlus = currentVal.includes('+');
+    const numericPart = parseInt(currentVal.replace(/[^0-9]/g, ''), 10);
+
+    if (!isNaN(numericPart)) {
+      const nextNum = Math.max(0, numericPart + delta);
+      updated[index].value = hasPlus ? `${nextNum}+` : `${nextNum}`;
+      setHeroStatsList(updated);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await api.updateSiteSettings({
-        hero_stats: heroStats,
+        hero_stats_list: heroStatsList,
         general_settings: settings,
       });
       setSaved(true);
@@ -77,7 +107,7 @@ export const SiteSettingsManager: React.FC = () => {
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
         <div>
           <h1 className="page-title">Site Settings &amp; Homepage Hero Control</h1>
-          <p className="page-subtitle">Manage homepage hero statistics, major funders, platform contact info, and SEO</p>
+          <p className="page-subtitle">Manage homepage hero statistics (Publications, Blogs, Excerpts, Documentaries &amp; Talk Shows), contact info, and SEO</p>
         </div>
 
         <button onClick={handleSave} className="btn-teal" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.65rem 1.25rem' }}>
@@ -86,90 +116,152 @@ export const SiteSettingsManager: React.FC = () => {
       </div>
 
       {saved && (
-        <div style={{ background: 'rgba(0,200,200,0.12)', border: '1px solid #00C8C8', color: '#48b302', padding: '0.875rem 1.25rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-          <CheckCircle2 size={18} /> Settings &amp; Homepage Hero stats updated successfully!
+        <div style={{ background: 'rgba(0,200,200,0.12)', border: '1.5px solid #00C8C8', color: '#065F46', padding: '0.875rem 1.25rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+          <CheckCircle2 size={20} color="#00C8C8" /> Homepage Hero statistics &amp; platform settings updated successfully!
         </div>
       )}
 
       <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>
         
-        {/* ── PANEL 1: HOMEPAGE HERO STATS & MAJOR FUNDERS ── */}
-        <div className="card" style={{ padding: '1.75rem', background: '#fff', border: '2px solid #00C8C8', borderRadius: '16px', gridColumn: '1 / -1' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg,#00C8C8,#1A3461)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <BarChart2 size={20} color="#fff" />
+        {/* ── PANEL 1: HOMEPAGE HERO STATS (4-SLOT CONFIGURATOR) ── */}
+        <div className="card" style={{ padding: '1.75rem', background: '#fff', border: '2px solid #00C8C8', borderRadius: '20px', gridColumn: '1 / -1', boxShadow: '0 8px 30px rgba(0,200,200,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,200,200,0.3)' }}>
+                <BarChart2 size={22} color="#fff" />
+              </div>
+              <div>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
+                  Homepage Hero Bottom Stat Bar (4 Cards)
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: '#6B7A95', margin: 0 }}>
+                  Customize the counts, numbers, and labels shown on the homepage slider bottom bar.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.2rem', fontWeight: 700, color: '#0B1E3D', margin: 0 }}>
-                Homepage Hero Bottom Stat Bar &amp; Major Funders
-              </h3>
-              <p style={{ fontSize: '0.8rem', color: '#6B7A95', margin: 0 }}>
-                Customize the live stats and major funder names displayed on the main homepage banner.
-              </p>
+
+            {/* Quick Presets */}
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() =>
+                  setHeroStatsList([
+                    { value: '23', label: 'Publications' },
+                    { value: '25+', label: 'Blogs' },
+                    { value: '30+', label: 'Excerpts' },
+                    { value: '20+', label: 'Documentaries & Talk shows' },
+                  ])
+                }
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px', border: '1px solid #00C8C8', background: '#F0FDFA', color: '#00A3A3', cursor: 'pointer' }}
+              >
+                Media &amp; Publications Preset
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setHeroStatsList([
+                    { value: '13+', label: 'Peer-Reviewed Papers' },
+                    { value: '8+', label: 'Funded Projects' },
+                    { value: '19', label: 'Expert Team Members' },
+                    { value: 'ADB · EU', label: 'Major Funders' },
+                  ])
+                }
+                style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#475569', cursor: 'pointer' }}
+              >
+                Original Impact Preset
+              </button>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginTop: '1.25rem' }}>
-            <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.35rem', display: 'block' }}>
-                Peer-Reviewed Papers Count
-              </label>
-              <input
-                type="text"
-                value={heroStats.papers}
-                onChange={(e) => setHeroStats({ ...heroStats, papers: e.target.value })}
-                className="input-field"
-                placeholder="e.g. 13+"
-                style={{ paddingLeft: '1rem', fontWeight: 700, color: '#00C8C8' }}
-              />
-            </div>
+          {/* ── LIVE HERO PREVIEW STRIP ── */}
+          <div style={{ background: '#0B1E3D', borderRadius: '14px', padding: '1.25rem 1.75rem', marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1.5rem', justifyContent: 'space-around', border: '1px solid #1E3A8A' }}>
+            {heroStatsList.map((stat, i) => (
+              <div key={i} style={{ textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: i === 3 ? '#FFD700' : '#ffffff', fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>
+                  {stat.value || '0'}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginTop: '2px' }}>
+                  {stat.label || 'Label'}
+                </div>
+              </div>
+            ))}
+          </div>
 
-            <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.35rem', display: 'block' }}>
-                Funded Projects Count
-              </label>
-              <input
-                type="text"
-                value={heroStats.projects}
-                onChange={(e) => setHeroStats({ ...heroStats, projects: e.target.value })}
-                className="input-field"
-                placeholder="e.g. 8+"
-                style={{ paddingLeft: '1rem', fontWeight: 700, color: '#00C8C8' }}
-              />
-            </div>
+          {/* ── 4 STAT CARDS EDITORS WITH INCREMENT / DECREMENT BUTTONS ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+            {heroStatsList.map((stat, index) => (
+              <div
+                key={index}
+                style={{
+                  background: '#F8FAFC',
+                  border: '1.5px solid #E2E8F0',
+                  borderRadius: '16px',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.85rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#00A3A3', letterSpacing: '0.05em' }}>
+                    Stat Card #{index + 1}
+                  </span>
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleAdjustValue(index, -1)}
+                      style={{ width: '26px', height: '26px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#475569' }}
+                      title="Decrease value by 1"
+                    >
+                      <Minus size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleAdjustValue(index, 1)}
+                      style={{ width: '26px', height: '26px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#475569' }}
+                      title="Increase value by 1"
+                    >
+                      <Plus size={12} />
+                    </button>
+                  </div>
+                </div>
 
-            <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.35rem', display: 'block' }}>
-                Expert Team Members Count
-              </label>
-              <input
-                type="text"
-                value={heroStats.team}
-                onChange={(e) => setHeroStats({ ...heroStats, team: e.target.value })}
-                className="input-field"
-                placeholder="e.g. 19"
-                style={{ paddingLeft: '1rem', fontWeight: 700, color: '#00C8C8' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.25rem', display: 'block' }}>
+                    Value / Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={stat.value}
+                    onChange={(e) => handleStatChange(index, 'value', e.target.value)}
+                    className="input-field"
+                    placeholder="e.g. 23 or 25+"
+                    style={{ paddingLeft: '0.85rem', fontWeight: 800, color: '#0B1E3D', fontSize: '1.1rem' }}
+                  />
+                </div>
 
-            <div>
-              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.35rem', display: 'block' }}>
-                Major Funders List (Text)
-              </label>
-              <input
-                type="text"
-                value={heroStats.funders}
-                onChange={(e) => setHeroStats({ ...heroStats, funders: e.target.value })}
-                className="input-field"
-                placeholder="e.g. ADB · EU · World Bank"
-                style={{ paddingLeft: '1rem', fontWeight: 700, color: '#1A3461' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.25rem', display: 'block' }}>
+                    Card Label Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={stat.label}
+                    onChange={(e) => handleStatChange(index, 'label', e.target.value)}
+                    className="input-field"
+                    placeholder="e.g. Publications"
+                    style={{ paddingLeft: '0.85rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* ── PANEL 2: GENERAL PLATFORM IDENTITY ── */}
-        <div className="card" style={{ padding: '1.75rem', background: '#fff' }}>
+        <div className="card" style={{ padding: '1.75rem', background: '#fff', borderRadius: '18px' }}>
           <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', color: '#0B1E3D', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Globe size={18} color="#00C8C8" /> General Platform Identity
           </h3>
@@ -242,7 +334,7 @@ export const SiteSettingsManager: React.FC = () => {
         </div>
 
         {/* ── PANEL 3: SEO META ── */}
-        <div className="card" style={{ padding: '1.75rem', background: '#fff' }}>
+        <div className="card" style={{ padding: '1.75rem', background: '#fff', borderRadius: '18px' }}>
           <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', color: '#0B1E3D', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Lock size={18} color="#00C8C8" /> Default SEO &amp; Search Engine Meta
           </h3>
