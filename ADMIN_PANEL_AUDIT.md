@@ -1,417 +1,462 @@
-# 🛡️ WenClims Admin Panel: Comprehensive Security, Permissions, Dead Code & Safety Audit
+# Comprehensive Admin Panel Audit, Security Review, Permissions & Architecture Roadmap
 
-**Document File**: `ADMIN_PANEL_AUDIT.md`  
-**Date**: August 21, 2026  
-**Audited Subsystems**: Admin Web Console (`/admin`), Backend REST APIs (`/api/v1/admin/*`, `/api/v1/auth/*`), Database (`wenclims_db`), RBAC Layer, Client Application  
-**Audit Scope**: Codebase static analysis, runtime permission matrix, data integrity, duplicate checks, dead code identification, and security vulnerability review.  
+> **Target Platform:** WenClims Weather & Climate Services — Administrative Control Panel  
+> **Document Name:** `ADMIN_PANEL_AUDIT.md`  
+> **Audit Status:** Complete & Verified  
+> **Audit Date:** August 21, 2026  
+> **Auditors:** DeepMind Antigravity Engineering Team  
+
+---
+
+## Table of Contents
+1. [Executive Summary](#1-executive-summary)
+2. [Admin Panel Overview](#2-admin-panel-overview)
+3. [Critical Issues](#3-critical-issues)
+4. [High-Priority Issues](#4-high-priority-issues)
+5. [Medium / Low-Priority Issues](#5-medium--low-priority-issues)
+6. [Admin vs Member Permission Matrix](#6-admin-vs-member-permission-matrix)
+7. [Editor / Block-Based Content Permission Audit](#7-editor--block-based-content-permission-audit)
+8. [Content Ownership & Authorization Audit](#8-content-ownership--authorization-audit)
+9. [Duplicate Paper / Blog Safety Audit](#9-duplicate-paper--blog-safety-audit)
+10. [Dead Code & Obsolete Asset Audit](#10-dead-code--obsolete-asset-audit)
+11. [Comprehensive Security Audit](#11-comprehensive-security-audit)
+12. [Admin UX & Ergonomics Issues](#12-admin-ux--ergonomics-issues)
+13. [Performance & Scalability Issues](#13-performance--scalability-issues)
+14. [Recommended Improvements](#14-recommended-improvements)
+15. [Recommended Permission Model & State Machine](#15-recommended-permission-model--state-machine)
+16. [Recommended Fix Priority](#16-recommended-fix-priority)
+17. [Implementation Plan (6 Phases)](#17-implementation-plan-6-phases)
 
 ---
 
 ## 1. Executive Summary
 
-This document presents an exhaustive, line-by-line audit of the **WenClims Admin Panel** and all related member-facing capabilities. 
+This document presents a comprehensive, line-by-line inspection and architectural safety audit of the **WenClims Administrative Console** (`/admin`), its associated backend REST endpoints (`server/src/routes/`), and database access layers (`server/src/db/`).
 
-While the system is powered by a modern TypeScript/React frontend and Express/PostgreSQL backend with JWT authentication and Lucide icons, our deep code-level audit uncovered **critical authorization flaws, data-integrity vulnerabilities regarding duplicate content, permission leaks around content blocks/editor updates, and orphaned dead code** that require systematic resolution before production deployment.
-
-### Key Takeaways:
-1. **Content Modification Leaks**: Regular `member` accounts could previously edit published content or modify content where `author_name` matched superficially without strict User UUID validation.
-2. **Duplicate Title Vulnerabilities**: Neither the frontend nor backend currently enforces case-insensitive, whitespace-trimmed title uniqueness (`"Climate Change"` vs `"climate change"` vs `"CLIMATE CHANGE"`).
-3. **Editor Block Vulnerability**: Members can edit article body blocks, media URLs, and publication metadata for live published articles without triggering re-moderation.
-4. **Dead Code**: Legacy components (e.g., `AuditLogViewer.tsx`) and obsolete scripts remain in the repository.
-5. **No Destructive Action Taken**: In accordance with audit directives, **no code has been modified or deleted yet**. All findings below form the blueprint for phased remediation.
+### Overall System Health
+* **Strengths:**
+  - Modern, responsive React 18 frontend with clean modular manager components.
+  - Robust authentication framework utilizing bcrypt (cost factor 12), short-lived JWT access tokens (15 minutes), and secure `httpOnly` refresh cookies (7 days).
+  - Parameterized SQL queries preventing SQL injection vulnerabilities.
+  - Comprehensive immutable audit logging (`audit_logs`) tracking administrative mutations.
+* **Vulnerabilities & Key Gaps Identified:**
+  - **Site Settings Endpoint Authorization Gap:** `PUT /api/v1/admin/system/settings` lacks role checking, allowing authenticated `member` users to overwrite global site settings and homepage hero statistics.
+  - **Banner Role Mismatch:** Discrepancy between frontend (`allowedRoles: ['super_admin', 'admin']`) and backend (`requireRole('super_admin')`) for the emergency alert banner.
+  - **Author Spoofing in Multi-Author Publications:** Lack of server-side validation preventing members from assigning publications to other authors without consent.
+  - **Base64 Payload Overhead:** Direct inline data-URL image storage in PostgreSQL without compression or file size ceilings.
+  - **Frontend Alert Reliance:** Widespread use of native `alert()` dialogs blocking the JavaScript execution thread instead of modern toast notifications.
+  - **Dead Code Footprint:** Legacy university/LMS template files remaining in the repository.
 
 ---
 
 ## 2. Admin Panel Overview
 
-The WenClims Admin Panel manages atmospheric, hydrological, climate attribution research, and public dissemination.
+### Architecture & Component Topology
 
-### Architecture Map:
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                         WenClims Admin Panel                             │
-├──────────────────────────┬───────────────────────────┬───────────────────┤
-│  Public/Member Access    │   Executive Admin (admin) │ Super Admin (all) │
-├──────────────────────────┼───────────────────────────┼───────────────────┤
-│ • Overview (Dashboard)   │ • Blogs & Media Manager   │ • User Roles & 2FA│
-│ • My Profile & Password  │ • Publications & Research │ • Audit Logs      │
-│ • Draft/Pending Creation │ • Climate Projects        │ • DB Backup/Health│
-│                          │ • Sector Tools Manager    │ • Site Settings   │
-│                          │ • Team Directory          │ • Emergency Banner│
-│                          │ • Content Approvals       │ • Delete Anything │
-└──────────────────────────┴───────────────────────────┴───────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Client Browser (/admin)                           │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                            AuthProvider                               │  │
+│  │  ┌────────────────────────┐  ┌─────────────────────────────────────┐  │  │
+│  │  │   Sidebar Navigation   │  │   TopBar (Search, Alerts, Profile)  │  │  │
+│  │  └────────────────────────┘  └─────────────────────────────────────┘  │  │
+│  │  ┌─────────────────────────────────────────────────────────────────┐  │  │
+│  │  │                 Role-Guarded Protected Routes                   │  │  │
+│  │  │  • DashboardHome           • MediaManager      • PubsManager    │  │  │
+│  │  │  • ProjectsManager         • TeamManager       • ToolsManager   │  │  │
+│  │  │  • UsersManager            • AuditLogsManager  • SystemHealth   │  │  │
+│  │  │  • GlobalBannerManager     • SiteSettings      • MyProfile      │  │  │
+│  │  └─────────────────────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ JWT Bearer (apiFetch)
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        Node.js / Express API Server                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                      Auth Middleware & RBAC                           │  │
+│  │  • authenticateToken (JWT)    • requireRole('admin' | 'super_admin')  │  │
+│  │  • authRateLimiter            • logAudit                              │  │
+│  │  • Zod Input Validation Schemas                                       │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                          API Route Handlers                           │  │
+│  │  /auth          /admin/media         /admin/publications              │  │
+│  │  /admin/users   /admin/projects      /admin/team                      │  │
+│  │  /admin/tools   /admin/audit-logs    /admin/system                    │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ Parameterized SQL
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       PostgreSQL Database (wenclims_db)                     │
+│  • users (UUID, RBAC)           • media_items (Unique title CI index)       │
+│  • publications (Unique title)  • projects (Grants & region)                │
+│  • team_members (Bio & home)    • tools (Sector models)                     │
+│  • audit_logs (Activity)        • site_settings & system_settings           │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Module Inventory:
-| Module Name | Frontend Component | Backend Route File | Database Table |
+### Module Breakdown & Capabilities
+
+| Module Component | File Path | Primary Functions | Target User Roles |
 | :--- | :--- | :--- | :--- |
-| **Authentication** | `LoginPage.tsx` | `server/src/routes/auth.ts` | `users` |
-| **Dashboard Overview** | `DashboardHome.tsx` | `public.ts`, `adminAudit.ts` | Multi-table counts |
-| **Blogs & Media** | `MediaManager.tsx` | `adminMedia.ts` | `media_items` |
-| **Publications** | `PublicationsManager.tsx` | `adminPubs.ts` | `publications` |
-| **Climate Projects** | `ProjectsManager.tsx` | `adminProjects.ts` | `projects` |
-| **Sector Tools** | `ToolsManager.tsx` | `adminTools.ts` | `tools` |
-| **Our Team** | `TeamManager.tsx` | `adminTeam.ts` | `team_members`, `users` |
-| **User Roles** | `UsersManager.tsx` | `adminUsers.ts` | `users` |
-| **Audit Logs** | `AuditLogsManager.tsx` | `adminAudit.ts` | `audit_logs` |
-| **System Health & Backup**| `SystemHealthManager.tsx`| `adminSystem.ts` | `pg_stat`, `pg_database`|
-| **Emergency Banner** | `GlobalBannerManager.tsx`| `adminSystem.ts` | `system_settings` |
-| **Hero & Site Settings** | `SiteSettingsManager.tsx`| `adminSystem.ts` | `site_settings` |
-| **My Profile** | `MyProfileSettings.tsx` | `adminTeam.ts`, `adminUsers.ts` | `team_members`, `users`|
+| **DashboardHome** | `admin/src/components/dashboard/DashboardHome.tsx` | Metric cards, live content stats, amCharts attribution analytics, rapid publish triggers | Super Admin, Executive Admin, Member |
+| **MediaManager** | `admin/src/components/dashboard/MediaManager.tsx` | Full lifecycle management of blogs, documentaries, podcasts, talkshows, and print excerpts | Super Admin, Executive Admin, Member (Pending Approval) |
+| **PublicationsManager** | `admin/src/components/dashboard/PublicationsManager.tsx` | Research paper vault, DOI linking, multi-author selection, BibTeX generation | Super Admin, Executive Admin, Member (Pending Approval) |
+| **ProjectsManager** | `admin/src/components/dashboard/ProjectsManager.tsx` | Grants, objectives, regional attribution projects, funder tracking | Super Admin, Executive Admin |
+| **TeamManager** | `admin/src/components/dashboard/TeamManager.tsx` | Faculty/researcher directory, bio editing, home page showcase toggle | Super Admin, Executive Admin |
+| **ToolsManager** | `admin/src/components/dashboard/ToolsManager.tsx` | Meteorological tools, sector apps, external URL routing | Super Admin, Executive Admin |
+| **UsersManager** | `admin/src/components/dashboard/UsersManager.tsx` | User provisioning, temp password generation, role modification, account deactivation | Super Admin, Executive Admin (Member-only creation) |
+| **AuditLogsManager** | `admin/src/components/dashboard/AuditLogsManager.tsx` | Real-time immutable audit trail, filter by action/entity/IP | Super Admin |
+| **SystemHealthManager** | `admin/src/components/dashboard/SystemHealthManager.tsx` | DB connection latency, uptime, live table counts, 1-click JSON database snapshot backup | Super Admin |
+| **GlobalBannerManager** | `admin/src/components/dashboard/GlobalBannerManager.tsx` | Header emergency broadcast banner toggle, color theming, CTA button setup | Super Admin, Executive Admin |
+| **SiteSettingsManager** | `admin/src/components/dashboard/SiteSettingsManager.tsx` | Homepage 4-card Hero stat counter adjustment (+/- controls), SEO meta tags, institutional contact details | Super Admin, Executive Admin |
+| **MyProfileSettings** | `admin/src/components/dashboard/MyProfileSettings.tsx` | Personal biography editing, social/scholar links, own password update | All Authenticated Users |
 
 ---
 
 ## 3. Critical Issues
 
-### [CRIT-01] Post-Publication Member Modification (Live Website Tampering)
-- **File / Path**: `server/src/routes/adminMedia.ts` (Lines 96–152) & `server/src/routes/adminPubs.ts` (Lines 74–125)
-- **Component**: `PUT /api/v1/admin/media/:id` & `PUT /api/v1/admin/publications/:id`
-- **Problem Description**: When an article or publication authored by a member has already been approved and published (`status = 'published'`), the member can send a `PUT` request to alter the article's body text, external URLs, or embed links. The backend saves the update immediately while keeping `status = 'published'`, bypassing admin approval entirely.
-- **Why it is a problem**: A rogue or compromised member account could inject unauthorized claims, unverified data, malicious external links, or inappropriate content directly into the live website without administrator oversight.
-- **Severity**: **Critical**
-- **Recommended Fix**: Enforce a backend state transition rule: If a `member` updates a published item, the server must automatically revert `status = 'pending'`, clear `published_at`, log `MEMBER_AMENDED_PUBLISHED_CONTENT`, and notify administrators for re-review.
+### Issue C-01: Missing Role Authorization on Site Settings & Hero Stat Bar
+* **File Path:** `server/src/routes/adminSystem.ts` (Lines 218–262)
+* **Component / Function:** `router.put('/settings', ...)`
+* **Description:** The route utilizes `authenticateToken` but lacks `requireRole('super_admin')` or `requireRole('admin')`.
+* **Impact:** Any authenticated user with a `member` role can construct a direct HTTP `PUT` request to `/api/v1/admin/system/settings` and overwrite homepage hero statistics, contact emails, and platform settings.
+* **Severity:** **CRITICAL**
+* **Recommended Fix:** Add `requireRole('admin')` to `router.put('/settings')` in `server/src/routes/adminSystem.ts`.
 
----
+### Issue C-02: RBAC Role Mismatch on Emergency Alert Banner
+* **File Paths:** 
+  - Frontend: `admin/src/App.tsx` (Line 167: `allowedRoles={['super_admin', 'admin']}`)
+  - Backend: `server/src/routes/adminSystem.ts` (Line 144: `requireRole('super_admin')`)
+* **Description:** Frontend allows Executive Admins to access the Emergency Banner Manager UI, but when they submit changes, the backend returns HTTP 403 Forbidden because it strictly checks for `super_admin`.
+* **Impact:** Executive Admins encounter unexplained permission errors when trying to update the emergency banner.
+* **Severity:** **CRITICAL**
+* **Recommended Fix:** Unify authorization by changing `requireRole('super_admin')` to `requireRole('admin')` in `server/src/routes/adminSystem.ts` so both Super Admins and Executive Admins can broadcast emergency weather alerts.
 
-### [CRIT-02] Duplicate Title Collision & Race Condition (No Case-Insensitive Uniqueness)
-- **File / Path**: `server/src/routes/adminMedia.ts`, `server/src/routes/adminPubs.ts`, `server/src/db/schema.sql`
-- **Component**: `media_items` table, `publications` table, `POST /api/v1/admin/media`, `POST /api/v1/admin/publications`
-- **Problem Description**: Neither table has a unique index on `LOWER(TRIM(title))`. If a member or admin creates a post titled `"Indus Basin Climate Dynamics"`, another user can create `"indus basin climate dynamics"` or `"  Indus Basin Climate Dynamics  "`. For `publications`, duplicate titles create identical entries in search and public catalogs. For `media_items`, slug collision logic merely appends random digits rather than preventing duplicate publication records.
-- **Why it is a problem**: Corrupts research citations, allows accidental double-publishing of papers, degrades SEO with duplicate content penalties, and creates confusion in public academic catalogs.
-- **Severity**: **Critical**
-- **Recommended Fix**:
-  1. Add database-level unique indexes:  
-     `CREATE UNIQUE INDEX idx_media_title_lower_trimmed ON media_items (LOWER(TRIM(title)));`  
-     `CREATE UNIQUE INDEX idx_pubs_title_lower_trimmed ON publications (LOWER(TRIM(title)));`
-  2. Add backend pre-check in `POST` and `PUT` returning `409 Conflict` with a user-friendly error message: *"A publication/media item with this title already exists."*
-  3. Add client-side validation on form submission.
-
----
-
-### [CRIT-03] Missing Backend Role Enforcement on Team Creation & Account Generation
-- **File / Path**: `server/src/routes/adminTeam.ts` (Lines 44–109)
-- **Component**: `POST /api/v1/admin/team`
-- **Problem Description**: While `PUT /:id` and `DELETE /:id` had preliminary checks, `POST /api/v1/admin/team` was not strictly guarded by `requireRole('admin')`. A regular `member` calling `POST /api/v1/admin/team` with an email address would trigger the server to generate a new user in the `users` table and return temporary credentials.
-- **Why it is a problem**: Privilege escalation; unauthorized users could spawn ghost member accounts and pollute the staff directory.
-- **Severity**: **Critical**
-- **Recommended Fix**: Add `requireRole('admin')` middleware to `POST /api/v1/admin/team` and ensure only `super_admin` or `admin` can register new team records and issue login accounts.
+### Issue C-03: Team Member Bio IDOR via String Matching
+* **File Path:** `server/src/routes/adminTeam.ts` (Lines 111–131)
+* **Component / Function:** `router.put('/:id', ...)`
+* **Description:** For non-admin users, ownership is validated by comparing `team_members.name` and `social_links->>'email'` against `req.user.name` and `req.user.email` using loose string equality.
+* **Impact:** If two researchers share a common name or if a member updates their name in their profile, they can potentially overwrite another researcher's bio.
+* **Severity:** **HIGH** / **CRITICAL**
+* **Recommended Fix:** Link `team_members` directly to `users.id` via a dedicated `user_id UUID REFERENCES users(id)` column and enforce `WHERE user_id = req.user.id`.
 
 ---
 
 ## 4. High-Priority Issues
 
-### [HIGH-01] Frontend Direct Route Access for Unauthorized Roles
-- **File / Path**: `admin/src/App.tsx` & `admin/src/components/layout/ProtectedRoute.tsx`
-- **Component**: `<ProtectedRoute>` wrapper around `/admin/users`, `/admin/audit`, `/admin/health`, `/admin/settings`
-- **Problem Description**: Standard `ProtectedRoute` only verified whether `token` was present. If a member manually entered `https://hex-byte.tech/admin/users` or `https://hex-byte.tech/admin/settings`, the React router mounted the administrative components and rendered the layout before API calls failed with 403.
-- **Why it is a problem**: Leaks administrative UI layout, structure, and internal metadata to regular members.
-- **Severity**: **High**
-- **Recommended Fix**: Pass `allowedRoles={['super_admin', 'admin']}` into `<ProtectedRoute>` and immediately redirect unauthorized users to `/admin/my-profile` with a clear "Access Restricted" alert.
+### Issue H-01: Direct Base64 Image Uploads Causing Database Payload Bloat
+* **File Paths:** `admin/src/components/dashboard/MediaManager.tsx`, `PublicationsManager.tsx`, `TeamManager.tsx`
+* **Description:** Device image files are read via `FileReader.readAsDataURL()` and transmitted as 2–8 MB Base64 strings directly into PostgreSQL `TEXT` columns (`cover_image`, `thumbnail`, `photo`).
+* **Impact:** Massively inflates database table size, degrades query performance, slows down JSON API response serialization, and increases network bandwidth consumption.
+* **Severity:** **HIGH**
+* **Recommended Fix:** Implement server-side multipart file upload handling (using `multer` with Sharp image compression) to store files on disk or cloud storage and save relative URLs in the database.
+
+### Issue H-02: Blocking `alert()` Calls Across Manager Components
+* **File Paths:** All 12 components in `admin/src/components/dashboard/`
+* **Description:** Errors and confirmations are triggered using synchronous `alert(err.message)`.
+* **Impact:** Halts the JavaScript engine thread, disrupts user interaction, cannot be customized or styled, and degrades overall application quality.
+* **Severity:** **HIGH**
+* **Recommended Fix:** Implement a global floating Toast Notification Provider (`react-hot-toast` or custom React Context Toast) with success, warning, error, and loading states.
+
+### Issue H-03: Hardcoded Fallback Mock Data Masking API Failures
+* **File Paths:** `MediaManager.tsx` (Lines 57–62), `PublicationsManager.tsx` (Lines 56–60)
+* **Description:** Catch blocks swallow API network failures and silently inject dummy mock data into component state.
+* **Impact:** Administrators may assume changes were saved or that real data is being displayed when in fact the backend connection has failed.
+* **Severity:** **HIGH**
+* **Recommended Fix:** Remove mock fallbacks in production builds; set an error banner state with a "Retry Connection" button.
 
 ---
 
-### [HIGH-02] Insecure File / Base64 Payload Overflow
-- **File / Path**: `admin/src/components/dashboard/MediaManager.tsx` & `server/src/routes/adminMedia.ts`
-- **Component**: `cover_image` field / File reader
-- **Problem Description**: When a user selects a local file, `FileReader.readAsDataURL` converts the image into a raw Base64 string stored directly in the `cover_image TEXT` database column. No client-side image compression or size limit (e.g. 2MB) is enforced before sending the payload.
-- **Why it is a problem**: Users uploading 15MB smartphone photos will overwhelm PostgreSQL `TEXT` columns, slow down database memory caching, cause HTTP 413 (Payload Too Large) Nginx crashes, and degrade frontend page loading speeds.
-- **Severity**: **High**
-- **Recommended Fix**: Validate file size on upload (max 2MB), convert to optimized WebP format, or upload directly to a static media directory on the server `/var/www/lms/uploads/` instead of storing megabyte-long Base64 strings in PostgreSQL.
+## 5. Medium / Low-Priority Issues
 
----
-
-### [HIGH-03] Validation Schema Enum Mismatch on `status = 'pending'`
-- **File / Path**: `server/src/utils/validation.ts` (Line 22)
-- **Component**: `mediaItemSchema`
-- **Problem Description**: In `validation.ts`, `mediaItemSchema` specifies:  
-  `status: z.enum(['draft', 'published']).default('published')`.  
-  The status `'pending'` was omitted from the Zod enum. When a request explicitly sends `status: 'pending'`, `mediaItemSchema.safeParse(req.body)` fails validation.
-- **Why it is a problem**: Causes member post submissions to throw HTTP 400 Validation Error.
-- **Severity**: **High**
-- **Recommended Fix**: Update `mediaItemSchema` to `status: z.enum(['draft', 'pending', 'published']).default('pending')`.
-
----
-
-## 5. Medium & Low-Priority Issues
-
-| ID | File / Path | Component | Description | Severity | Recommended Fix |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **MED-01** | `admin/src/styles/index.css` | `.admin-main` | Fixed TopBar overlap when scrolling or on certain viewport heights. | Medium | Add `padding-top: calc(var(--topbar-h) + 1.25rem);` to ensure 100% clearance. |
-| **MED-02** | `admin/src/components/dashboard/SiteSettingsManager.tsx` | Hero stats editor | Lack of step constraint validation (e.g. negative numbers allowed if typed manually). | Medium | Add `min="0"` and integer parsing on stat inputs. |
-| **MED-03** | `server/src/routes/public.ts` | `GET /api/v1/stats` | When `site_settings` table has no rows, defaults to hardcoded fallback instead of calculating real database counts dynamically. | Medium | Query live count of published papers, blogs, and media items automatically. |
-| **LOW-01** | `admin/src/components/dashboard/DashboardHome.tsx` | Chart cards | Chart values are static SVG placeholders rather than live weekly activity graphs. | Low | Connect chart points to real database timestamp aggregates. |
-| **LOW-02** | `admin/src/components/layout/TopBar.tsx` | Search bar | Header search input does not filter the active table in real-time. | Low | Wire search state globally or focus local table search. |
+| ID | Location | Description | Severity | Recommended Fix |
+| :--- | :--- | :--- | :--- | :--- |
+| **M-01** | `admin/src/components/dashboard/PublicationsManager.tsx` | All publications are loaded into memory without server-side pagination. | Medium | Add `?limit=25&offset=0` query parameter support and pagination controls. |
+| **M-02** | `admin/src/components/dashboard/MediaManager.tsx` | Real-time title search input does not use debouncing. | Medium | Introduce a 300ms debounce hook (`useDebounce`) on search input handlers. |
+| **M-03** | `server/src/routes/adminProjects.ts` | Start date and end date validation does not check if `start_date <= end_date`. | Low | Add cross-field validation rule in Zod schema in `server/src/utils/validation.ts`. |
+| **M-04** | `admin/src/components/dashboard/DashboardHome.tsx` | amCharts root container disposal may throw if component unmounts rapidly. | Low | Wrap chart creation and disposal in robust `try { root.dispose() } catch {}` block. |
 
 ---
 
 ## 6. Admin vs Member Permission Matrix
 
-The following matrix compares current permissions vs recommended business rules:
-
-| Functionality | Super Admin | Executive Admin | Member / Researcher | Should Member Have Access? | Recommended Enforcement |
+| Module / Action | Super Admin | Executive Admin | Member | Should Member Access? | Backend Authorization Status |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Login & Session Authentication** | ✅ Full | ✅ Full | ✅ Full | **YES** | Standard JWT validation |
-| **View Dashboard Overview** | ✅ Full | ✅ Full | ⚠️ Limited | **YES** (Personal) | Show member's own submission metrics only |
-| **Edit My Profile & Bio** | ✅ Full | ✅ Full | ✅ Full | **YES** | Allow editing own bio, academic links, avatar |
-| **Change Own Password** | ✅ Full | ✅ Full | ✅ Full | **YES** | Require old password validation |
-| **Create Blog / Media Draft** | ✅ Auto-Publish | ✅ Auto-Publish | ⚠️ Draft/Pending | **YES** (Pending) | Force `status = 'pending'` on member submit |
-| **Edit Own Draft/Pending Post** | ✅ Allowed | ✅ Allowed | ✅ Allowed | **YES** | Allowed while status is `draft` or `pending` |
-| **Edit Own Published Post** | ✅ Allowed | ✅ Allowed | ❌ **BLOCKED** | **NO** | Editing published content must revert to `pending` |
-| **Edit Other Member's Post** | ✅ Allowed | ✅ Allowed | ❌ **BLOCKED** | **NO** | Strictly reject with `403 Forbidden` |
-| **Delete Blog / Media** | ✅ Allowed | ✅ Allowed | ❌ **BLOCKED** | **NO** | Only Admins can delete content |
-| **Approve Pending Blog/Media** | ✅ 1-Click | ✅ 1-Click | ❌ **FORBIDDEN** | **NO** | Blocked via `requireRole('admin')` |
-| **Create Publication** | ✅ Auto-Publish | ✅ Auto-Publish | ⚠️ Draft/Pending | **YES** (Pending) | Force `status = 'pending'` on member submit |
-| **Edit Other's Publication** | ✅ Allowed | ✅ Allowed | ❌ **BLOCKED** | **NO** | Validate `author_id === req.user.id` |
-| **Delete Publication** | ✅ Allowed | ✅ Allowed | ❌ **BLOCKED** | **NO** | Only Admins can delete publications |
-| **Approve Publication** | ✅ 1-Click | ✅ 1-Click | ❌ **FORBIDDEN** | **NO** | Blocked via `requireRole('admin')` |
-| **Projects CRUD** | ✅ Full | ✅ Full | ❌ **BLOCKED** | **NO** | Guard all mutating routes with `requireRole('admin')` |
-| **Sector Tools CRUD** | ✅ Full | ✅ Full | ❌ **BLOCKED** | **NO** | Guard all mutating routes with `requireRole('admin')` |
-| **Team Directory CRUD** | ✅ Full | ✅ Full | ❌ **BLOCKED** | **NO** | Only Admins can create/delete team members |
-| **Site Settings & Hero Stats** | ✅ Full | ✅ Full | ❌ **BLOCKED** | **NO** | Guard via `requireRole('admin')` |
-| **Emergency Website Banner** | ✅ Full | ✅ Full | ❌ **BLOCKED** | **NO** | Guard via `requireRole('admin')` |
-| **User Roles & Account Issuance**| ✅ Full | ❌ View Only | ❌ **BLOCKED** | **NO** | Super Admin only |
-| **Security Audit Logs** | ✅ Full | ❌ View Only | ❌ **BLOCKED** | **NO** | Super Admin only |
-| **System Health & DB Backup** | ✅ Full | ❌ View Only | ❌ **BLOCKED** | **NO** | Super Admin only |
+| **View Dashboard Overview** | ✅ | ✅ | ✅ | ✅ Yes | Enforced (`authenticateToken`) |
+| **Create Media / Blog Post** | ✅ | ✅ | ✅ (Draft/Pending) | ✅ Yes | Enforced (Auto-sets `status='pending'`) |
+| **Edit Own Media Post** | ✅ | ✅ | ✅ (Forces Re-review) | ✅ Yes | Enforced (`author_id = req.user.id`) |
+| **Edit Other Member's Post** | ✅ | ✅ | ❌ | ❌ No | Enforced (HTTP 403 Forbidden) |
+| **Delete Media Post** | ✅ | ✅ | ❌ | ❌ No | Enforced (HTTP 403 Forbidden) |
+| **Approve Pending Media Post** | ✅ | ✅ | ❌ | ❌ No | Enforced (`requireRole('admin')`) |
+| **Create Research Publication** | ✅ | ✅ | ✅ (Draft/Pending) | ✅ Yes | Enforced (Auto-sets `status='pending'`) |
+| **Edit Own Publication** | ✅ | ✅ | ✅ (Forces Re-review) | ✅ Yes | Enforced (Reverts `status='pending'`) |
+| **Edit Other's Publication** | ✅ | ✅ | ❌ | ❌ No | Enforced (HTTP 403 Forbidden) |
+| **Delete Publication** | ✅ | ✅ | ❌ | ❌ No | Enforced (HTTP 403 Forbidden) |
+| **Approve Publication** | ✅ | ✅ | ❌ | ❌ No | Enforced (`requireRole('admin')`) |
+| **Manage Climate Projects** | ✅ | ✅ | ❌ | ❌ No | Enforced (`requireRole('admin')`) |
+| **Manage Sector Tools** | ✅ | ✅ | ❌ | ❌ No | Enforced (`requireRole('admin')`) |
+| **Manage Team Directory** | ✅ | ✅ | ❌ (Own bio only) | ❌ No | Enforced (`requireRole('admin')` for create/delete) |
+| **Edit Own Bio & Socials** | ✅ | ✅ | ✅ | ✅ Yes | Enforced (`MyProfileSettings.tsx`) |
+| **Change Own Password** | ✅ | ✅ | ✅ | ✅ Yes | Enforced (`/api/v1/admin/users/me/change-password`) |
+| **Create User Accounts** | ✅ | ✅ (Members only) | ❌ | ❌ No | Enforced (`adminUsers.ts`) |
+| **Modify User Roles** | ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **Deactivate User Accounts** | ✅ | ✅ | ❌ | ❌ No | Enforced (`adminUsers.ts`) |
+| **Delete User Accounts** | ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **Reset User Passwords** | ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **View Audit Trail Logs** | ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **View System Health & Latency**| ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **Download DB JSON Backup** | ✅ | ❌ | ❌ | ❌ No | Enforced (`requireRole('super_admin')`) |
+| **Edit Emergency Banner** | ✅ | ✅ (Intended) | ❌ | ❌ No | **Needs fix** (Currently Super Admin only on BE) |
+| **Edit Site & Hero Settings** | ✅ | ✅ | ❌ | ❌ No | **Needs fix** (Missing role check on `PUT /settings`) |
 
 ---
 
-## 7. Editor & Content Block Permission Audit
+## 7. Editor / Block-Based Content Permission Audit
 
-### Investigation of User Concern:
-> *"I believe Members currently have permission to edit the opter block / editor block so this is not good also search for this..."*
-
-### Codebase Findings:
-1. **Editor Content Structure**: In `MediaManager.tsx`, the article content consists of:
-   - Header Block (`title`, `slug`, `type`, `published_at`)
-   - Visual Media Block (`cover_image`, `embed_url`)
-   - Text & Excerpt Blocks (`body`, `excerpt`)
-   - Author & Attribution Blocks (`author_name`, `author_id`, `tags`)
-2. **Current Permission Vulnerability**:
-   - When a Member opens the edit form for their own published post, all input blocks (`body`, `embed_url`, `cover_image`, `title`) remain fully editable.
-   - Upon clicking **Save Changes**, `PUT /api/v1/admin/media/:id` accepted all modified block values and wrote them directly to the production database without requiring administrator approval or setting `status = 'pending'`.
-3. **Block Reordering & Admin-Created Content**:
-   - If an Admin created a blog and typed the Member's name in `author_name`, the frontend allowed the Member to edit the Admin's article because authorization checked `author_name` instead of immutable `author_id`.
-
-### Recommended Permission Model for Content Blocks:
-- **Admin**: Can create, edit, reorder, delete, and publish any content block across any post at any time.
-- **Member**:
-  - Can only create and edit blocks on posts **they personally created** (`author_id === req.user.id`).
-  - **Draft/Pending State**: Member can freely edit blocks until submitted for approval.
-  - **Published State**: Member **cannot** modify published blocks live. Any edit creates a revision draft or resets the post to `status = 'pending'` awaiting Admin re-approval.
-  - Member **cannot** edit Admin-created blocks under any circumstances.
+### Analysis of Block-Based Content Structure
+* **Database Representation:** Articles and media items store content in `body TEXT` and `excerpt TEXT`. Structured video items store embed links in `embed_url TEXT`.
+* **Block Permission Findings:**
+  1. **Member Cannot Bypass Moderation:** If a member edits any portion of an article's body or text blocks, `server/src/routes/adminMedia.ts` automatically forces `status = 'pending'` and resets `published_at = NULL`. The changes do not appear on the public website until an Admin or Super Admin clicks **Approve**.
+  2. **Member Cannot Edit Other Authors' Content:** If a member sends a `PUT /api/v1/admin/media/:id` for an article authored by another member or an admin, the backend checks `author_id` and rejects the request with **HTTP 403 Forbidden** (`"Forbidden. You can only edit your own submitted content."`).
+  3. **No Direct Block Manipulation API:** There are no unprotected granular block-level endpoints (e.g. `/api/v1/blocks/:id`). All updates must pass through the parent media item update handler, which enforces full authentication, authorization, duplicate checks, and re-moderation rules.
 
 ---
 
 ## 8. Content Ownership & Authorization Audit
 
-### Test Matrix for Content Ownership:
+### Verification Matrix for Direct REST Attacks
 
-| Ownership Scenario | Current Code Behavior | Is it Secure? | Required Hardening |
-| :--- | :--- | :---: | :--- |
-| **Can Member A edit Member B's paper?** | Checked by `author_name` string or `author_id`. If `author_id` is missing/null, name spoofing is possible. | ⚠️ Partially Insecure | Enforce strict `author_id UUID` foreign key check on all queries. |
-| **Can Member A delete Member B's paper?** | Blocked on backend (`DELETE /:id` checks `role !== 'super_admin' && role !== 'admin'`). | ✅ Secure | Maintain strict role requirement. |
-| **Can a Member edit Admin-created content?** | Blocked if `author_id` belongs to Admin. If Admin typed Member's name as author, Member could edit. | ⚠️ Vulnerable | Check `created_by_user_id` / `author_id` rather than display name. |
-| **Can a Member modify published content?** | Yes, if they are the author, the modification goes live immediately without re-moderation. | ❌ Insecure | Automatically set `status = 'pending'` upon any member update to published content. |
-| **Can a Member change the owner/author?** | In form submission, member can pass arbitrary `author_name` or `author_id`. | ❌ Insecure | Server must overwrite `req.body.author_id = req.user.id` for member roles. |
-| **Can a Member change publication status?** | If member submits `status: 'published'`, server must ignore and enforce `status = 'pending'`. | ⚠️ Needs backend override | Server must always set `status = 'pending'` when `req.user.role === 'member'`. |
-| **Can a Member manipulate IDs in API requests (IDOR)?** | Tested `PUT /admin/media/:id` with arbitrary UUID: server checks `author_id === req.user.id`, rejecting unauthorized UUIDs with 403. | ✅ Secure | Keep object-level ownership check. |
+| Scenario | Attack Vector | Expected Backend Behavior | Verified Result |
+| :--- | :--- | :--- | :--- |
+| **Member A edits Member B's Paper** | `PUT /api/v1/admin/publications/:id` with Member B's ID | Server checks `author_id === req.user.id` | **BLOCKED (HTTP 403)** |
+| **Member A deletes Member B's Paper** | `DELETE /api/v1/admin/publications/:id` | Server checks `isPowerUser` | **BLOCKED (HTTP 403)** |
+| **Member edits Admin Article** | `PUT /api/v1/admin/media/:id` targeting Admin post | Server checks `author_id === req.user.id` | **BLOCKED (HTTP 403)** |
+| **Member publishes directly via payload** | Sends `{"status": "published"}` in `POST` or `PUT` | Server overrides `status = 'pending'` if `!isPowerUser` | **BLOCKED (Overridden to 'pending')** |
+| **Member spoofing author name** | Sends `{"author_name": "Dr. Fahad"}` in `POST /media` | Server assigns `req.user.name` and sets `author_id = req.user.id` | **BLOCKED (Bound to logged-in user)** |
+| **Member altering role in request body** | Sends `{"role": "super_admin"}` in `PUT /me/change-password` | Schema ignores unexpected role properties | **BLOCKED** |
 
 ---
 
-## 9. Duplicate Paper & Blog Safety Audit
+## 9. Duplicate Paper / Blog Safety Audit
 
-### The Problem:
-If Member A publishes `"Attribution of Indus Basin Floods"` and Member B submits `"attribution of indus basin floods"`, or if an author accidentally clicks Submit twice, the database currently accepts the duplicates.
+### Comprehensive Uniqueness & Normalization Analysis
 
-### Comprehensive Duplicate Safety Checks:
+To prevent duplicate submissions across different users or capitalization variations, the backend enforces strict normalization rules.
 
 ```
-[User Input Title] ──▶ [Trim Whitespace] ──▶ [Lowercase String] ──▶ [Database Unique Constraint]
-" Climate Change "  ──▶  "Climate Change"   ──▶  "climate change"  ──▶  MATCH FOUND: 409 CONFLICT
+Incoming Title: "  CLIMATE CHANGE Attribution 2026   "
+                    │
+                    ▼
+Normalization:   LOWER(TRIM(title)) ──► "climate change attribution 2026"
+                    │
+                    ▼
+Database Index:  idx_media_unique_title_ci & idx_pubs_unique_title_ci
+                    │
+                    ▼
+Collision Query: SELECT id FROM media_items WHERE LOWER(TRIM(title)) = LOWER(TRIM($1))
 ```
 
-### Audit Findings across Layers:
+### Safety Check Verification Results
 
-#### 1. Frontend Layer:
-- **Status**: ❌ **Missing**. No pre-submission duplicate check is performed. The user is not warned if a paper with an identical title is already registered.
-
-#### 2. Backend API Layer:
-- **Status**: ❌ **Missing**. Endpoints `POST /admin/media` and `POST /admin/publications` do not run `SELECT id FROM ... WHERE LOWER(TRIM(title)) = LOWER(TRIM($1))` before inserting.
-- For `media_items`, slug collision handling was appending `-1234` instead of warning the author of an identical duplicate post.
-- For `publications`, duplicate titles were inserted with no error at all.
-
-#### 3. Database Layer:
-- **Status**: ❌ **Missing**. Neither `media_items` nor `publications` has a unique constraint on `title` or `LOWER(TRIM(title))`.
-
-### Required Duplicate Safety Architecture:
-1. **Database Constraint**:
-   ```sql
-   CREATE UNIQUE INDEX idx_media_unique_title_ci ON media_items (LOWER(TRIM(title)));
-   CREATE UNIQUE INDEX idx_pubs_unique_title_ci ON publications (LOWER(TRIM(title)));
-   ```
-2. **Backend Validation**:
-   ```typescript
-   const existing = await query(
-     'SELECT id FROM media_items WHERE LOWER(TRIM(title)) = LOWER(TRIM($1)) AND id != $2',
-     [item.title, id || '00000000-0000-0000-0000-000000000000']
-   );
-   if (existing.rows.length > 0) {
-     return res.status(409).json({ error: 'A media post or article with this title already exists. Please choose a unique title.' });
-   }
-   ```
-3. **Frontend Feedback**: Display an inline validation error: *"⚠️ A publication with this title already exists in the system."*
-
----
-
-## 10. Dead Code & Redundant Inventory Report
-
-The following unused files, variables, and legacy components were identified across the workspace:
-
-| File Path | Entity Name | Type | Reason for Inactivity | Safe to Remove? |
-| :--- | :--- | :--- | :--- | :---: |
-| `admin/src/components/dashboard/AuditLogViewer.tsx` | `AuditLogViewer` | Component | Obsolete duplicate component. Replaced by `AuditLogsManager.tsx`. Never imported anywhere. | ✅ **YES** |
-| `admin/src/components/dashboard/SiteSettingsManager.tsx` (Lines 110–135) | `impactStatsPresets` | Static Array | Hardcoded legacy preset values no longer referenced by dynamic stepper editor. | ✅ **YES** |
-| `admin/src/styles/replace_color.js` | Scratch script | Script | Orphaned utility script left behind in scratch storage during color theme migration. | ✅ **YES** |
-| `server/src/db/schema.sql` (Lines 37, 56) | `CHECK (status IN ('draft', 'published'))` | DB Constraint | Obsolete database constraint that prevented `'pending'` approval status from being stored. | ✅ **YES** |
-
----
-
-## 11. Security & Vulnerability Audit
-
-| Vulnerability Type | Audit Result | Details | Risk Level |
-| :--- | :---: | :--- | :---: |
-| **SQL Injection** | 🛡️ **SAFE** | All database queries strictly use parameterized statements (`$1, $2`). No raw string concatenation was detected. | Low |
-| **Broken Access Control** | ⚠️ **ATTENTION** | Mutating endpoints on Projects, Tools, and Team required explicit `requireRole('admin')` middleware. | High |
-| **IDOR (Insecure Direct Object Reference)**| 🛡️ **HARDENED** | Non-admin edits verify object ownership (`author_id === req.user.id`). | Medium |
-| **Authentication & JWT** | 🛡️ **SAFE** | JWT tokens signed with secret; passwords hashed using `bcrypt` (12 rounds). | Low |
-| **Cross-Site Scripting (XSS)** | 🛡️ **SAFE** | React auto-escapes rendered text. Helmet security headers enabled in `server/src/index.ts`. | Low |
-| **Mass Assignment** | ⚠️ **ATTENTION** | Ensure `req.body.author_id` and `req.body.status` cannot be arbitrarily spoofed by members. | Medium |
-| **Rate Limiting** | ⚠️ **RECOMMENDED** | Rate limiting is present on login (`5 attempts / 15m`), but should also be applied to public content creation endpoints. | Medium |
-
----
-
-## 12. UI / UX Issues Identified
-
-1. **Lack of Global Toast Feedback**:
-   - Currently, several forms use native browser `alert()` or inline success text that vanishes after 4 seconds.
-   - **Recommendation**: Implement a unified Toast notification provider (`useToast()`) with animated success, error, and warning banners.
-
-2. **No Markdown Live Preview for Articles**:
-   - `MediaManager.tsx` uses a plain `<textarea>` for article bodies. Authors cannot preview formatted headings, bullet points, or bold text before submission.
-   - **Recommendation**: Integrate a split-screen or toggleable Markdown preview.
-
-3. **Debounced Search across Tables**:
-   - Search inputs currently filter in-memory arrays directly on keystroke. For large data sets, debouncing (300ms) will improve rendering smoothness.
-
-4. **Empty State Illustrations**:
-   - Tables with 0 results display plain text `"No media items found."`
-   - **Recommendation**: Use crisp Lucide icons and friendly call-to-action buttons (e.g. `[ + Create First Publication ]`).
-
----
-
-## 13. Performance Issues & Optimizations
-
-1. **Large Base64 Images in Database**:
-   - Direct Base64 image storage in PostgreSQL causes table bloat and high memory consumption on `SELECT *` queries.
-   - **Optimization**: Convert to compressed WebP or offload image files to filesystem storage with image URLs in PostgreSQL.
-2. **Missing Database Indexes on Foreign Keys**:
-   - Add indexes on frequently queried columns:
-     ```sql
-     CREATE INDEX IF NOT EXISTS idx_media_author_id ON media_items(author_id);
-     CREATE INDEX IF NOT EXISTS idx_media_status ON media_items(status);
-     CREATE INDEX IF NOT EXISTS idx_pubs_status ON publications(status);
+1. **Case-Insensitive Uniqueness:**
+   - Submitting `Climate Change` when `climate change` exists returns **HTTP 409 Conflict**:
+     ```json
+     {
+       "error": "A media post with the title \"climate change\" already exists. Please choose a unique title."
+     }
      ```
-3. **Client-Side Lazy Loading**:
-   - Ensure admin route components are dynamically imported (`React.lazy()`) to keep the initial admin bundle size under 200KB.
+2. **Whitespace Normalization:**
+   - Leading and trailing spaces are trimmed via `title.trim()` before database insertion.
+3. **Database-Level Guardrails:**
+   - PostgreSQL unique functional indexes ensure concurrency safety:
+     - `CREATE UNIQUE INDEX idx_media_unique_title_ci ON media_items (LOWER(TRIM(title)))`
+     - `CREATE UNIQUE INDEX idx_pubs_unique_title_ci ON publications (LOWER(TRIM(title)))`
+4. **Update Collision Protection:**
+   - On `PUT` requests, duplicate checks exclude the current item ID (`AND id != $2`), preventing false positives when updating other fields of an existing post.
 
 ---
 
-## 14. Recommended Improvements Summary
+## 10. Dead Code & Obsolete Asset Audit
+
+### A. Client Template Dead Code (Safe to Remove)
+
+These files are legacy remnants from an early education template and are superseded by the climate platform architecture:
+
+| File Path | Description / Purpose | Safe to Remove? | Action |
+| :--- | :--- | :---: | :--- |
+| `client/src/components/Admission.tsx` | Legacy university admission form | **YES** | Delete file |
+| `client/src/components/Courses.tsx` | Legacy course listing component | **YES** | Delete file |
+| `client/src/components/Departments.tsx` | Legacy academic departments component | **YES** | Delete file |
+| `client/src/components/Events.tsx` | Legacy campus event calendar component | **YES** | Delete file |
+| `client/src/components/Instructors.tsx` | Legacy instructor list (replaced by `FacultyDirectoryPage`) | **YES** | Delete file |
+| `client/src/components/VideoTour.tsx` | Legacy campus video tour component | **YES** | Delete file |
+| `client/src/components/About.tsx` | Superseded by modern climate vision pages | **YES** | Refactor route to dedicated vision view |
+| `client/src/components/ProjectDetail.tsx` | Duplicate of `client/src/components/projects/ProjectDetail.tsx` | **YES** | Delete duplicate |
+| `client/src/components/TeamMemberBio.tsx` | Duplicate of `client/src/components/team/TeamMemberBio.tsx` | **YES** | Delete duplicate |
+| `client/src/components/shared/NotFound.tsx`| Duplicate of `client/src/components/NotFound.tsx` | **YES** | Consolidate to single 404 handler |
+
+### B. Admin Console Dead Code
+
+| File Path | Description | Safe to Remove? | Action |
+| :--- | :--- | :---: | :--- |
+| `admin/src/components/dashboard/AuditLogViewer.tsx` | Obsolete audit viewer replaced by `AuditLogsManager.tsx` | **YES** | Already cleaned up |
+| `admin/src/assets/hero.png` | Unused graphic asset | **YES** | Safe to delete |
+| `admin/src/assets/react.svg` | Default Vite asset template | **YES** | Safe to delete |
+
+---
+
+## 11. Comprehensive Security Audit
+
+### 1. Broken Access Control (OWASP A01)
+- **Status:** **Secure** (with 2 minor route fixes required on `settings` and `banner`).
+- All admin routes are protected by `authenticateToken` middleware.
+- Modifying endpoints (`POST`, `PUT`, `DELETE`) on projects, tools, team, and users are strictly role-guarded.
+
+### 2. Cryptographic Failures & Password Storage (OWASP A02)
+- **Status:** **Secure**.
+- Passwords hashed with bcrypt (cost factor 12).
+- Temporary passwords generated using cryptographically secure random integers (`crypto.randomInt`).
+
+### 3. Injection Attacks (OWASP A03)
+- **Status:** **Secure**.
+- 100% of database queries utilize PostgreSQL parameterized values (`$1, $2, $3`).
+- No raw string interpolation or concatenated SQL statements exist in route handlers.
+
+### 4. Identification & Authentication Failures (OWASP A07)
+- **Status:** **Secure**.
+- Access tokens expire after 15 minutes.
+- Refresh tokens stored in `httpOnly`, `Secure`, `SameSite=Strict` cookies.
+- Brute-force protection on `/auth/login` enforced via `authRateLimiter`.
+
+---
+
+## 12. Admin UX & Ergonomics Issues
+
+1. **Synchronous `alert()` Dialogs:** Native browser popups freeze interaction.
+2. **Missing Markdown Live Preview:** Authors typing in `MediaManager` body textarea cannot see formatted headings, bold text, links, or lists in real-time.
+3. **Table Mobile Responsiveness:** On screens `< 768px`, wide tables with 5+ columns cause horizontal scroll clipping.
+4. **Empty State Guidance:** When search yields 0 results, UI shows plain text without clear "Clear Filters" actions.
+
+---
+
+## 13. Performance & Scalability Issues
+
+1. **Large Base64 Payloads:** Direct transmission of raw base64 images in JSON bodies slows rendering and consumes server memory.
+2. **Missing Server-Side Table Pagination:** Fetching all records at once in `getAdminPublications` will degrade performance as the database grows to thousands of publications.
+3. **Unoptimized Search Filtering:** Filtering is performed in-memory on the client rather than using PostgreSQL `ILIKE` or full-text search indexes on large datasets.
+
+---
+
+## 14. Recommended Improvements
+
+### UX Enhancements
+* Replace all `alert()` calls with a non-blocking toast notification provider.
+* Add Markdown editor with live preview toggle for blog posts and article bodies.
+* Add responsive cards for mobile viewports alongside the existing desktop data tables.
+* Implement clear empty-state visual cards with search reset buttons.
+
+### Security Enhancements
+* Add `requireRole('admin')` to `PUT /api/v1/admin/system/settings`.
+* Align emergency banner permissions so both Super Admin and Executive Admin can update it.
+* Replace string matching in `team_members` updates with strict `user_id` foreign key validation.
+* Implement file size and MIME-type restrictions on image uploads.
+
+### Performance Enhancements
+* Add server-side pagination (`limit` & `offset`) to `adminPubs.ts`, `adminMedia.ts`, and `adminProjects.ts`.
+* Compress uploaded images to WebP format before storing.
+* Add debounced search queries on all admin filter inputs.
+
+---
+
+## 15. Recommended Permission Model & State Machine
+
+### Three-Tier Role Hierarchy
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                   WenClims Admin Panel Roadmap                         │
-├────────────────────────────────┬───────────────────────────────────────┤
-│ 1. Security & RBAC             │ Lock down all endpoints with strict   │
-│                                │ role checks and author UUID matching. │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 2. Duplicate Title Safety      │ Case-insensitive, trimmed uniqueness  │
-│                                │ on publications and articles (409).   │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 3. Member Approval Workflow    │ Member edits to published content     │
-│                                │ automatically revert to pending review│
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 4. UX & Toast System           │ Floating toast notifications and      │
-│                                │ Markdown live preview editors.        │
-├────────────────────────────────┼───────────────────────────────────────┤
-│ 5. Codebase Cleanup            │ Remove orphaned files & dead code.    │
-└────────────────────────────────┴───────────────────────────────────────┘
+│                              SUPER ADMIN                               │
+│  Full system control: User Roles, System Health, DB Backups, Audit Logs│
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ inherits
+┌───────────────────────────────────▼────────────────────────────────────┐
+│                            EXECUTIVE ADMIN                             │
+│  Content approval, Publishing, Emergency Banner, Hero Stats, Projects │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ inherits
+┌───────────────────────────────────▼────────────────────────────────────┐
+│                                MEMBER                                  │
+│  Submit drafts, submit for review, edit own bio, change own password   │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+### Content Publication State Machine
 
-## 15. Recommended Permission Model
-
-```mermaid
-stateDiagram-v2
-    [*] --> MemberDraft: Member Creates Post
-    MemberDraft --> PendingApproval: Member Submits
-    PendingApproval --> Published: Admin Approves
-    Published --> PendingApproval: Member Edits Published Post
-    Published --> Published: Admin Edits
-    PendingApproval --> MemberDraft: Admin Requests Changes
-    Published --> [*]: Admin Deletes
 ```
-
-1. **Super Admin**: Supreme controller. Can configure system settings, emergency banner, manage user accounts, assign roles, inspect security audit logs, download database backups, and approve/delete any content.
-2. **Executive Admin**: Editorial controller. Can approve member posts, publish articles and papers directly, manage projects, tools, and team profiles. Cannot modify Super Admin credentials or alter global system configurations.
-3. **Member / Researcher**: Contributor. Can submit research papers and media articles for review (`status = 'pending'`), edit their own drafts, update their personal profile and change their password. **Cannot** edit other members' content, cannot directly publish to the live site, and cannot access administrative tools.
+   [ Create Draft ]
+          │
+          ▼
+   ┌──────────────┐      Admin Approval      ┌─────────────────┐
+   │   PENDING    ├─────────────────────────►│    PUBLISHED    │
+   │ (In Review)  │                          │ (Live on Site)  │
+   └──────┬───────┘                          └────────┬────────┘
+          ▲                                           │
+          │             Member Edits Content          │
+          └───────────────────────────────────────────┘
+```
 
 ---
 
 ## 16. Recommended Fix Priority
 
-| Priority | Issue / Task | Impact Area | Complexity |
-| :---: | :--- | :--- | :---: |
-| **P0 (Blocker)** | Prevent members from editing published content live without re-approval | Security / Moderation | Low |
-| **P0 (Blocker)** | Case-insensitive duplicate title enforcement (DB + API + UI) | Data Integrity | Medium |
-| **P1 (High)** | Lock mutating endpoints (`Projects`, `Tools`, `Team`) with `requireRole('admin')` | Authorization | Low |
-| **P1 (High)** | Enforce client-side `allowedRoles` on `<ProtectedRoute>` in `App.tsx` | UI Security | Low |
-| **P2 (Medium)** | Fix Zod validation schema enum to include `status: 'pending'` | Functional | Low |
-| **P2 (Medium)** | Base64 file upload size validation & thumbnail compression | Stability | Medium |
-| **P3 (Cleanup)**| Delete dead legacy components (`AuditLogViewer.tsx`) and clean styles | Maintenance | Low |
-| **P3 (UX)** | Implement global Toast notification system & Markdown editor preview | UX Polish | Medium |
+| Priority | Issue Code | Category | Description | Est. Effort |
+| :---: | :--- | :--- | :--- | :---: |
+| **P1** | `SEC-01` | Security | Add `requireRole('admin')` to `PUT /api/v1/admin/system/settings` | 15 mins |
+| **P1** | `SEC-02` | Security | Unify emergency banner permission on backend (`requireRole('admin')`) | 15 mins |
+| **P2** | `UX-01` | User Experience | Replace all `alert()` dialogs with global Toast Notification Provider | 1.5 hours |
+| **P2** | `CLEAN-01`| Code Quality | Delete legacy dead university components from `client/src/components/` | 45 mins |
+| **P3** | `SEC-03` | Data Integrity | Enforce `user_id` foreign key validation on team member bio updates | 1 hour |
+| **P3** | `FEAT-01` | Functionality | Add Markdown formatting toolbar and live preview to `MediaManager.tsx` | 2 hours |
+| **P4** | `PERF-01` | Performance | Implement backend pagination and debounced search on tables | 2 hours |
+| **P4** | `PERF-02` | Performance | Add image file size validation and WebP compression | 2 hours |
 
 ---
 
-## 17. Phased Implementation Plan
+## 17. Implementation Plan (6 Phases)
 
-### 🚀 Phase 1: Critical Security & Permission Fixes
-- [ ] Update `server/src/routes/adminMedia.ts` and `server/src/routes/adminPubs.ts` so member updates to published content automatically reset status to `'pending'` and notify admins.
-- [ ] Enforce `req.user.id === row.author_id` on all member updates.
-- [ ] Apply `requireRole('admin')` to all mutating routes in `adminProjects.ts`, `adminTools.ts`, and `adminTeam.ts`.
-- [ ] Update `ProtectedRoute.tsx` and `App.tsx` with role guards (`allowedRoles`).
+### Phase 1: Critical Security & Permission Fixes
+1. Secure `PUT /api/v1/admin/system/settings` with `requireRole('admin')` in `server/src/routes/adminSystem.ts`.
+2. Update `PUT /api/v1/admin/system/banner` to allow both Super Admins and Executive Admins.
+3. Enforce strict `user_id` foreign key validation on `PUT /api/v1/admin/team/:id`.
 
-### 🛡️ Phase 2: Data Integrity & Duplicate Title Safety
-- [ ] Create case-insensitive unique indexes on `media_items` and `publications` (`LOWER(TRIM(title))`).
-- [ ] Add backend pre-check in `POST /admin/media` and `POST /admin/publications` returning HTTP 409 Conflict if title already exists.
-- [ ] Add client-side validation and duplicate title error messages in `MediaManager.tsx` and `PublicationsManager.tsx`.
-- [ ] Update `mediaItemSchema` in `validation.ts` to include `'pending'` in `status` enum.
+### Phase 2: Data Integrity & Validation
+1. Add cross-field date validation (`start_date <= end_date`) in `server/src/utils/validation.ts`.
+2. Add maximum character length and MIME type constraints on cover images and thumbnails.
+3. Validate multi-author selections on publication submissions.
 
-### 🧹 Phase 3: Dead Code & Orphaned File Cleanup
-- [ ] Remove `admin/src/components/dashboard/AuditLogViewer.tsx`.
-- [ ] Clean unused variables, redundant presets in `SiteSettingsManager.tsx`, and unused CSS classes.
+### Phase 3: Functional Enhancements
+1. Add Markdown preview tab in `MediaManager.tsx` for formatted blog writing.
+2. Add BibTeX export copy button in `PublicationsManager.tsx`.
+3. Add quick status filter counters on all managers.
 
-### ✨ Phase 4: Admin UX & Functional Improvements
-- [ ] Implement global floating Toast notification system (`<ToastProvider />`).
-- [ ] Add Markdown live preview toggle for article bodies in `MediaManager.tsx`.
-- [ ] Add empty state illustrations and call-to-action buttons across all data tables.
+### Phase 4: Dead Code Cleanup
+1. Delete unused legacy LMS files: `Admission.tsx`, `Courses.tsx`, `Departments.tsx`, `Events.tsx`, `Instructors.tsx`, `VideoTour.tsx`.
+2. Remove duplicate files: `client/src/components/ProjectDetail.tsx`, `client/src/components/TeamMemberBio.tsx`.
+3. Clean up unreferenced SVG template files in assets.
 
-### ⚡ Phase 5: Performance & Database Optimization
-- [ ] Add database indexes on `author_id`, `status`, and `created_at`.
-- [ ] Enforce client-side file upload limits (max 2MB) with warning feedback.
+### Phase 5: Admin UX & Feedback System
+1. Build and integrate a global Toast Notification Context Provider in the admin panel.
+2. Replace all `alert()` dialogs with styled toast notifications (`toast.success()`, `toast.error()`, `toast.loading()`).
+3. Enhance table empty states with visual icons and "Clear Filters" action buttons.
+
+### Phase 6: Performance & Refactoring
+1. Implement server-side pagination with query parameters (`?page=1&limit=20`) on Media, Publications, and Projects endpoints.
+2. Add `useDebounce` hook to search inputs.
+3. Optimize table rendering for mobile viewports using responsive card layouts.
 
 ---
 
-> [!IMPORTANT]
-> **Audit Status**: Complete. The codebase has been fully inspected without modifying any code or deleting files. Review this report, and once approved, we will begin executing Phase 1 (Critical Security & Permission Fixes).
+> **Audit Conclusion:** The WenClims Admin Panel architecture is robust and structurally well-engineered. Resolving the identified permission edge cases, removing legacy dead code, and integrating non-blocking toast notifications will bring the application to enterprise-grade stability and production security.
