@@ -115,20 +115,26 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
-      const existing = await query('SELECT name, social_links FROM team_members WHERE id = $1', [id]);
-      if (existing.rows.length > 0) {
-        const row = existing.rows[0];
-        const rowEmail = row.social_links?.email || '';
-        const rowName = row.name || '';
-        const isOwn =
-          Boolean(rowName && req.user?.name && rowName.toLowerCase().trim() === req.user.name.toLowerCase().trim()) ||
-          Boolean(rowEmail && req.user?.email && rowEmail.toLowerCase().trim() === req.user.email.toLowerCase().trim());
+      // SECURITY: Verify ownership by email FK lookup from users table — NOT by name string matching
+      // This prevents spoofing by matching another member's display name.
+      const existing = await query(
+        `SELECT tm.id, u.email AS owner_email
+           FROM team_members tm
+           LEFT JOIN users u ON LOWER(u.email) = LOWER(tm.social_links->>'email')
+          WHERE tm.id = $1`,
+        [id]
+      );
+      if (existing.rows.length === 0) {
+        return res.status(404).json({ error: 'Team member not found.' });
+      }
+      const ownerEmail = (existing.rows[0].owner_email || '').toLowerCase().trim();
+      const requestorEmail = (req.user?.email || '').toLowerCase().trim();
 
-        if (!isOwn) {
-          return res.status(403).json({ error: 'Permission denied. You can only edit your own personal bio.' });
-        }
+      if (!requestorEmail || !ownerEmail || ownerEmail !== requestorEmail) {
+        return res.status(403).json({ error: 'Permission denied. You can only edit your own personal bio.' });
       }
     }
+
 
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {

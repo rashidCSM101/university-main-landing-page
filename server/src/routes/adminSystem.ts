@@ -141,7 +141,7 @@ router.get('/backup', requireRole('super_admin'), async (req: AuthenticatedReque
  * PUT /api/v1/admin/system/banner
  * Update live Emergency Alert Banner text & settings
  */
-router.put('/banner', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/banner', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { is_active, message, url, theme_color, button_text } = req.body;
 
@@ -214,8 +214,9 @@ router.get('/settings', async (req: AuthenticatedRequest, res: Response) => {
 /**
  * PUT /api/v1/admin/system/settings
  * Update stored Site Settings & Hero Stat Bar custom overrides
+ * SECURITY: Requires at minimum Executive Admin role — members must NOT be able to modify hero stats.
  */
-router.put('/settings', async (req: AuthenticatedRequest, res: Response) => {
+router.put('/settings', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     await query(`
       CREATE TABLE IF NOT EXISTS site_settings (
