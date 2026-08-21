@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { query } from '../db/index';
 import { projectSchema } from '../utils/validation';
-import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware/auth';
+import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticateToken);
@@ -24,7 +24,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-router.post('/', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     await ensureProjectsTableSchema();
     const parseResult = projectSchema.safeParse(req.body);
@@ -65,7 +65,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const parseResult = projectSchema.safeParse(req.body);
@@ -109,7 +109,7 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query('DELETE FROM projects WHERE id = $1 RETURNING title', [id]);

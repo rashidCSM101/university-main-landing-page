@@ -74,18 +74,27 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       publishedAt,
     ];
 
-    const result = await query(text, params);
-    const created = result.rows[0];
+    let created;
+    try {
+      const result = await query(text, params);
+      created = result.rows[0];
+    } catch (dbErr: any) {
+      if (dbErr.code === '23505') { // Slug collision, retry with unique suffix
+        const uniqueSlug = `${item.slug}-${Date.now().toString().slice(-4)}`;
+        params[2] = uniqueSlug;
+        const retryResult = await query(text, params);
+        created = retryResult.rows[0];
+      } else {
+        throw dbErr;
+      }
+    }
 
     const auditAction = isMember ? 'SUBMIT_PENDING_APPROVAL' : 'CREATE_MEDIA';
     await logAudit(req.user, auditAction, 'media_items', created.id, req.ip || '127.0.0.1', { title: item.title, author: req.user?.name, status: finalStatus });
 
     return res.status(201).json(created);
   } catch (error: any) {
-    if (error.code === '23505') { // Unique constraint violation (slug)
-      return res.status(400).json({ error: 'A item with this slug already exists.' });
-    }
-    return res.status(500).json({ error: 'Failed to create media item.' });
+    return res.status(500).json({ error: 'Failed to create media item: ' + (error.message || 'Server error') });
   }
 });
 

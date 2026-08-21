@@ -8,6 +8,7 @@ router.use(authenticateToken);
 
 async function ensurePubsTableSchema() {
   try {
+    await query('ALTER TABLE publications ADD COLUMN IF NOT EXISTS author_id VARCHAR(255)');
     await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_type_check');
     await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_status_check');
     await query('ALTER TABLE publications ALTER COLUMN thumbnail TYPE TEXT');
@@ -31,6 +32,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensurePubsTableSchema();
     const parseResult = publicationSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -41,8 +43,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     const finalStatus = isMember ? 'pending' : (item.status || 'published');
 
     const text = `
-      INSERT INTO publications (type, title, author_name, co_authors, outlet_name, external_url, published_date, abstract, thumbnail, tags, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      INSERT INTO publications (type, title, author_name, co_authors, outlet_name, external_url, published_date, abstract, thumbnail, tags, status, author_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING *
     `;
     const params = [
@@ -57,6 +59,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.thumbnail || null,
       item.tags || [],
       finalStatus,
+      req.user?.id || null,
     ];
 
     const result = await query(text, params);
@@ -76,17 +79,19 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
 
     // Fetch existing publication
-    const existing = await query('SELECT author_name FROM publications WHERE id = $1', [id]);
+    const existing = await query('SELECT author_id, author_name FROM publications WHERE id = $1', [id]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Publication not found.' });
     }
 
-    // Role check: Member can only edit their own publications
+    // Strict role check: Member can only edit their own publications
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
-      const isAuthor = existing.rows[0].author_name?.toLowerCase().trim() === req.user?.name?.toLowerCase().trim();
+      const isAuthor =
+        (existing.rows[0].author_id && existing.rows[0].author_id === req.user?.id) ||
+        (req.user?.name && existing.rows[0].author_name?.toLowerCase().trim() === req.user.name.toLowerCase().trim());
       if (!isAuthor) {
-        return res.status(403).json({ error: 'Permission denied. Members can only edit their own submitted publications.' });
+        return res.status(403).json({ error: 'Permission denied. You can only edit your own submitted publications.' });
       }
     }
 

@@ -88,11 +88,11 @@ export function App() {
           }
         />
 
-        {/* Climate Projects Manager */}
+        {/* Climate Projects Manager — Super Admin & Executive Admin */}
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/projects`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
               <AdminLayout title="Projects & Grants">
                 <ProjectsManager />
               </AdminLayout>
@@ -100,11 +100,11 @@ export function App() {
           }
         />
 
-        {/* Team Members Manager */}
+        {/* Team Members Manager — Super Admin & Executive Admin */}
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/team`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
               <AdminLayout title="Team Members Manager">
                 <TeamManager />
               </AdminLayout>
@@ -112,11 +112,11 @@ export function App() {
           }
         />
 
-        {/* Sector Tools Manager */}
+        {/* Sector Tools Manager — Super Admin & Executive Admin */}
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/tools`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
               <AdminLayout title="Sector Tools Manager">
                 <ToolsManager />
               </AdminLayout>
@@ -128,7 +128,7 @@ export function App() {
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/users`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin']}>
               <AdminLayout title="User Roles & Access">
                 <UsersManager />
               </AdminLayout>
@@ -140,7 +140,7 @@ export function App() {
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/audit`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin']}>
               <AdminLayout title="Security Audit Trail">
                 <AuditLogsManager />
               </AdminLayout>
@@ -152,7 +152,7 @@ export function App() {
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/health`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin']}>
               <AdminLayout title="System Health & DB Backup">
                 <SystemHealthManager />
               </AdminLayout>
@@ -164,7 +164,7 @@ export function App() {
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/banner`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
               <AdminLayout title="Emergency Website Banner">
                 <GlobalBannerManager />
               </AdminLayout>
@@ -184,11 +184,11 @@ export function App() {
           }
         />
 
-        {/* Site Settings Manager */}
+        {/* Site Settings Manager — Super Admin & Executive Admin */}
         <Route
           path={`${OBFUSCATED_ADMIN_PATH}/settings`}
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
               <AdminLayout title="Site Settings & Policy">
                 <SiteSettingsManager />
               </AdminLayout>

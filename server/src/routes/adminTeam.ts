@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from '../db/index';
 import { teamMemberSchema } from '../utils/validation';
-import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware/auth';
+import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '../middleware/auth';
 
 const router = Router();
 router.use(authenticateToken);
@@ -41,7 +41,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
-router.post('/', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     await ensureTeamTableSchema();
     const parseResult = teamMemberSchema.safeParse(req.body);
