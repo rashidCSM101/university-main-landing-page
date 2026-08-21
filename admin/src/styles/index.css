@@ -87,12 +87,16 @@ h1,h2,h3,h4,h5,h6 {
   margin-left: var(--sidebar-w);
   padding-top: var(--topbar-h);
   min-height: 100vh;
-  transition: margin-left 0.3s ease;
+  width: calc(100% - var(--sidebar-w));
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
 .admin-content {
-  padding: 2rem;
-  max-width: 1400px;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -126,6 +130,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .admin-layout.sidebar-collapsed .admin-main {
   margin-left: 76px;
+  width: calc(100% - 76px);
 }
 
 .admin-layout.sidebar-collapsed .topbar {
@@ -667,3 +672,52 @@ h1,h2,h3,h4,h5,h6 {
 .animate-fade-up  { animation: fadeUp  0.5s ease both; }
 .animate-fade-in  { animation: fadeIn  0.4s ease both; }
 .animate-pulse-teal { animation: pulse-teal 2s ease-in-out infinite; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Notifications Dropdown & Modals
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.notifications-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 380px;
+  max-width: 90vw;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(11, 30, 61, 0.18), 0 0 0 1px rgba(0, 200, 200, 0.25);
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-item {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: #f8fafc;
+}
+
+.notification-item.unread {
+  background: rgba(0, 200, 200, 0.05);
+}
+
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00C8C8;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
