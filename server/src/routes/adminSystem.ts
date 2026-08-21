@@ -14,22 +14,27 @@ router.get('/banner', async (req, res: Response) => {
     if (result.rows.length === 0) {
       const defaultPayload = {
         is_active: false,
+        theme_color: 'red',
         message: '🔴 Emergency Alert: Indus Basin Flash Flood & Precipitation Attribution Study 2026 Released',
         url: '/publications',
+        button_text: 'Read Full Report',
       };
       return res.json(defaultPayload);
     }
     const stored = result.rows[0].value;
-    // Guarantee is_active is boolean
     return res.json({
       ...stored,
+      theme_color: stored?.theme_color || 'red',
+      button_text: stored?.button_text || 'Read Full Report',
       is_active: Boolean(stored?.is_active),
     });
   } catch {
     return res.json({
       is_active: false,
+      theme_color: 'red',
       message: '🔴 Emergency Alert: Indus Basin Flash Flood & Precipitation Attribution Study 2026 Released',
       url: '/publications',
+      button_text: 'Read Full Report',
     });
   }
 });
@@ -138,12 +143,14 @@ router.get('/backup', requireRole('super_admin'), async (req: AuthenticatedReque
  */
 router.put('/banner', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { is_active, message, url } = req.body;
+    const { is_active, message, url, theme_color, button_text } = req.body;
 
     const payload = {
       is_active: is_active ?? false,
+      theme_color: theme_color || 'red',
       message: message || '🔴 Emergency Alert: Climate Report Released',
       url: url || '/publications',
+      button_text: button_text || 'Read Full Report',
     };
 
     // Ensure system_settings table exists

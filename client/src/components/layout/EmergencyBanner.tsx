@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, ChevronRight, X } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Sparkles, Megaphone, CheckCircle2, ChevronRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetchFromAPI } from '../../services/api';
 
@@ -17,7 +17,6 @@ export const EmergencyBanner: React.FC = () => {
         }
       })
       .catch(() => {
-        // If API unreachable, default banner off
         setBanner(null);
       });
   }, []);
@@ -32,6 +31,38 @@ export const EmergencyBanner: React.FC = () => {
 
   if (!banner || !banner.is_active || dismissed) return null;
 
+  // Theme style presets
+  const themes: Record<string, { bg: string; shadow: string; Icon: any }> = {
+    red: {
+      bg: 'linear-gradient(90deg, #DC2626 0%, #991B1B 100%)',
+      shadow: '0 2px 10px rgba(220, 38, 38, 0.4)',
+      Icon: AlertCircle,
+    },
+    amber: {
+      bg: 'linear-gradient(90deg, #D97706 0%, #B45309 100%)',
+      shadow: '0 2px 10px rgba(217, 119, 6, 0.4)',
+      Icon: AlertTriangle,
+    },
+    teal: {
+      bg: 'linear-gradient(90deg, #0D9488 0%, #0F766E 100%)',
+      shadow: '0 2px 10px rgba(13, 148, 136, 0.4)',
+      Icon: Sparkles,
+    },
+    blue: {
+      bg: 'linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%)',
+      shadow: '0 2px 10px rgba(37, 99, 235, 0.4)',
+      Icon: Megaphone,
+    },
+    green: {
+      bg: 'linear-gradient(90deg, #16A34A 0%, #15803D 100%)',
+      shadow: '0 2px 10px rgba(22, 163, 74, 0.4)',
+      Icon: CheckCircle2,
+    },
+  };
+
+  const currentTheme = themes[banner.theme_color || 'red'] || themes.red;
+  const BannerIcon = currentTheme.Icon;
+
   return (
     <div
       style={{
@@ -41,14 +72,15 @@ export const EmergencyBanner: React.FC = () => {
         right: 0,
         height: '38px',
         zIndex: 60,
-        background: 'linear-gradient(90deg, #DC2626 0%, #991B1B 100%)',
+        background: currentTheme.bg,
         color: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         padding: '0 1rem',
         fontSize: '0.8rem',
         fontWeight: 600,
-        boxShadow: '0 2px 10px rgba(220, 38, 38, 0.4)',
+        boxShadow: currentTheme.shadow,
+        transition: 'background 0.3s ease',
       }}
     >
       <div
@@ -62,7 +94,7 @@ export const EmergencyBanner: React.FC = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-          <AlertCircle size={16} className="animate-pulse" style={{ flexShrink: 0 }} />
+          <BannerIcon size={16} className="animate-pulse" style={{ flexShrink: 0 }} />
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{banner.message}</span>
         </div>
 
@@ -72,19 +104,19 @@ export const EmergencyBanner: React.FC = () => {
               to={banner.url}
               style={{
                 color: '#ffffff',
-                background: 'rgba(255, 255, 255, 0.2)',
-                padding: '0.15rem 0.6rem',
+                background: 'rgba(255, 255, 255, 0.22)',
+                padding: '0.15rem 0.65rem',
                 borderRadius: '999px',
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.2rem',
+                gap: '0.25rem',
                 textDecoration: 'none',
                 transition: 'background 0.2s ease',
               }}
             >
-              <span>Read Full Report</span>
+              <span>{banner.button_text || 'Read Full Report'}</span>
               <ChevronRight size={12} />
             </Link>
           )}
@@ -94,7 +126,7 @@ export const EmergencyBanner: React.FC = () => {
             style={{
               background: 'transparent',
               border: 'none',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: 'rgba(255, 255, 255, 0.85)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
