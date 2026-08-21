@@ -14,8 +14,6 @@ import {
   ChevronRight,
   Activity,
   Megaphone,
-  UserCircle,
-  KeyRound,
   Sliders,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
@@ -38,7 +36,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   // ── Navigation items visible to ALL logged-in users ──────────────────────
   const commonItems = [
     { label: 'Overview',       path: OBFUSCATED_ADMIN_PATH,             icon: LayoutDashboard, exact: true },
-    { label: 'My Profile',     path: `${OBFUSCATED_ADMIN_PATH}/my-profile`, icon: UserCircle },
     { label: 'Blogs & Media',  path: `${OBFUSCATED_ADMIN_PATH}/media`,  icon: FileText },
     { label: 'Publications',   path: `${OBFUSCATED_ADMIN_PATH}/publications`, icon: BookOpen },
   ];
