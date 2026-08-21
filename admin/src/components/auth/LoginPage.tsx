@@ -7,9 +7,6 @@ import {
   Sparkles,
   Eye,
   EyeOff,
-  Globe2,
-  Activity,
-  ShieldCheck,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 import gsap from 'gsap';
@@ -74,7 +71,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="login-page">
-      {/* ── Left Clean & Minimalist Professional Brand Showcase ── */}
+      {/* ── Left Ultra-Clean Luxury Minimalist Showcase ── */}
       <div ref={leftRef} className="login-left">
         <div className="dot-grid" />
         <div className="orb orb-1" />
@@ -84,134 +81,77 @@ export const LoginPage: React.FC = () => {
           style={{
             position: 'relative',
             zIndex: 10,
-            padding: '4rem 3.5rem',
-            maxWidth: '520px',
-            width: '100%',
+            padding: '4rem 3rem',
+            textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: '480px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: '440px',
+            width: '100%',
           }}
         >
-          {/* Top Logo & Identity */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.15rem', marginBottom: '3rem' }}>
-              <div
-                style={{
-                  width: '58px',
-                  height: '58px',
-                  borderRadius: '18px',
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
-                  flexShrink: 0,
-                }}
-              >
-                <img
-                  src={logoImg}
-                  alt="WenClims Logo"
-                  style={{ height: '38px', width: 'auto', objectFit: 'contain' }}
-                />
-              </div>
-
-              <div>
-                <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2rem', fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-                  WenClims
-                </h1>
-                <span style={{ fontSize: '0.75rem', color: '#00C8C8', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                  Weather &amp; Climate Services
-                </span>
-              </div>
-            </div>
-
-            {/* Headline Statement */}
-            <h2
-              style={{
-                fontFamily: 'Outfit, sans-serif',
-                fontSize: '2.5rem',
-                fontWeight: 800,
-                color: '#fff',
-                lineHeight: 1.25,
-                marginBottom: '1.25rem',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Advanced Climate Science &amp; Intelligence Console.
-            </h2>
-
-            <p
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '1.05rem',
-                lineHeight: 1.65,
-                marginBottom: '3rem',
-                fontWeight: 400,
-              }}
-            >
-              Enterprise administration suite for atmospheric modeling, regional attribution data, peer-reviewed research, and sector analytics.
-            </p>
+          {/* Glowing Brand Icon */}
+          <div
+            style={{
+              width: '84px',
+              height: '84px',
+              borderRadius: '26px',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 100%)',
+              backdropFilter: 'blur(20px)',
+              border: '1.5px solid rgba(255, 255, 255, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 20px 50px rgba(0, 200, 200, 0.2), 0 0 30px rgba(0,200,200,0.15)',
+              marginBottom: '2rem',
+            }}
+          >
+            <img
+              src={logoImg}
+              alt="WenClims Logo"
+              style={{ height: '52px', width: 'auto', objectFit: 'contain' }}
+            />
           </div>
 
-          {/* Bottom Clean Pill Tags */}
-          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'rgba(255, 255, 255, 0.06)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                padding: '0.5rem 1rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontWeight: 600,
-              }}
-            >
-              <Globe2 size={15} color="#00C8C8" /> Climate Attribution
-            </div>
+          {/* Clean Typography */}
+          <h1
+            style={{
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: '2.5rem',
+              fontWeight: 800,
+              color: '#ffffff',
+              margin: '0 0 0.5rem 0',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            WenClims
+          </h1>
 
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'rgba(255, 255, 255, 0.06)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                padding: '0.5rem 1rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontWeight: 600,
-              }}
-            >
-              <Activity size={15} color="#E8C547" /> Research &amp; Media
-            </div>
-
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'rgba(255, 255, 255, 0.06)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                padding: '0.5rem 1rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontWeight: 600,
-              }}
-            >
-              <ShieldCheck size={15} color="#10B981" /> Verified Console
-            </div>
+          <div
+            style={{
+              fontSize: '0.85rem',
+              color: '#00C8C8',
+              fontWeight: 700,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              marginBottom: '1.5rem',
+            }}
+          >
+            Weather &amp; Climate Services
           </div>
+
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.65)',
+              fontSize: '1rem',
+              lineHeight: 1.6,
+              margin: 0,
+              fontWeight: 400,
+            }}
+          >
+            Atmospheric Intelligence &amp; Regional Climate Console
+          </p>
         </div>
       </div>
 
