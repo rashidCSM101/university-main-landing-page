@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, KeyRound, Copy, CheckCheck, RefreshCw, Trash2, ShieldAlert, Sparkles, X, User } from 'lucide-react';
+import { Plus, KeyRound, Copy, CheckCheck, RefreshCw, Trash2, ShieldAlert, Sparkles, X, User, UserX, AlertTriangle } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -339,8 +339,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
           </div>
         </div>
 
-        <p style={{ fontSize: '0.75rem', color: '#B45309', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1.5rem', lineHeight: 1.4 }}>
-          ⚠️ Copy and share this password with the member. They can change their password anytime after logging in via <strong>My Profile Settings</strong>.
+        <p style={{ fontSize: '0.75rem', color: '#B45309', background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1.5rem', lineHeight: 1.4, display: 'flex', alignItems: 'center' }}>
+          <AlertTriangle size={16} color="#B45309" style={{ flexShrink: 0, marginRight: '8px' }} />
+          <span>Copy and share this password with the member. They can change their password anytime after logging in via <strong>My Profile Settings</strong>.</span>
         </p>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -655,8 +656,21 @@ export const UsersManager: React.FC = () => {
                     <button
                       onClick={() => handleStatusToggle(u.id)}
                       className="btn-ghost"
-                      style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: u.is_active ? '#d97706' : '#16a34a' }}
+                      style={{
+                        fontSize: '0.78rem',
+                        padding: '0.35rem 0.65rem',
+                        color: u.is_active ? '#d97706' : '#16a34a',
+                        background: u.is_active ? 'rgba(217, 119, 6, 0.08)' : 'rgba(22, 163, 74, 0.08)',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        fontWeight: 600,
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      }}
+                      title={u.is_active ? 'Deactivate Account' : 'Activate Account'}
                     >
+                      <UserX size={13} />
                       {u.is_active ? 'Deactivate' : 'Activate'}
                     </button>
 
@@ -664,8 +678,21 @@ export const UsersManager: React.FC = () => {
                       <button
                         onClick={() => setDeleteTarget({ id: u.id, name: u.name })}
                         className="btn-ghost"
-                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#dc2626' }}
+                        style={{
+                          fontSize: '0.78rem',
+                          padding: '0.35rem 0.65rem',
+                          color: '#dc2626',
+                          background: 'rgba(220, 38, 38, 0.08)',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                          fontWeight: 600,
+                          border: '1px solid rgba(220, 38, 38, 0.2)',
+                        }}
+                        title="Delete User"
                       >
+                        <Trash2 size={13} />
                         Delete
                       </button>
                     )}

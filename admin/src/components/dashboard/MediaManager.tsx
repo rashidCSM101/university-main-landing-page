@@ -396,7 +396,12 @@ export const MediaManager: React.FC = () => {
                 <tr key={item.id} style={{ borderBottom: '1px solid #E8ECF2' }}>
                   <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>
                     {item.title}
-                    {item.embed_url && <div style={{ fontSize: '0.725rem', color: '#009A9A' }}>🎥 Video Embed Configured</div>}
+                    {item.embed_url && (
+                      <div style={{ fontSize: '0.725rem', color: '#009A9A', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        <Video size={12} />
+                        <span>Video Embed Configured</span>
+                      </div>
+                    )}
                   </td>
                   <td style={{ padding: '0.875rem 1rem' }}>
                     <span className="badge badge-navy" style={{ textTransform: 'capitalize' }}>{item.type}</span>

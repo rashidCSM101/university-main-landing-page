@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, Upload, Image as ImageIcon, UserCheck, CheckCircle, Save, ShieldCheck, KeyRound, Copy, CheckCheck } from 'lucide-react';
+import { Plus, Edit2, Trash2, Upload, Image as ImageIcon, UserCheck, CheckCircle, Save, ShieldCheck, KeyRound, Copy, CheckCheck, AlertTriangle } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -53,8 +53,9 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
           </div>
         </div>
 
-        <p style={{ fontSize: '0.75rem', color: '#d97706', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.6rem 0.875rem', marginBottom: '1.25rem' }}>
-          ⚠️ Copy and send this password to the member. They can change their password anytime after logging in via <strong>My Profile Settings</strong>.
+        <p style={{ fontSize: '0.75rem', color: '#d97706', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '0.6rem 0.875rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center' }}>
+          <AlertTriangle size={16} color="#d97706" style={{ flexShrink: 0, marginRight: '8px' }} />
+          <span>Copy and send this password to the member. They can change their password anytime after logging in via <strong>My Profile Settings</strong>.</span>
         </p>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
-import { Save, KeyRound, Eye, EyeOff, CheckCircle, AlertCircle, User } from 'lucide-react';
+import { Save, KeyRound, Eye, EyeOff, CheckCircle, AlertCircle, AlertTriangle, User } from 'lucide-react';
 
 export const MyProfileSettings: React.FC = () => {
   const { user } = useAuth();
@@ -137,8 +137,9 @@ export const MyProfileSettings: React.FC = () => {
           {bioLoading ? (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#6B7A95' }}>Loading your profile…</div>
           ) : !myProfile ? (
-            <div style={{ background: '#FFF7ED', border: '1px solid #FDE68A', borderRadius: '10px', padding: '1.25rem', color: '#92400E', fontSize: '0.875rem' }}>
-              ⚠️ No profile record found for your account. Please ask the Super Admin to add you via the <strong>Our Team</strong> page first.
+            <div style={{ background: '#FFF7ED', border: '1px solid #FDE68A', borderRadius: '10px', padding: '1.25rem', color: '#92400E', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <AlertTriangle size={18} color="#D97706" style={{ flexShrink: 0, marginRight: '10px' }} />
+              <span>No profile record found for your account. Please ask the Super Admin to add you via the <strong>Our Team</strong> page first.</span>
             </div>
           ) : (
             <form onSubmit={handleBioSave} style={{ display: 'grid', gap: '1.25rem' }}>
