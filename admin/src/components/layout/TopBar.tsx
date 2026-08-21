@@ -82,25 +82,67 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch real audit logs if Super Admin
+  // Fetch real audit logs & pending member posts for Admins
   useEffect(() => {
-    if (user?.role === 'super_admin') {
-      api.getAuditLogs({ action: '' })
-        .then((logs: any[]) => {
-          if (Array.isArray(logs) && logs.length > 0) {
-            const mapped: NotificationItem[] = logs.slice(0, 5).map((log, idx) => ({
-              id: log.id?.toString() || idx.toString(),
-              title: (log.action || 'System Event').replace(/_/g, ' '),
-              desc: `${log.user_name || 'Admin'} performed ${log.action} on ${log.target_type || 'system'}`,
-              time: log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
-              type: log.action.includes('PASSWORD') || log.action.includes('ROLE') ? 'security' : log.action.includes('USER') ? 'user' : 'system',
-              read: idx > 1,
-              link: `${OBFUSCATED_ADMIN_PATH}/audit`,
-            }));
-            setNotifications(mapped);
-          }
-        })
-        .catch(() => {});
+    const isPowerUser = user?.role === 'super_admin' || user?.role === 'admin';
+    if (isPowerUser) {
+      Promise.allSettled([
+        api.getAdminMedia({ status: 'pending' }),
+        api.getAdminPublications(),
+        api.getAuditLogs({ action: '' }),
+      ]).then(([mediaRes, pubsRes, logsRes]) => {
+        const list: NotificationItem[] = [];
+
+        // 1. Pending Media Submissions from members
+        if (mediaRes.status === 'fulfilled' && Array.isArray(mediaRes.value)) {
+          const pendingMedia = mediaRes.value.filter((m: any) => m.status === 'pending');
+          pendingMedia.forEach((pm: any) => {
+            list.push({
+              id: `pending-media-${pm.id}`,
+              title: `Pending Post Approval`,
+              desc: `"${pm.title}" submitted by ${pm.author_name || 'Member'}. Click to review.`,
+              time: 'Requires Review',
+              type: 'content',
+              read: false,
+              link: `${OBFUSCATED_ADMIN_PATH}/media`,
+            });
+          });
+        }
+
+        // 2. Pending Publications Submissions from members
+        if (pubsRes.status === 'fulfilled' && Array.isArray(pubsRes.value)) {
+          const pendingPubs = pubsRes.value.filter((p: any) => p.status === 'pending');
+          pendingPubs.forEach((pp: any) => {
+            list.push({
+              id: `pending-pub-${pp.id}`,
+              title: `Pending Paper Approval`,
+              desc: `"${pp.title}" submitted by ${pp.author_name || 'Author'}. Click to review.`,
+              time: 'Requires Review',
+              type: 'content',
+              read: false,
+              link: `${OBFUSCATED_ADMIN_PATH}/publications`,
+            });
+          });
+        }
+
+        // 3. System Audit Logs
+        if (logsRes.status === 'fulfilled' && Array.isArray(logsRes.value) && logsRes.value.length > 0) {
+          const mapped: NotificationItem[] = logsRes.value.slice(0, 5).map((log, idx) => ({
+            id: log.id?.toString() || `audit-${idx}`,
+            title: (log.action || 'System Event').replace(/_/g, ' '),
+            desc: `${log.user_name || 'Admin'} performed ${log.action} on ${log.target_type || 'system'}`,
+            time: log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
+            type: log.action.includes('PASSWORD') || log.action.includes('ROLE') ? 'security' : log.action.includes('USER') ? 'user' : 'system',
+            read: true,
+            link: `${OBFUSCATED_ADMIN_PATH}/audit`,
+          }));
+          list.push(...mapped);
+        }
+
+        if (list.length > 0) {
+          setNotifications(list);
+        }
+      });
     }
   }, [user]);
 

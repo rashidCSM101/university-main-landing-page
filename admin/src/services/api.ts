@@ -70,6 +70,8 @@ export const api = {
     apiFetch<any>(`/admin/media/${id}`, { method: 'PUT', body: JSON.stringify(item) }),
   deleteMedia: (id: string) =>
     apiFetch<{ message: string }>(`/admin/media/${id}`, { method: 'DELETE' }),
+  approveMedia: (id: string) =>
+    apiFetch<any>(`/admin/media/${id}/approve`, { method: 'PUT' }),
 
   // Publications
   getAdminPublications: () =>
@@ -78,6 +80,8 @@ export const api = {
     apiFetch<any>('/admin/publications', { method: 'POST', body: JSON.stringify(pub) }),
   updatePublication: (id: string, pub: any) =>
     apiFetch<any>(`/admin/publications/${id}`, { method: 'PUT', body: JSON.stringify(pub) }),
+  approvePublication: (id: string) =>
+    apiFetch<any>(`/admin/publications/${id}/approve`, { method: 'PUT' }),
   deletePublication: (id: string) =>
     apiFetch<{ message: string }>(`/admin/publications/${id}`, { method: 'DELETE' }),
 

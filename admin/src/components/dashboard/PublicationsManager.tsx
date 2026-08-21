@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, BookOpen, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, BookOpen, Search, CheckCheck, Clock, CheckCircle2 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -66,6 +66,15 @@ export const PublicationsManager: React.FC = () => {
       alert(err?.message || 'Failed to delete publication');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleApprove = async (id: string) => {
+    try {
+      await api.approvePublication(id);
+      loadData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to approve publication');
     }
   };
 
@@ -204,7 +213,7 @@ export const PublicationsManager: React.FC = () => {
               <th style={{ padding: '0.875rem 1rem' }}>Title</th>
               <th style={{ padding: '0.875rem 1rem' }}>Type</th>
               <th style={{ padding: '0.875rem 1rem' }}>Outlet / Journal</th>
-              <th style={{ padding: '0.875rem 1rem' }}>Date</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Status</th>
               <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
@@ -221,8 +230,37 @@ export const PublicationsManager: React.FC = () => {
                     <span className="badge badge-teal" style={{ textTransform: 'capitalize' }}>{item.type}</span>
                   </td>
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{item.outlet_name || 'N/A'}</td>
-                  <td style={{ padding: '0.875rem 1rem', color: '#6B7A95' }}>{item.published_date || 'N/A'}</td>
-                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    {item.status === 'pending' ? (
+                      <span className="badge badge-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={11} /> Pending Approval
+                      </span>
+                    ) : (
+                      <span className={`badge ${item.status === 'published' ? 'badge-teal' : 'badge-gold'}`}>
+                        {item.status || 'published'}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    {isPowerUser && item.status === 'pending' && (
+                      <button
+                        onClick={() => handleApprove(item.id)}
+                        className="btn-teal"
+                        style={{
+                          padding: '0.25rem 0.65rem',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          marginRight: '0.4rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                        }}
+                        title="Approve & Publish Immediately"
+                      >
+                        <CheckCheck size={13} /> Approve
+                      </button>
+                    )}
+
                     {(isPowerUser || item.author_name?.toLowerCase().trim() === user?.name?.toLowerCase().trim()) && (
                       <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }}>
                         <Edit2 size={15} />

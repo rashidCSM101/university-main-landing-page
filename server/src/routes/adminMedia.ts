@@ -49,7 +49,9 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const item = parseResult.data;
-    const publishedAt = item.status === 'published' ? new Date() : null;
+    const isMember = req.user?.role === 'member' || req.user?.role === 'editor';
+    const finalStatus = isMember ? 'pending' : (item.status || 'published');
+    const publishedAt = finalStatus === 'published' ? new Date() : null;
 
     const text = `
       INSERT INTO media_items (type, title, slug, body, excerpt, external_url, embed_url, cover_image, author_name, author_id, tags, status, published_at)
@@ -68,14 +70,15 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.author_name || req.user?.name || 'Admin',
       req.user?.id,
       item.tags || [],
-      item.status,
+      finalStatus,
       publishedAt,
     ];
 
     const result = await query(text, params);
     const created = result.rows[0];
 
-    await logAudit(req.user, 'CREATE_MEDIA', 'media_items', created.id, req.ip || '127.0.0.1', { title: item.title });
+    const auditAction = isMember ? 'SUBMIT_PENDING_APPROVAL' : 'CREATE_MEDIA';
+    await logAudit(req.user, auditAction, 'media_items', created.id, req.ip || '127.0.0.1', { title: item.title, author: req.user?.name, status: finalStatus });
 
     return res.status(201).json(created);
   } catch (error: any) {
@@ -181,6 +184,35 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
     return res.json({ message: 'Media item deleted successfully.' });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to delete media item.' });
+  }
+});
+
+/**
+ * PUT /api/v1/admin/media/:id/approve
+ * Approve pending post for publication (Super Admin & Executive Admin only)
+ */
+router.put('/:id/approve', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission Denied. Only Admins can approve posts.' });
+    }
+
+    const { id } = req.params;
+    const result = await query(
+      `UPDATE media_items SET status = 'published', published_at = NOW(), updated_at = NOW() WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Media item not found.' });
+    }
+
+    const updated = result.rows[0];
+    await logAudit(req.user, 'APPROVE_POST', 'media_items', id, req.ip || '127.0.0.1', { title: updated.title });
+    return res.json(updated);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to approve media post.' });
   }
 });
 

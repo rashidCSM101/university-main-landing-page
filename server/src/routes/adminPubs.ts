@@ -37,6 +37,9 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const item = parseResult.data;
+    const isMember = req.user?.role === 'member' || req.user?.role === 'editor';
+    const finalStatus = isMember ? 'pending' : (item.status || 'published');
+
     const text = `
       INSERT INTO publications (type, title, author_name, co_authors, outlet_name, external_url, published_date, abstract, thumbnail, tags, status)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -45,7 +48,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     const params = [
       item.type,
       item.title,
-      item.author_name || null,
+      item.author_name || req.user?.name || null,
       item.co_authors || [],
       item.outlet_name || null,
       item.external_url || null,
@@ -53,13 +56,14 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.abstract || null,
       item.thumbnail || null,
       item.tags || [],
-      item.status,
+      finalStatus,
     ];
 
     const result = await query(text, params);
     const created = result.rows[0];
 
-    await logAudit(req.user, 'CREATE_PUBLICATION', 'publications', created.id, req.ip || '127.0.0.1', { title: item.title });
+    const auditAction = isMember ? 'SUBMIT_PENDING_APPROVAL' : 'CREATE_PUBLICATION';
+    await logAudit(req.user, auditAction, 'publications', created.id, req.ip || '127.0.0.1', { title: item.title, author: req.user?.name, status: finalStatus });
 
     return res.status(201).json(created);
   } catch (error) {
@@ -141,6 +145,35 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
     return res.json({ message: 'Publication deleted.' });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to delete publication.' });
+  }
+});
+
+/**
+ * PUT /api/v1/admin/publications/:id/approve
+ * Approve pending publication for release (Super Admin & Executive Admin only)
+ */
+router.put('/:id/approve', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
+    if (!isPowerUser) {
+      return res.status(403).json({ error: 'Permission Denied. Only Admins can approve publications.' });
+    }
+
+    const { id } = req.params;
+    const result = await query(
+      `UPDATE publications SET status = 'published', updated_at = NOW() WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Publication not found.' });
+    }
+
+    const updated = result.rows[0];
+    await logAudit(req.user, 'APPROVE_PUBLICATION', 'publications', id, req.ip || '127.0.0.1', { title: updated.title });
+    return res.json(updated);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to approve publication.' });
   }
 });
 

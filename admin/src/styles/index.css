@@ -85,7 +85,7 @@ h1,h2,h3,h4,h5,h6 {
 .admin-main {
   flex: 1;
   margin-left: var(--sidebar-w);
-  padding-top: var(--topbar-h);
+  padding-top: calc(var(--topbar-h) + 1.25rem);
   min-height: 100vh;
   width: calc(100% - var(--sidebar-w));
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);

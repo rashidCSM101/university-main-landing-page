@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Video, Image as ImageIcon, Upload } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Link as LinkIcon, Video, Image as ImageIcon, Upload, CheckCheck, Clock, CheckCircle2 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -87,6 +87,15 @@ export const MediaManager: React.FC = () => {
     }
   };
 
+  const handleApprove = async (id: string) => {
+    try {
+      await api.approveMedia(id);
+      loadData();
+    } catch (err: any) {
+      alert(err?.message || 'Failed to approve media post');
+    }
+  };
+
   const openCreate = () => {
     setFormData({
       id: null,
@@ -113,10 +122,19 @@ export const MediaManager: React.FC = () => {
     setIsEditing(true);
   };
 
-  const filteredItems = items.filter(item =>
-    item.title.toLowerCase().includes(search.toLowerCase()) ||
-    item.slug.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredItems = items.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.slug.toLowerCase().includes(search.toLowerCase());
+    if (!matchesSearch) return false;
+
+    if (selectedType === 'pending') {
+      return item.status === 'pending';
+    }
+    if (selectedType !== 'all') {
+      return item.type === selectedType;
+    }
+    return true;
+  });
 
   return (
     <div className="admin-content">
@@ -131,7 +149,7 @@ export const MediaManager: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', overflowX: 'auto', paddingBottom: '0.25rem', alignItems: 'center' }}>
         {['all', 'blog', 'documentary', 'podcast', 'talkshow', 'print'].map((t) => (
           <button
             key={t}
@@ -150,6 +168,27 @@ export const MediaManager: React.FC = () => {
             {t}
           </button>
         ))}
+
+        {/* Pending Review Filter */}
+        <button
+          onClick={() => setSelectedType(selectedType === 'pending' ? 'all' : 'pending')}
+          className={`btn-ghost ${selectedType === 'pending' ? 'active' : ''}`}
+          style={{
+            fontSize: '0.8rem',
+            padding: '0.4rem 0.85rem',
+            borderRadius: '999px',
+            background: selectedType === 'pending' ? '#D97706' : '#FEF3C7',
+            color: selectedType === 'pending' ? '#ffffff' : '#B45309',
+            borderColor: '#FCD34D',
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+          }}
+        >
+          <Clock size={13} />
+          <span>Pending Review ({items.filter(i => i.status === 'pending').length})</span>
+        </button>
       </div>
 
       {/* Search Input */}
@@ -408,11 +447,36 @@ export const MediaManager: React.FC = () => {
                   </td>
                   <td style={{ padding: '0.875rem 1rem', color: '#4D5D78' }}>{item.author_name || 'Dr. Rashid'}</td>
                   <td style={{ padding: '0.875rem 1rem' }}>
-                    <span className={`badge ${item.status === 'published' ? 'badge-teal' : 'badge-gold'}`}>
-                      {item.status}
-                    </span>
+                    {item.status === 'pending' ? (
+                      <span className="badge badge-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={11} /> Pending Approval
+                      </span>
+                    ) : (
+                      <span className={`badge ${item.status === 'published' ? 'badge-teal' : 'badge-gold'}`}>
+                        {item.status}
+                      </span>
+                    )}
                   </td>
-                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    {isPowerUser && item.status === 'pending' && (
+                      <button
+                        onClick={() => handleApprove(item.id)}
+                        className="btn-teal"
+                        style={{
+                          padding: '0.25rem 0.65rem',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          marginRight: '0.4rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                        }}
+                        title="Approve and Publish Immediately"
+                      >
+                        <CheckCheck size={13} /> Approve
+                      </button>
+                    )}
+
                     {(isPowerUser || item.author_name?.toLowerCase().trim() === user?.name?.toLowerCase().trim()) && (
                       <button onClick={() => openEdit(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Edit">
                         <Edit2 size={15} />
