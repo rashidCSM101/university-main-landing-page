@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Plus, Edit2, Trash2, FolderKanban } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
+import { useToast } from '../../context/ToastContext';
 
 export const ProjectsManager: React.FC = () => {
+  const toast = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -57,13 +59,15 @@ export const ProjectsManager: React.FC = () => {
     try {
       if (formData.id) {
         await api.updateProject(formData.id, payload);
+        toast.success('Project updated successfully!');
       } else {
         await api.createProject(payload);
+        toast.success('Project created successfully!');
       }
       setIsEditing(false);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to save project');
+      toast.error('Failed to save project', err?.message);
     }
   };
 
@@ -72,10 +76,11 @@ export const ProjectsManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deleteProject(deleteTarget.id);
+      toast.success('Project deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete project');
+      toast.error('Failed to delete project', err?.message);
     } finally {
       setIsDeleting(false);
     }

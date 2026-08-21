@@ -17,9 +17,11 @@ import {
 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../context/ToastContext';
 
 export const PublicationsManager: React.FC = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const isPowerUser = user?.role === 'super_admin' || user?.role === 'admin';
   const [items, setItems] = useState<any[]>([]);
   const [registeredMembers, setRegisteredMembers] = useState<any[]>([]);
@@ -78,13 +80,15 @@ export const PublicationsManager: React.FC = () => {
 
       if (formData.id) {
         await api.updatePublication(formData.id, payload);
+        toast.success('Publication updated successfully!');
       } else {
         await api.createPublication(payload);
+        toast.success(isPowerUser ? 'Publication published successfully!' : 'Publication submitted for review!');
       }
       setIsEditing(false);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to save publication');
+      toast.error('Failed to save publication', err?.message);
     }
   };
 
@@ -93,10 +97,11 @@ export const PublicationsManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deletePublication(deleteTarget.id);
+      toast.success('Publication deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete publication');
+      toast.error('Failed to delete publication', err?.message);
     } finally {
       setIsDeleting(false);
     }
@@ -105,9 +110,10 @@ export const PublicationsManager: React.FC = () => {
   const handleApprove = async (id: string) => {
     try {
       await api.approvePublication(id);
+      toast.success('Publication approved and published live!');
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to approve publication');
+      toast.error('Failed to approve publication', err?.message);
     }
   };
 

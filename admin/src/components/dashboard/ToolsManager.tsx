@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Plus, Edit2, Trash2, Wrench } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
+import { useToast } from '../../context/ToastContext';
 
 export const ToolsManager: React.FC = () => {
+  const toast = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -40,13 +42,15 @@ export const ToolsManager: React.FC = () => {
     try {
       if (formData.id) {
         await api.updateTool(formData.id, formData);
+        toast.success('Tool updated successfully!');
       } else {
         await api.createTool(formData);
+        toast.success('Tool created successfully!');
       }
       setIsEditing(false);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to save tool');
+      toast.error('Failed to save tool', err?.message);
     }
   };
 
@@ -55,10 +59,11 @@ export const ToolsManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deleteTool(deleteTarget.id);
+      toast.success('Tool deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete tool');
+      toast.error('Failed to delete tool', err?.message);
     } finally {
       setIsDeleting(false);
     }

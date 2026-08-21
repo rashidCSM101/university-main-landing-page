@@ -69,9 +69,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
   );
 };
 
+import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../context/ToastContext';
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export const TeamManager: React.FC = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const isSuperAdmin = user?.role === 'super_admin';
 
   const [items, setItems] = useState<any[]>([]);
@@ -175,7 +179,7 @@ export const TeamManager: React.FC = () => {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size exceeds 5MB limit.');
+      toast.warning('File size exceeds 5MB limit. Please choose a smaller image.');
       return;
     }
 
@@ -224,6 +228,7 @@ export const TeamManager: React.FC = () => {
     try {
       if (formData.id) {
         await api.updateTeamMember(formData.id, payload);
+        toast.success('Team member profile updated successfully!');
       } else {
         const created = await api.createTeamMember(payload);
         if (created?.id) {
@@ -239,13 +244,14 @@ export const TeamManager: React.FC = () => {
             password: created.temp_password,
           });
         }
+        toast.success('Team member registered successfully!');
       }
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to save profile bio');
+      toast.error('Failed to save profile bio', err?.message);
     } finally {
       setSaving(false);
     }
@@ -256,10 +262,11 @@ export const TeamManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deleteTeamMember(deleteTarget.id);
+      toast.success('Team member deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete team member');
+      toast.error('Failed to delete team member', err?.message);
     } finally {
       setIsDeleting(false);
     }

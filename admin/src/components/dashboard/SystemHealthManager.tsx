@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { HardDrive, Download, Activity, CheckCircle, Database, Server, RefreshCw, Cpu } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 export const SystemHealthManager: React.FC = () => {
+  const toast = useToast();
   const [health, setHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -48,8 +50,9 @@ export const SystemHealthManager: React.FC = () => {
         document.body.appendChild(a);
         a.click();
         a.remove();
+        toast.success('Database backup downloaded successfully!');
       })
-      .catch((err) => alert('Failed to download database backup: ' + err.message))
+      .catch((err) => toast.error('Failed to download database backup', err.message))
       .finally(() => setDownloading(false));
   };
 

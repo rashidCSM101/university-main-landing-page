@@ -12,8 +12,10 @@ import {
   ChevronRight,
   Palette,
 } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 export const GlobalBannerManager: React.FC = () => {
+  const toast = useToast();
   const [banner, setBanner] = useState<any>({
     is_active: false,
     theme_color: 'red',
@@ -57,9 +59,10 @@ export const GlobalBannerManager: React.FC = () => {
     try {
       await api.updateEmergencyBanner(banner);
       setSaveSuccess(true);
+      toast.success('Emergency banner settings updated live!');
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err: any) {
-      alert(err?.message || 'Failed to update banner settings');
+      toast.error('Failed to update banner settings', err?.message);
     } finally {
       setSaving(false);
     }

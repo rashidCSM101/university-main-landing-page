@@ -14,8 +14,10 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { api } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 
 export const SiteSettingsManager: React.FC = () => {
+  const toast = useToast();
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -95,9 +97,10 @@ export const SiteSettingsManager: React.FC = () => {
         general_settings: settings,
       });
       setSaved(true);
+      toast.success('Site settings and hero stats saved successfully!');
       setTimeout(() => setSaved(false), 3500);
     } catch (err: any) {
-      alert(err?.message || 'Failed to save settings');
+      toast.error('Failed to save settings', err?.message);
     }
   };
 

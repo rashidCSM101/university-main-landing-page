@@ -3,6 +3,7 @@ import { api } from '../../services/api';
 import { Plus, KeyRound, Copy, CheckCheck, RefreshCw, Trash2, ShieldAlert, Sparkles, X, User, UserX, AlertTriangle } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../context/ToastContext';
 
 // ─── Reset Password Confirmation Modal ───────────────────────────────────────
 interface ResetConfirmModalProps {
@@ -391,6 +392,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
 // ─── Main Component ───────────────────────────────────────────────────────────
 export const UsersManager: React.FC = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const isSuperAdmin = user?.role === 'super_admin';
 
   const [users, setUsers] = useState<any[]>([]);
@@ -432,17 +434,18 @@ export const UsersManager: React.FC = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isSuperAdmin && (formData.role === 'admin' || formData.role === 'super_admin')) {
-      alert('Permission Denied: You can only create Member accounts.');
+      toast.warning('Permission Denied: You can only create Member accounts.');
       return;
     }
     try {
       const result = await api.createUser(formData);
       setFormData({ name: '', email: '', role: 'member' });
       setIsEditing(false);
+      toast.success('User account created successfully.');
       loadData();
       setCredModal({ open: true, name: result.name, email: result.email, password: result.temp_password });
     } catch (err: any) {
-      alert(err?.message || 'Failed to create user account');
+      toast.error('Failed to create user account', err?.message);
     }
   };
 
@@ -460,6 +463,7 @@ export const UsersManager: React.FC = () => {
       const result = await api.resetUserPassword(resetTarget.id);
       const targetCopy = { ...resetTarget };
       setResetTarget(null);
+      toast.success('Password reset successfully.');
       setCredModal({
         open: true,
         name: result.name || targetCopy.name,
@@ -467,7 +471,7 @@ export const UsersManager: React.FC = () => {
         password: result.temp_password,
       });
     } catch (err: any) {
-      alert(err?.message || 'Failed to reset password');
+      toast.error('Failed to reset password', err?.message);
     } finally {
       setIsResetting(false);
     }
@@ -475,23 +479,25 @@ export const UsersManager: React.FC = () => {
 
   const handleRoleChange = async (id: string, nextRole: string) => {
     if (!isSuperAdmin) {
-      alert('Permission Denied.');
+      toast.warning('Permission Denied.');
       return;
     }
     try {
       await api.updateUserRole(id, nextRole);
+      toast.success('Role updated successfully.');
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to update role');
+      toast.error('Failed to update role', err?.message);
     }
   };
 
   const handleStatusToggle = async (id: string) => {
     try {
       await api.toggleUserStatus(id);
+      toast.success('User status toggled.');
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to toggle status');
+      toast.error('Failed to toggle status', err?.message);
     }
   };
 
@@ -500,10 +506,11 @@ export const UsersManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deleteUser(deleteTarget.id);
+      toast.success('User deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete user account');
+      toast.error('Failed to delete user account', err?.message);
     } finally {
       setIsDeleting(false);
     }

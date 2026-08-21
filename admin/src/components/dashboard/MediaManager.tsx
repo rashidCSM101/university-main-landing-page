@@ -17,10 +17,13 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
+import { MarkdownEditor } from '../common/MarkdownEditor';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../context/ToastContext';
 
 export const MediaManager: React.FC = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const isPowerUser = user?.role === 'super_admin' || user?.role === 'admin';
   const [items, setItems] = useState<any[]>([]);
   const [registeredMembers, setRegisteredMembers] = useState<any[]>([]);
@@ -83,13 +86,15 @@ export const MediaManager: React.FC = () => {
     try {
       if (formData.id) {
         await api.updateMedia(formData.id, payload);
+        toast.success('Media item updated successfully!');
       } else {
         await api.createMedia(payload);
+        toast.success(isPowerUser ? 'Media item published successfully!' : 'Media item submitted for review!');
       }
       setIsEditing(false);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to save media item');
+      toast.error('Failed to save media item', err?.message);
     }
   };
 
@@ -98,10 +103,11 @@ export const MediaManager: React.FC = () => {
     setIsDeleting(true);
     try {
       await api.deleteMedia(deleteTarget.id);
+      toast.success('Media item deleted successfully.');
       setDeleteTarget(null);
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to delete media item');
+      toast.error('Failed to delete media item', err?.message);
     } finally {
       setIsDeleting(false);
     }
@@ -110,9 +116,10 @@ export const MediaManager: React.FC = () => {
   const handleApprove = async (id: string) => {
     try {
       await api.approveMedia(id);
+      toast.success('Post approved and published live!');
       loadData();
     } catch (err: any) {
-      alert(err?.message || 'Failed to approve media post');
+      toast.error('Failed to approve media post', err?.message);
     }
   };
 
@@ -442,13 +449,14 @@ export const MediaManager: React.FC = () => {
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B' }}>Body Content / Description</label>
-              <textarea
-                rows={4}
-                value={formData.body}
-                onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-                className="input-field"
-                style={{ paddingLeft: '1rem', height: 'auto' }}
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E2A3B', marginBottom: '0.4rem', display: 'block' }}>
+                Body Content (Markdown Supported with Live Preview)
+              </label>
+              <MarkdownEditor
+                value={formData.body || ''}
+                onChange={(val) => setFormData({ ...formData, body: val })}
+                placeholder="Write article or media notes in markdown (e.g. ## Overview, **key findings**, bullet points)..."
+                rows={8}
               />
             </div>
 
