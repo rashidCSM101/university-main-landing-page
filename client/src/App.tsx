@@ -13,18 +13,14 @@ import { QuoteSection } from './components/QuoteSection';
 
 
 // ─── Home page sections (lazy-loaded below fold) ───────────────────────────
-const Introduction  = lazy(() => import('./components/Introduction'));
+const Introduction   = lazy(() => import('./components/Introduction'));
 const ServicesSlider = lazy(() => import('./components/home/ServicesSlider'));
-// const Stats         = lazy(() => import('./components/Stats'));
-// const Reasons       = lazy(() => import('./components/Reasons'));
-// const Courses       = lazy(() => import('./components/Courses'));        // repurposed → Sectors / Tools preview
-const Events        = lazy(() => import('./components/Events'));          // repurposed → Featured Projects
-// const Departments   = lazy(() => import('./components/Departments'));     // repurposed → Focus Areas
-const VideoTour     = lazy(() => import('./components/VideoTour'));       // repurposed → Interactive Map placeholder
-const Instructors   = lazy(() => import('./components/Instructors'));     // repurposed → Featured Team
-const Testimonials  = lazy(() => import('./components/Testimonials'));    // repurposed → Partners / Quotes
-// const Admission     = lazy(() => import('./components/Admission'));       // repurposed → CTA / Latest Reports
-const Blog          = lazy(() => import('./components/Blog'));            // repurposed → Latest Blogs
+const Events         = lazy(() => import('./components/Events'));          // Featured Projects
+const VideoTour      = lazy(() => import('./components/VideoTour'));       // Interactive Map preview
+const Instructors    = lazy(() => import('./components/Instructors'));     // Featured Team
+const Testimonials   = lazy(() => import('./components/Testimonials'));    // Partners / Quotes
+const Blog           = lazy(() => import('./components/Blog'));            // Latest Blogs
+
 
 // ─── Full Domain Pages ──────────────────────────────────────────────────────
 // Vision & Tools
@@ -225,20 +221,15 @@ const HomePage = () => (
     <Introduction />
     <ServicesSlider />
     <ClimateMapChart />
-    {/* <Stats /> */}
-    {/* <Reasons /> */}
-    {/* <Courses /> */}
     <Events />
-    {/* <Departments /> */}
     <VideoTour />
     <Instructors />
     <Testimonials />
-    {/* <Admission /> */}
     <Blog />
-    {/* Quote Section */}
     <QuoteSection />
   </main>
 );
+
 
 // ─── App content: routing + Lenis smooth scroll ───────────────────────────
 function AppContent() {
