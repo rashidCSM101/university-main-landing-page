@@ -7,10 +7,9 @@ import {
   Sparkles,
   Eye,
   EyeOff,
-  CloudRain,
-  BookOpenCheck,
-  Cpu,
-  CheckCircle2,
+  Globe2,
+  Activity,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth, OBFUSCATED_ADMIN_PATH } from '../../hooks/useAuth';
 import gsap from 'gsap';
@@ -38,16 +37,16 @@ export const LoginPage: React.FC = () => {
     const ctx = gsap.context(() => {
       gsap.from(leftRef.current, {
         opacity: 0,
-        x: -40,
-        duration: 0.9,
+        x: -30,
+        duration: 0.8,
         ease: 'power3.out',
       });
       gsap.from(cardRef.current, {
         opacity: 0,
-        y: 30,
-        duration: 0.8,
+        y: 25,
+        duration: 0.7,
         ease: 'power3.out',
-        delay: 0.2,
+        delay: 0.15,
       });
     });
     return () => ctx.revert();
@@ -75,222 +74,148 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="login-page">
-      {/* ── Left Luxury Climate-Tech Branding Side ── */}
+      {/* ── Left Clean & Minimalist Professional Brand Showcase ── */}
       <div ref={leftRef} className="login-left">
         <div className="dot-grid" />
         <div className="orb orb-1" />
         <div className="orb orb-2" />
-        <div className="orb orb-3" />
 
-        <div style={{ position: 'relative', zIndex: 10, padding: '3.5rem 3rem', maxWidth: '560px', width: '100%' }}>
-          {/* Brand Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-            <div
-              style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '16px',
-                background: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-                flexShrink: 0,
-              }}
-            >
-              <img
-                src={logoImg}
-                alt="WenClims Logo"
-                style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
-              />
-            </div>
-            <div>
-              <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.85rem', fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>
-                WenClims
-              </h1>
-              <span style={{ fontSize: '0.725rem', color: '#00C8C8', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-                Weather &amp; Climate Services
-              </span>
-            </div>
-          </div>
-
-          {/* Portal Badge */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(0, 200, 200, 0.12)',
-              border: '1px solid rgba(0, 200, 200, 0.3)',
-              padding: '0.45rem 1rem',
-              borderRadius: '999px',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#10B981',
-                boxShadow: '0 0 10px #10B981',
-                display: 'inline-block',
-              }}
-            />
-            <span style={{ fontSize: '0.75rem', color: '#00C8C8', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Institutional Management Portal
-            </span>
-          </div>
-
-          {/* Main Title & Description */}
-          <h2
-            style={{
-              fontFamily: 'Outfit, sans-serif',
-              fontSize: '2.35rem',
-              fontWeight: 800,
-              color: '#fff',
-              lineHeight: 1.2,
-              marginBottom: '1rem',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Atmospheric Intelligence &amp; Research Platform
-          </h2>
-          <p style={{ color: 'rgba(255, 255, 255, 0.72)', fontSize: '0.95rem', lineHeight: 1.65, marginBottom: '2.25rem' }}>
-            Unified control suite for climate attribution modeling, meteorological datasets, peer-reviewed publications, and regional hazard tools.
-          </p>
-
-          {/* Feature Highlights Grid (Luxury Glassmorphic Cards) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '2.5rem' }}>
-            
-            {/* Card 1 */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '0.9rem 1.2rem',
-                borderRadius: '14px',
-                transition: 'all 0.3s ease',
-              }}
-            >
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            padding: '4rem 3.5rem',
+            maxWidth: '520px',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            minHeight: '480px',
+          }}
+        >
+          {/* Top Logo & Identity */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.15rem', marginBottom: '3rem' }}>
               <div
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: 'rgba(0, 200, 200, 0.15)',
-                  color: '#00C8C8',
+                  width: '58px',
+                  height: '58px',
+                  borderRadius: '18px',
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
                   flexShrink: 0,
                 }}
               >
-                <CloudRain size={20} />
+                <img
+                  src={logoImg}
+                  alt="WenClims Logo"
+                  style={{ height: '38px', width: 'auto', objectFit: 'contain' }}
+                />
               </div>
+
               <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>
-                  Hydro-Climate Attribution &amp; Extreme Weather
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-                  Attribution modeling and regional climate anomaly analysis.
-                </div>
+                <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2rem', fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                  WenClims
+                </h1>
+                <span style={{ fontSize: '0.75rem', color: '#00C8C8', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  Weather &amp; Climate Services
+                </span>
               </div>
             </div>
 
-            {/* Card 2 */}
-            <div
+            {/* Headline Statement */}
+            <h2
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '0.9rem 1.2rem',
-                borderRadius: '14px',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '2.5rem',
+                fontWeight: 800,
+                color: '#fff',
+                lineHeight: 1.25,
+                marginBottom: '1.25rem',
+                letterSpacing: '-0.02em',
               }}
             >
-              <div
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: 'rgba(232, 197, 71, 0.15)',
-                  color: '#E8C547',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <BookOpenCheck size={20} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>
-                  Peer-Reviewed Research &amp; Multi-Author Vault
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-                  Institutional repository for journals, media reports, and talkshows.
-                </div>
-              </div>
-            </div>
+              Advanced Climate Science &amp; Intelligence Console.
+            </h2>
 
-            {/* Card 3 */}
-            <div
+            <p
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '0.9rem 1.2rem',
-                borderRadius: '14px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '1.05rem',
+                lineHeight: 1.65,
+                marginBottom: '3rem',
+                fontWeight: 400,
               }}
             >
-              <div
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  color: '#10B981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <Cpu size={20} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>
-                  Sector Climate &amp; Hazard Tools
-                </div>
-                <div style={{ fontSize: '0.775rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-                  Interactive decision-support tools for water, energy, and agriculture.
-                </div>
-              </div>
-            </div>
-
+              Enterprise administration suite for atmospheric modeling, regional attribution data, peer-reviewed research, and sector analytics.
+            </p>
           </div>
 
-          {/* Operational Status Pill */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.5)' }}>
-            <CheckCircle2 size={16} color="#10B981" />
-            <span>Secure TLS 1.3 Verified · Production Cluster</span>
+          {/* Bottom Clean Pill Tags */}
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'rgba(255, 255, 255, 0.06)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                padding: '0.5rem 1rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                color: 'rgba(255, 255, 255, 0.85)',
+                fontWeight: 600,
+              }}
+            >
+              <Globe2 size={15} color="#00C8C8" /> Climate Attribution
+            </div>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'rgba(255, 255, 255, 0.06)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                padding: '0.5rem 1rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                color: 'rgba(255, 255, 255, 0.85)',
+                fontWeight: 600,
+              }}
+            >
+              <Activity size={15} color="#E8C547" /> Research &amp; Media
+            </div>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'rgba(255, 255, 255, 0.06)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                padding: '0.5rem 1rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                color: 'rgba(255, 255, 255, 0.85)',
+                fontWeight: 600,
+              }}
+            >
+              <ShieldCheck size={15} color="#10B981" /> Verified Console
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── Right Sign In Card Side ── */}
+      {/* ── Right Minimalist Sign-In Card ── */}
       <div className="login-right">
         <div ref={cardRef} className="login-card">
           <div className="login-card-inner">
