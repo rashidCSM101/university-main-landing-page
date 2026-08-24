@@ -75,6 +75,8 @@ export const TeamManager: React.FC = () => {
   const { user } = useAuth();
   const toast = useToast();
   const isSuperAdmin = user?.role === 'super_admin';
+  const isAdmin = user?.role === 'admin';
+  const isPowerUser = isSuperAdmin || isAdmin;
 
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -306,13 +308,13 @@ export const TeamManager: React.FC = () => {
             <span>Our Team &amp; Faculty Manager</span>
           </h1>
           <p className="page-subtitle">
-            {isSuperAdmin
-              ? 'Super Admin Mode: Add new scientists/members — auto-generates login account and temporary password!'
+            {isPowerUser
+              ? 'Team & Faculty Directory: Add new scientists/members — auto-generates login account and temporary password!'
               : 'Editor Profile Mode: Update your scientist biography and credentials'}
           </p>
         </div>
 
-        {isSuperAdmin && (
+        {isPowerUser && (
           <button onClick={openNewBlankMember} className="btn-teal">
             <Plus size={18} /> Add New Team Member
           </button>
@@ -335,7 +337,7 @@ export const TeamManager: React.FC = () => {
               {formData.id ? `Edit Member: ${formData.name}` : 'Add New Team Member'}
             </h2>
             <span style={{ fontSize: '0.8rem', color: '#009A9A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
-              <ShieldCheck size={14} /> Logged in as: {user?.name} ({isSuperAdmin ? 'Super Admin' : 'Editor Profile'})
+              <ShieldCheck size={14} /> Logged in as: {user?.name} ({isSuperAdmin ? 'Super Admin' : isAdmin ? 'Executive Admin' : 'Editor Profile'})
             </span>
           </div>
 

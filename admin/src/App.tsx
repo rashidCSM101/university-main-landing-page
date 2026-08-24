@@ -126,11 +126,11 @@ export function App() {
             }
           />
 
-          {/* Super Admin User Roles */}
+          {/* User Roles & Access — Super Admin & Executive Admin */}
           <Route
             path={`${OBFUSCATED_ADMIN_PATH}/users`}
             element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
+              <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
                 <AdminLayout title="User Roles & Access">
                   <UsersManager />
                 </AdminLayout>
