@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Building2,
 } from 'lucide-react';
+import { formatExternalUrl } from '../utils/url';
 
 export interface ScientistBioData {
   id: string;
@@ -183,7 +184,7 @@ export const TeamMemberBio = () => {
                 
                 {/* LinkedIn Direct Action */}
                 <a
-                  href={member.linkedin}
+                  href={formatExternalUrl(member.linkedin)}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Connect on LinkedIn"
@@ -197,7 +198,7 @@ export const TeamMemberBio = () => {
 
                 {/* X (Twitter) Direct Action */}
                 <a
-                  href={member.twitter}
+                  href={formatExternalUrl(member.twitter)}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Follow on X (Twitter)"

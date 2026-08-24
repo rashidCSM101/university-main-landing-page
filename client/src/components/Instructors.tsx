@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GraduationCap, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetchTeamMembers } from '../services/api';
+import { formatExternalUrl } from '../utils/url';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -60,9 +61,8 @@ const ScientistCard = ({ sc, getInitials }: { sc: any; getInitials: (name: strin
       <div className="p-3 pt-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 px-1">
           {/* LinkedIn Glow Button */}
-          {/* LinkedIn Glow Button */}
           <a
-            href={sc.linkedin || 'https://linkedin.com'}
+            href={formatExternalUrl(sc.linkedin || 'https://linkedin.com')}
             target="_blank"
             rel="noopener noreferrer"
             title="LinkedIn Profile"
@@ -75,7 +75,7 @@ const ScientistCard = ({ sc, getInitials }: { sc: any; getInitials: (name: strin
 
           {/* X (Twitter) Glow Button */}
           <a
-            href={sc.twitter || 'https://x.com'}
+            href={formatExternalUrl(sc.twitter || 'https://x.com')}
             target="_blank"
             rel="noopener noreferrer"
             title="X (Twitter) Profile"
@@ -85,7 +85,6 @@ const ScientistCard = ({ sc, getInitials }: { sc: any; getInitials: (name: strin
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
             </svg>
           </a>
-
         </div>
 
         <Link

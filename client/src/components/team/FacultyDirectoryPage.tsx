@@ -12,6 +12,7 @@ import {
   BookOpen,
   GraduationCap,
 } from 'lucide-react';
+import { formatExternalUrl } from '../../utils/url';
 
 import heroBgFallback from '../../../assets/images/1.webp?url';
 
@@ -103,7 +104,7 @@ const FacultyCard = ({ member }: { member: TeamMemberItem }) => {
         <div className="flex items-center gap-2.5 px-1">
           {/* LinkedIn Glow Button */}
           <a
-            href={member.social_links?.linkedin || member.social_links?.link || 'https://linkedin.com'}
+            href={formatExternalUrl(member.social_links?.linkedin || member.social_links?.link || 'https://linkedin.com')}
             target="_blank"
             rel="noopener noreferrer"
             title="LinkedIn Profile"
@@ -116,7 +117,7 @@ const FacultyCard = ({ member }: { member: TeamMemberItem }) => {
 
           {/* X (Twitter) Glow Button */}
           <a
-            href={member.social_links?.twitter || member.social_links?.x || 'https://x.com'}
+            href={formatExternalUrl(member.social_links?.twitter || member.social_links?.x || 'https://x.com')}
             target="_blank"
             rel="noopener noreferrer"
             title="X (Twitter) Profile"

@@ -196,7 +196,11 @@ export const TeamManager: React.FC = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setSaveSuccess(false);
+    const normalizeUrl = (url?: string) => {
+      if (!url || !url.trim()) return '';
+      const trimmed = url.trim();
+      return /^(https?:|\/\/|mailto:|tel:)/i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    };
 
     const social_links = {
       qualification: formData.qualification,
@@ -205,10 +209,10 @@ export const TeamManager: React.FC = () => {
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
-      linkedin: formData.linkedin,
-      x_twitter: formData.x_twitter,
-      google_scholar: formData.google_scholar,
-      orcid: formData.orcid,
+      linkedin: normalizeUrl(formData.linkedin),
+      x_twitter: normalizeUrl(formData.x_twitter),
+      google_scholar: normalizeUrl(formData.google_scholar),
+      orcid: normalizeUrl(formData.orcid),
       publications: formData.publications,
     };
 
