@@ -105,6 +105,7 @@ export const TeamManager: React.FC = () => {
     phone: '+92 51 9260100',
     address: 'WenClims Research HQ, Sector H-8/4, Islamabad, Pakistan',
     linkedin: '',
+    github: '',
     x_twitter: '',
     google_scholar: '',
     orcid: '',
@@ -165,8 +166,9 @@ export const TeamManager: React.FC = () => {
       phone: sl.phone || item.phone || '+92 51 9260100',
       address: sl.address || 'WenClims Research HQ, Sector H-8/4, Islamabad, Pakistan',
       linkedin: sl.linkedin || '',
-      x_twitter: sl.x_twitter || '',
-      google_scholar: sl.google_scholar || '',
+      github: sl.github || '',
+      x_twitter: sl.x_twitter || sl.twitter || '',
+      google_scholar: sl.google_scholar || sl.googleScholar || '',
       orcid: sl.orcid || '',
       publications: sl.publications || '',
       show_on_home: item.show_on_home ?? false,
@@ -210,6 +212,7 @@ export const TeamManager: React.FC = () => {
       phone: formData.phone,
       address: formData.address,
       linkedin: normalizeUrl(formData.linkedin),
+      github: normalizeUrl(formData.github),
       x_twitter: normalizeUrl(formData.x_twitter),
       google_scholar: normalizeUrl(formData.google_scholar),
       orcid: normalizeUrl(formData.orcid),
@@ -292,6 +295,7 @@ export const TeamManager: React.FC = () => {
       phone: '',
       address: 'WenClims Research HQ, Islamabad, Pakistan',
       linkedin: '',
+      github: '',
       x_twitter: '',
       google_scholar: '',
       orcid: '',
@@ -419,15 +423,30 @@ export const TeamManager: React.FC = () => {
             </div>
           </div>
 
-          {/* Social Links */}
+          {/* Social & Academic Links */}
           <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn URL (Optional)</label>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>LinkedIn Profile (Optional)</label>
             <input type="text" placeholder="https://linkedin.com/in/..." value={formData.linkedin} onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
           <div>
             <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Google Scholar URL (Optional)</label>
-            <input type="text" placeholder="https://scholar.google.com/..." value={formData.google_scholar} onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+            <input type="text" placeholder="https://scholar.google.com/citations?user=..." value={formData.google_scholar} onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>GitHub Profile URL (Optional)</label>
+            <input type="text" placeholder="https://github.com/..." value={formData.github} onChange={(e) => setFormData({ ...formData, github: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>X / Twitter Profile (Optional)</label>
+            <input type="text" placeholder="https://x.com/..." value={formData.x_twitter} onChange={(e) => setFormData({ ...formData, x_twitter: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>ORCID Researcher iD (Optional)</label>
+            <input type="text" placeholder="https://orcid.org/0000-..." value={formData.orcid} onChange={(e) => setFormData({ ...formData, orcid: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
           </div>
 
           {/* Bio Text */}

@@ -8,6 +8,8 @@ import {
   Phone,
   CheckCircle2,
   Building2,
+  GraduationCap,
+  Github,
 } from 'lucide-react';
 import { formatExternalUrl } from '../utils/url';
 
@@ -26,6 +28,7 @@ export interface ScientistBioData {
   image: string;
   linkedin: string;
   twitter: string;
+  github?: string;
   orcid?: string;
   googleScholar?: string;
   publications: { title: string; journal: string; year: string; doi?: string }[];
@@ -59,10 +62,11 @@ export const TeamMemberBio = () => {
               department: data.team || data.department || 'Atmospheric & Climate Science',
               bio: data.bio || sl.bio || 'Scientific researcher at Weather and Climate Services (WenClims), contributing to regional climate dynamics, meteorological forecasting models, and attribution analytics across South Asia.',
               image: data.photo || data.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-              linkedin: sl.linkedin || data.linkedin || 'https://linkedin.com',
-              twitter: sl.twitter || sl.x || data.twitter || data.x || 'https://x.com',
-              orcid: sl.orcid || data.orcid,
-              googleScholar: sl.google_scholar || data.googleScholar,
+              linkedin: sl.linkedin || data.linkedin || '',
+              twitter: sl.twitter || sl.x || sl.x_twitter || data.twitter || data.x || data.x_twitter || '',
+              github: sl.github || data.github || '',
+              orcid: sl.orcid || data.orcid || '',
+              googleScholar: sl.google_scholar || sl.googleScholar || data.google_scholar || data.googleScholar || '',
               publications: Array.isArray(sl.publications) ? sl.publications : [],
               projectsLed: Array.isArray(sl.projectsLed) ? sl.projectsLed : [
                 'Regional Weather & Climate Attribution Protocol',
@@ -179,36 +183,82 @@ export const TeamMemberBio = () => {
                 <p className="text-sm text-gray-600">{member.qualification}</p>
               </div>
 
-              {/* Verified LinkedIn & X (Twitter) Buttons + Contact Info */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-3">
+              {/* Verified Social & Academic Profile Buttons + Contact Info */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 pt-3">
                 
                 {/* LinkedIn Direct Action */}
-                <a
-                  href={formatExternalUrl(member.linkedin)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Connect on LinkedIn"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0077b5] text-white text-xs font-bold hover:bg-[#005f93] transition-all shadow-sm hover:scale-105"
-                >
-                  <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24">
-                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-                  </svg>
-                  <span>LinkedIn</span>
-                </a>
+                {member.linkedin && (
+                  <a
+                    href={formatExternalUrl(member.linkedin)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Connect on LinkedIn"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0077b5] text-white text-xs font-bold hover:bg-[#005f93] transition-all shadow-sm hover:scale-105"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-currentColor" viewBox="0 0 24 24">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                    </svg>
+                    <span>LinkedIn</span>
+                  </a>
+                )}
 
                 {/* X (Twitter) Direct Action */}
-                <a
-                  href={formatExternalUrl(member.twitter)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Follow on X (Twitter)"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-950 text-white text-xs font-bold hover:bg-black transition-all shadow-sm hover:scale-105"
-                >
-                  <svg className="w-3.5 h-3.5 fill-currentColor" viewBox="0 0 24 24">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                  <span>X (Twitter)</span>
-                </a>
+                {member.twitter && (
+                  <a
+                    href={formatExternalUrl(member.twitter)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Follow on X (Twitter)"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-950 text-white text-xs font-bold hover:bg-black transition-all shadow-sm hover:scale-105"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    <span>X</span>
+                  </a>
+                )}
+
+                {/* Google Scholar Direct Action */}
+                {member.googleScholar && (
+                  <a
+                    href={formatExternalUrl(member.googleScholar)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View Google Scholar Profile"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#4285F4] text-white text-xs font-bold hover:bg-[#3367D6] transition-all shadow-sm hover:scale-105"
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Scholar</span>
+                  </a>
+                )}
+
+                {/* GitHub Direct Action */}
+                {member.github && (
+                  <a
+                    href={formatExternalUrl(member.github)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View GitHub Profile & Repositories"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#24292e] text-white text-xs font-bold hover:bg-black transition-all shadow-sm hover:scale-105"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub</span>
+                  </a>
+                )}
+
+                {/* ORCID Direct Action */}
+                {member.orcid && (
+                  <a
+                    href={formatExternalUrl(member.orcid)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="ORCID Researcher iD"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#A6CE39] text-gray-950 text-xs font-bold hover:bg-[#92b831] transition-all shadow-sm hover:scale-105"
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full bg-white text-[#A6CE39] flex items-center justify-center text-[9px] font-black">iD</span>
+                    <span>ORCID</span>
+                  </a>
+                )}
 
                 {/* Email */}
                 {member.email && (
