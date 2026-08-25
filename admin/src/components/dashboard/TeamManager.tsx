@@ -391,8 +391,9 @@ export const TeamManager: React.FC = () => {
 
               {/* Official Email */}
               <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>
-                  Official Email Address * <span style={{ color: '#00C8C8', fontWeight: 600 }}>(Creates Login Account)</span>
+                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>Official Email Address *</span>
+                  <span style={{ color: '#00A3A3', fontWeight: 700, fontSize: '0.7rem', background: 'rgba(0,200,200,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>Auto-Login</span>
                 </label>
                 <input type="email" required placeholder="ayesha@wenclims.org" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
               </div>
