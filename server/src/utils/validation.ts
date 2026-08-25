@@ -88,6 +88,7 @@ export const mediaItemSchema = z.object({
   embed_url: optionalUrl,
   cover_image: imageField,
   author_name: z.string().max(200, 'Author name too long').optional(),
+  co_authors: z.array(z.string().max(200)).max(50, 'Maximum 50 co-authors').optional(),
   tags: z.array(z.string().max(50)).max(20, 'Maximum 20 tags allowed').optional(),
   status: z.enum(['draft', 'pending', 'published']).default('published'),
 });

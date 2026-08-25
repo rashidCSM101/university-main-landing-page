@@ -32,7 +32,8 @@ export const MediaManager: React.FC = () => {
   const [search, setSearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
+  const [customAuthorInput, setCustomAuthorInput] = useState('');
   const [formData, setFormData] = useState<any>({
     id: null,
     type: 'blog',
@@ -44,6 +45,7 @@ export const MediaManager: React.FC = () => {
     embed_url: '',
     cover_image: '',
     author_name: 'Dr. Rashid',
+    co_authors: [],
     tags: 'Climate, South Asia',
     status: 'published',
   });
@@ -59,7 +61,7 @@ export const MediaManager: React.FC = () => {
       setRegisteredMembers(team);
     } catch {
       setItems([
-        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
+        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid Hussain', co_authors: ['Aqsa Sarfraz'], created_at: new Date().toISOString() },
         { id: '2', type: 'talkshow', title: 'Climate Resilience & Flood Warning Talkshow', slug: 'talkshow-climate-resilience', embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
       ]);
     } finally {
@@ -71,14 +73,40 @@ export const MediaManager: React.FC = () => {
     loadData();
   }, [selectedType]);
 
+  const toggleRegisteredMember = (name: string) => {
+    if (selectedAuthors.includes(name)) {
+      setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
+    } else {
+      setSelectedAuthors([...selectedAuthors, name]);
+    }
+  };
+
+  const handleAddCustomAuthor = () => {
+    if (!customAuthorInput.trim()) return;
+    const name = customAuthorInput.trim();
+    if (!selectedAuthors.includes(name)) {
+      setSelectedAuthors([...selectedAuthors, name]);
+    }
+    setCustomAuthorInput('');
+  };
+
+  const removeAuthor = (name: string) => {
+    setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const tagArray = typeof formData.tags === 'string'
       ? formData.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
       : formData.tags;
 
+    const leadAuthor = selectedAuthors[0] || formData.author_name || user?.name || 'Dr. Rashid';
+    const coAuthors = selectedAuthors.slice(1);
+
     const payload = {
       ...formData,
+      author_name: leadAuthor,
+      co_authors: coAuthors,
       tags: tagArray,
       slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
     };
@@ -134,14 +162,20 @@ export const MediaManager: React.FC = () => {
       external_url: '',
       embed_url: '',
       cover_image: '',
-      author_name: 'Dr. Rashid',
+      author_name: user?.name || 'Dr. Rashid',
+      co_authors: [],
       tags: 'Climate Change, South Asia',
       status: 'published',
     });
+    setSelectedAuthors([user?.name || 'Dr. Rashid']);
+    setCustomAuthorInput('');
     setIsEditing(true);
   };
 
   const openEdit = (item: any) => {
+    const allAuthors = [item.author_name, ...(Array.isArray(item.co_authors) ? item.co_authors : [])].filter(Boolean);
+    setSelectedAuthors(allAuthors.length > 0 ? allAuthors : [item.author_name || user?.name || 'Dr. Rashid']);
+    setCustomAuthorInput('');
     setFormData({
       ...item,
       tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
@@ -383,46 +417,140 @@ export const MediaManager: React.FC = () => {
               )}
             </div>
 
-            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.4rem' }}>
-                <Users size={16} color="#00C8C8" /> Author / Speaker Name (Registered Member or Custom)
-              </label>
-
-              {/* Registered Team Members Pills */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.6rem' }}>
-                {registeredMembers.map((member) => (
-                  <button
-                    key={member.id || member.name}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, author_name: member.name })}
-                    style={{
-                      padding: '0.25rem 0.65rem',
-                      borderRadius: '999px',
-                      border: formData.author_name === member.name ? '1.5px solid #00C8C8' : '1px solid #CBD5E1',
-                      background: formData.author_name === member.name ? 'rgba(0, 200, 200, 0.15)' : '#ffffff',
-                      color: formData.author_name === member.name ? '#007A7A' : '#334155',
-                      fontWeight: formData.author_name === member.name ? 700 : 500,
-                      fontSize: '0.75rem',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.3rem',
-                    }}
-                  >
-                    {formData.author_name === member.name && <UserCheck size={12} color="#00C8C8" />}
-                    <span>{member.name}</span>
-                  </button>
-                ))}
+            {/* ── DYNAMIC REGISTERED & CUSTOM AUTHORS SECTION ── */}
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1.25rem', borderRadius: '16px', border: '1.5px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Users size={18} color="#00C8C8" />
+                  <span>Authors &amp; Co-Authors (Registered Faculty Members + Custom)</span>
+                </label>
+                <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                  First author is assigned as <strong>Lead Author</strong>
+                </span>
               </div>
 
-              <input
-                type="text"
-                value={formData.author_name}
-                onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
-                className="input-field"
-                style={{ paddingLeft: '1rem', background: '#fff' }}
-                placeholder="Or type custom external author / speaker name..."
-              />
+              {/* 1. Quick Member Selector Pills from Backend */}
+              <div style={{ marginBottom: '1rem' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.4rem' }}>
+                  Select from Registered Team Members:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {registeredMembers.length === 0 ? (
+                    <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>No registered team members found.</span>
+                  ) : (
+                    registeredMembers.map((member) => {
+                      const isSelected = selectedAuthors.includes(member.name);
+                      return (
+                        <button
+                          key={member.id || member.name}
+                          type="button"
+                          onClick={() => toggleRegisteredMember(member.name)}
+                          style={{
+                            padding: '0.35rem 0.75rem',
+                            borderRadius: '999px',
+                            border: isSelected ? '1.5px solid #00C8C8' : '1px solid #CBD5E1',
+                            background: isSelected ? 'rgba(0, 200, 200, 0.15)' : '#ffffff',
+                            color: isSelected ? '#007A7A' : '#334155',
+                            fontWeight: isSelected ? 700 : 500,
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          {isSelected ? <UserCheck size={14} color="#00C8C8" /> : <Users size={14} color="#94A3B8" />}
+                          <span>{member.name}</span>
+                          <span style={{ fontSize: '0.68rem', color: '#64748B', opacity: 0.85 }}>({member.role || 'Member'})</span>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* 2. Custom Author Name Input */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                <input
+                  type="text"
+                  placeholder="Type custom external author/speaker name (e.g. Dr. Jane Smith, Oxford)..."
+                  value={customAuthorInput}
+                  onChange={(e) => setCustomAuthorInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddCustomAuthor();
+                    }
+                  }}
+                  className="input-field"
+                  style={{ paddingLeft: '1rem', flex: 1, background: '#fff' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleAddCustomAuthor()}
+                  className="btn-ghost"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#fff', border: '1px solid #00C8C8', color: '#00A3A3', fontWeight: 700 }}
+                >
+                  <UserPlus size={16} />
+                  <span>Add Author</span>
+                </button>
+              </div>
+
+              {/* 3. Selected Authors Ordered Chips */}
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.4rem' }}>
+                  Selected Authors ({selectedAuthors.length}):
+                </div>
+                {selectedAuthors.length === 0 ? (
+                  <div style={{ fontSize: '0.78rem', color: '#DC2626', fontStyle: 'italic' }}>
+                    * Please select at least one author or click a member pill above.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {selectedAuthors.map((author, index) => (
+                      <div
+                        key={author + index}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          background: index === 0 ? 'linear-gradient(135deg, #0B1E3D, #1A3461)' : '#E2E8F0',
+                          color: index === 0 ? '#00C8C8' : '#1E293B',
+                          padding: '0.35rem 0.75rem',
+                          borderRadius: '8px',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          boxShadow: index === 0 ? '0 2px 8px rgba(11, 30, 61, 0.2)' : 'none',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', opacity: 0.85, background: index === 0 ? 'rgba(0, 200, 200, 0.2)' : 'rgba(0,0,0,0.06)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>
+                          {index === 0 ? 'Lead Author' : `Co-Author #${index}`}
+                        </span>
+                        <span>{author}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeAuthor(author)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: index === 0 ? '#FF6B6B' : '#64748B',
+                            fontWeight: 900,
+                            padding: '0 0.2rem',
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                          title="Remove author"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>

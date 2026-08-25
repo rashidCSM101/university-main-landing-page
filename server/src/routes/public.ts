@@ -10,7 +10,7 @@ const router = Router();
 router.get('/media', async (req: Request, res: Response) => {
   try {
     const { type, limit = '20', offset = '0' } = req.query;
-    let text = 'SELECT id, type, title, slug, body, excerpt, external_url, embed_url, cover_image, author_name, tags, published_at FROM media_items WHERE status = $1';
+    let text = 'SELECT id, type, title, slug, body, excerpt, external_url, embed_url, cover_image, author_name, co_authors, tags, published_at FROM media_items WHERE status = $1';
     const params: any[] = ['published'];
 
     if (type) {

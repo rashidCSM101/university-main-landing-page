@@ -32,6 +32,7 @@ export interface MediaItem {
   embed_url?: string;
   cover_image?: string;
   author_name?: string;
+  co_authors?: string[];
   tags?: string[];
   status: 'draft' | 'published';
   published_at?: string;
@@ -391,7 +392,10 @@ export const MediaHubPage = () => {
                         {m.author_name && (
                           <>
                             <span className="text-gray-300">•</span>
-                            <span className="text-gray-600 font-sans font-medium">{m.author_name}</span>
+                            <span className="text-gray-600 font-sans font-medium">
+                              {m.author_name}
+                              {m.co_authors && m.co_authors.length > 0 && ` +${m.co_authors.length}`}
+                            </span>
                           </>
                         )}
                       </div>
