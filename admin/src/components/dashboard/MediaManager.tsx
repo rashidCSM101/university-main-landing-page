@@ -15,6 +15,8 @@ import {
   Users,
   UserCheck,
   UserPlus,
+  X,
+  Star,
 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { MarkdownEditor } from '../common/MarkdownEditor';
@@ -32,6 +34,9 @@ export const MediaManager: React.FC = () => {
   const [search, setSearch] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Author Multi-Select State
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [customAuthorInput, setCustomAuthorInput] = useState('');
   const [formData, setFormData] = useState<any>({
@@ -45,7 +50,6 @@ export const MediaManager: React.FC = () => {
     embed_url: '',
     cover_image: '',
     author_name: 'Dr. Rashid',
-    co_authors: [],
     tags: 'Climate, South Asia',
     status: 'published',
   });
@@ -61,7 +65,7 @@ export const MediaManager: React.FC = () => {
       setRegisteredMembers(team);
     } catch {
       setItems([
-        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid Hussain', co_authors: ['Aqsa Sarfraz'], created_at: new Date().toISOString() },
+        { id: '1', type: 'blog', title: 'Heatwave Attribution in South Asia 2025', slug: 'heatwave-attribution-2025', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
         { id: '2', type: 'talkshow', title: 'Climate Resilience & Flood Warning Talkshow', slug: 'talkshow-climate-resilience', embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', status: 'published', author_name: 'Dr. Rashid Hussain', created_at: new Date().toISOString() },
       ]);
     } finally {
@@ -72,27 +76,6 @@ export const MediaManager: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [selectedType]);
-
-  const toggleRegisteredMember = (name: string) => {
-    if (selectedAuthors.includes(name)) {
-      setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
-    } else {
-      setSelectedAuthors([...selectedAuthors, name]);
-    }
-  };
-
-  const handleAddCustomAuthor = () => {
-    if (!customAuthorInput.trim()) return;
-    const name = customAuthorInput.trim();
-    if (!selectedAuthors.includes(name)) {
-      setSelectedAuthors([...selectedAuthors, name]);
-    }
-    setCustomAuthorInput('');
-  };
-
-  const removeAuthor = (name: string) => {
-    setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
-  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,6 +135,9 @@ export const MediaManager: React.FC = () => {
   };
 
   const openCreate = () => {
+    const defaultAuthor = user?.name || (registeredMembers[0]?.name) || 'Dr. Rashid';
+    setSelectedAuthors([defaultAuthor]);
+    setCustomAuthorInput('');
     setFormData({
       id: null,
       type: 'blog',
@@ -162,25 +148,54 @@ export const MediaManager: React.FC = () => {
       external_url: '',
       embed_url: '',
       cover_image: '',
-      author_name: user?.name || 'Dr. Rashid',
-      co_authors: [],
+      author_name: defaultAuthor,
       tags: 'Climate Change, South Asia',
       status: 'published',
     });
-    setSelectedAuthors([user?.name || 'Dr. Rashid']);
-    setCustomAuthorInput('');
     setIsEditing(true);
   };
 
   const openEdit = (item: any) => {
-    const allAuthors = [item.author_name, ...(Array.isArray(item.co_authors) ? item.co_authors : [])].filter(Boolean);
-    setSelectedAuthors(allAuthors.length > 0 ? allAuthors : [item.author_name || user?.name || 'Dr. Rashid']);
+    const co = Array.isArray(item.co_authors)
+      ? item.co_authors
+      : typeof item.co_authors === 'string'
+        ? item.co_authors.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
+    const all = [item.author_name, ...co].filter(Boolean);
+    setSelectedAuthors(all.length > 0 ? all : [user?.name || 'Dr. Rashid']);
     setCustomAuthorInput('');
     setFormData({
       ...item,
       tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
     });
     setIsEditing(true);
+  };
+
+  const toggleRegisteredMember = (name: string) => {
+    if (selectedAuthors.includes(name)) {
+      setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
+    } else {
+      setSelectedAuthors([...selectedAuthors, name]);
+    }
+  };
+
+  const handleAddCustomAuthor = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const trimmed = customAuthorInput.trim();
+    if (!trimmed) return;
+    if (!selectedAuthors.includes(trimmed)) {
+      setSelectedAuthors([...selectedAuthors, trimmed]);
+    }
+    setCustomAuthorInput('');
+  };
+
+  const removeAuthor = (name: string) => {
+    setSelectedAuthors(selectedAuthors.filter((a) => a !== name));
+  };
+
+  const setAsLeadAuthor = (name: string) => {
+    const rest = selectedAuthors.filter((a) => a !== name);
+    setSelectedAuthors([name, ...rest]);
   };
 
   const filteredItems = items.filter(item => {
@@ -419,7 +434,7 @@ export const MediaManager: React.FC = () => {
 
             {/* ── DYNAMIC REGISTERED & CUSTOM AUTHORS SECTION ── */}
             <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1.25rem', borderRadius: '16px', border: '1.5px solid #E2E8F0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Users size={18} color="#00C8C8" />
                   <span>Authors &amp; Co-Authors (Registered Faculty Members + Custom)</span>
@@ -432,7 +447,7 @@ export const MediaManager: React.FC = () => {
               {/* 1. Quick Member Selector Pills from Backend */}
               <div style={{ marginBottom: '1rem' }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569', marginBottom: '0.4rem' }}>
-                  Select from Registered Team Members:
+                  Select from Registered Faculty / Team Members:
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {registeredMembers.length === 0 ? (
@@ -474,7 +489,7 @@ export const MediaManager: React.FC = () => {
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                 <input
                   type="text"
-                  placeholder="Type custom external author/speaker name (e.g. Dr. Jane Smith, Oxford)..."
+                  placeholder="Type custom external author / speaker name (e.g. Dr. Jane Smith, Oxford)..."
                   value={customAuthorInput}
                   onChange={(e) => setCustomAuthorInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -504,50 +519,78 @@ export const MediaManager: React.FC = () => {
                 </div>
                 {selectedAuthors.length === 0 ? (
                   <div style={{ fontSize: '0.78rem', color: '#DC2626', fontStyle: 'italic' }}>
-                    * Please select at least one author or click a member pill above.
+                    * Please select at least one author.
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {selectedAuthors.map((author, index) => (
-                      <div
-                        key={author + index}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          background: index === 0 ? 'linear-gradient(135deg, #0B1E3D, #1A3461)' : '#E2E8F0',
-                          color: index === 0 ? '#00C8C8' : '#1E293B',
-                          padding: '0.35rem 0.75rem',
-                          borderRadius: '8px',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                          boxShadow: index === 0 ? '0 2px 8px rgba(11, 30, 61, 0.2)' : 'none',
-                        }}
-                      >
-                        <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', opacity: 0.85, background: index === 0 ? 'rgba(0, 200, 200, 0.2)' : 'rgba(0,0,0,0.06)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>
-                          {index === 0 ? 'Lead Author' : `Co-Author #${index}`}
-                        </span>
-                        <span>{author}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeAuthor(author)}
+                    {selectedAuthors.map((author, index) => {
+                      const isLead = index === 0;
+                      return (
+                        <div
+                          key={author}
                           style={{
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: index === 0 ? '#FF6B6B' : '#64748B',
-                            fontWeight: 900,
-                            padding: '0 0.2rem',
-                            fontSize: '0.9rem',
-                            display: 'flex',
+                            display: 'inline-flex',
                             alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.4rem 0.85rem',
+                            borderRadius: '12px',
+                            background: isLead ? 'linear-gradient(135deg, #0B1E3D 0%, #1A3461 100%)' : '#ffffff',
+                            color: isLead ? '#ffffff' : '#1E293B',
+                            border: isLead ? '1.5px solid #00C8C8' : '1px solid #CBD5E1',
+                            fontSize: '0.825rem',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
                           }}
-                          title="Remove author"
                         >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                          {isLead ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem', color: '#00C8C8', fontWeight: 800, fontSize: '0.7rem', textTransform: 'uppercase' }}>
+                              <Star size={12} fill="#00C8C8" /> Lead Author:
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                              Co-Author:
+                            </span>
+                          )}
+
+                          <span style={{ fontWeight: 700 }}>{author}</span>
+
+                          {!isLead && (
+                            <button
+                              type="button"
+                              onClick={() => setAsLeadAuthor(author)}
+                              title="Set as Lead Author"
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#00A3A3',
+                                cursor: 'pointer',
+                                fontSize: '0.7rem',
+                                textDecoration: 'underline',
+                                padding: 0,
+                              }}
+                            >
+                              Make Lead
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => removeAuthor(author)}
+                            title="Remove Author"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: isLead ? '#94A3B8' : '#EF4444',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: 0,
+                            }}
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>

@@ -211,17 +211,21 @@ export const MediaReaderPage = () => {
                   {item.author_name ? item.author_name.charAt(0) : 'W'}
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-950 flex flex-wrap items-center gap-1.5">
-                    <span>{item.author_name || 'Dr. Rashid'}</span>
+                  <div className="text-sm font-bold text-gray-950 flex items-center gap-1.5">
+                    <span>
+                      {[
+                        item.author_name,
+                        ...(Array.isArray(item.co_authors)
+                          ? item.co_authors
+                          : typeof item.co_authors === 'string'
+                            ? item.co_authors.split(',').map((s: string) => s.trim()).filter(Boolean)
+                            : [])
+                      ].filter(Boolean).join(', ') || 'Dr. Rashid'}
+                    </span>
                     <CheckCircle2 className="w-4 h-4 text-[#48b302] fill-[#48b302]/15" />
-                    {item.co_authors && item.co_authors.length > 0 && (
-                      <span className="text-xs font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">
-                        with {item.co_authors.join(', ')}
-                      </span>
-                    )}
                   </div>
                   <div className="text-xs text-gray-500 font-medium">
-                    Weather &amp; Climate Services Scientific Research Group
+                    Weather &amp; Climate Services Research Faculty
                   </div>
                 </div>
               </div>

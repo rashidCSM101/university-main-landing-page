@@ -13,7 +13,7 @@ async function ensureMediaTableSchema() {
     await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_type_check');
     await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_status_check');
     await query('ALTER TABLE media_items ADD COLUMN IF NOT EXISTS author_id UUID');
-    await query('ALTER TABLE media_items ADD COLUMN IF NOT EXISTS co_authors TEXT[] DEFAULT \'{}\'');
+    await query('ALTER TABLE media_items ADD COLUMN IF NOT EXISTS co_authors TEXT[]');
     // Ensure case-insensitive trimmed unique index on title
     await query('CREATE UNIQUE INDEX IF NOT EXISTS idx_media_unique_title_ci ON media_items (LOWER(TRIM(title)))');
   } catch (err) {
@@ -79,8 +79,6 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     const finalStatus = isPowerUser ? (item.status || 'published') : 'pending';
     const publishedAt = finalStatus === 'published' ? new Date() : null;
-    const leadAuthor = isPowerUser ? (item.author_name || req.user?.name || 'Admin') : (req.user?.name || 'Member');
-    const coAuthors = item.co_authors || [];
 
     const text = `
       INSERT INTO media_items (type, title, slug, body, excerpt, external_url, embed_url, cover_image, author_name, co_authors, author_id, tags, status, published_at)
@@ -96,8 +94,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       item.external_url || null,
       item.embed_url || null,
       item.cover_image || null,
-      leadAuthor,
-      coAuthors,
+      isPowerUser ? (item.author_name || req.user?.name || 'Admin') : (req.user?.name || 'Member'),
+      item.co_authors || [],
       req.user?.id,
       item.tags || [],
       finalStatus,
@@ -117,21 +115,21 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
 
     const auditAction = isPowerUser ? 'CREATE_MEDIA' : 'SUBMIT_PENDING_APPROVAL';
     await logAudit(req.user, auditAction, 'media_items', created.id, req.ip || '127.0.0.1', {
-      title: created.title,
-      type: created.type,
-      status: created.status,
+      title: item.title,
       author: req.user?.name,
+      status: finalStatus
     });
 
     return res.status(201).json(created);
   } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to create media item.' });
+    console.error('Create media error:', error);
+    return res.status(500).json({ error: 'Failed to create media item: ' + (error.message || 'Server error') });
   }
 });
 
 /**
  * PUT /api/v1/admin/media/:id
- * Update media item (With Member Re-Moderation & Ownership Verification)
+ * Update media item / blog
  */
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -142,35 +140,32 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
     }
 
-    const item = parseResult.data;
-
-    // ── 1. Fetch Existing Record to Check Ownership & Current Status ──
+    // Object-level permission check
     const existing = await query('SELECT * FROM media_items WHERE id = $1', [id]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Media item not found.' });
     }
-    const existingRow = existing.rows[0];
 
-    // ── 2. Ownership & Privilege Enforcement ──
+    const existingRow = existing.rows[0];
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     const isAuthor =
       (existingRow.author_id && existingRow.author_id === req.user?.id) ||
       (req.user?.name && existingRow.author_name?.toLowerCase().trim() === req.user.name.toLowerCase().trim());
 
     if (!isPowerUser && !isAuthor) {
-      return res.status(403).json({
-        error: 'Forbidden: You do not have permission to edit content authored by other members.'
-      });
+      return res.status(403).json({ error: 'Forbidden. You can only edit your own submitted content.' });
     }
 
-    // ── 2b. Unique Title Check on Update (Excluding current item) ──
-    const duplicateTitle = await query(
-      'SELECT id FROM media_items WHERE LOWER(TRIM(title)) = LOWER(TRIM($1)) AND id != $2',
+    const item = parseResult.data;
+
+    // ── 2. Duplicate Title Safety Check on Update ──
+    const duplicateCheck = await query(
+      'SELECT id, title FROM media_items WHERE LOWER(TRIM(title)) = LOWER(TRIM($1)) AND id != $2',
       [item.title, id]
     );
-    if (duplicateTitle.rows.length > 0) {
+    if (duplicateCheck.rows.length > 0) {
       return res.status(409).json({
-        error: `Another media post already uses the title "${item.title}". Please choose a distinct title.`
+        error: `Another media post with the title "${duplicateCheck.rows[0].title}" already exists. Please choose a unique title.`
       });
     }
 
@@ -189,7 +184,6 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const authorName = isPowerUser ? (item.author_name || existingRow.author_name) : existingRow.author_name;
-    const coAuthors = isPowerUser ? (item.co_authors ?? existingRow.co_authors ?? []) : (existingRow.co_authors ?? []);
 
     const text = `
       UPDATE media_items 
@@ -207,7 +201,7 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
       item.embed_url || null,
       item.cover_image || null,
       authorName,
-      coAuthors,
+      item.co_authors || existingRow.co_authors || [],
       item.tags || [],
       finalStatus,
       publishedAt,
