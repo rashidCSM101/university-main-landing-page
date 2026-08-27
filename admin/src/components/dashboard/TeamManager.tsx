@@ -24,6 +24,7 @@ import {
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
+import { compressImage, formatBytes } from '../../utils/imageCompressor';
 
 // ─── Credentials Popup Modal ──────────────────────────────────────────────────
 interface CredentialsModalProps {
@@ -196,23 +197,33 @@ export const TeamManager: React.FC = () => {
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.warning('File size exceeds 5MB limit. Please choose a smaller image.');
-      return;
-    }
+    try {
+      // Auto-compress profile portrait to max 500x500 WebP (< 50 KB)
+      const result = await compressImage(file, {
+        maxWidth: 500,
+        maxHeight: 500,
+        quality: 0.85,
+        format: 'image/webp',
+      });
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
       setFormData((prev: any) => ({
         ...prev,
-        photo: reader.result as string,
+        photo: result.dataUrl,
       }));
-    };
-    reader.readAsDataURL(file);
+
+      const savedPercent = Math.round(((result.originalSize - result.compressedSize) / result.originalSize) * 100);
+      if (savedPercent > 20) {
+        toast.success(`Photo auto-optimized: ${formatBytes(result.originalSize)} ➔ ${formatBytes(result.compressedSize)} (${savedPercent}% saved)`);
+      } else {
+        toast.success('Photo loaded successfully!');
+      }
+    } catch (err: any) {
+      toast.error('Failed to process image', err?.message);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {

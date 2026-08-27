@@ -22,6 +22,7 @@ import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { MarkdownEditor } from '../common/MarkdownEditor';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
+import { compressImage, formatBytes } from '../../utils/imageCompressor';
 
 export const MediaManager: React.FC = () => {
   const { user } = useAuth();
@@ -378,14 +379,26 @@ export const MediaManager: React.FC = () => {
                     type="file"
                     accept="image/*"
                     style={{ display: 'none' }}
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (uploadEvent) => {
-                          setFormData({ ...formData, cover_image: uploadEvent.target?.result as string });
-                        };
-                        reader.readAsDataURL(file);
+                      if (!file) return;
+                      try {
+                        // Auto-compress cover photo to max 1200x800 WebP (< 80 KB)
+                        const result = await compressImage(file, {
+                          maxWidth: 1200,
+                          maxHeight: 800,
+                          quality: 0.82,
+                          format: 'image/webp',
+                        });
+                        setFormData({ ...formData, cover_image: result.dataUrl });
+                        const savedPercent = Math.round(((result.originalSize - result.compressedSize) / result.originalSize) * 100);
+                        if (savedPercent > 20) {
+                          toast.success(`Image auto-optimized: ${formatBytes(result.originalSize)} ➔ ${formatBytes(result.compressedSize)} (${savedPercent}% saved)`);
+                        } else {
+                          toast.success('Image loaded successfully!');
+                        }
+                      } catch (err: any) {
+                        toast.error('Failed to process image', err?.message);
                       }
                     }}
                   />
