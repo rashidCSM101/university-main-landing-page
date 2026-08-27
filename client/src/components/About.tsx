@@ -476,10 +476,7 @@ const About = () => {
             </aside>
 
           </div>
-        </div>
-
-        </div>
-      </div>
+        </div>      </div>
     </>
   );
 };
