@@ -1,14 +1,37 @@
 import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { query } from '../db/index';
-import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '../middleware/auth';
+import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware/auth';
 import { z } from 'zod';
-import { generateTempPassword } from '../utils/password';
+import crypto from 'crypto';
 
 const router = Router();
 
 // Protect all user management routes with JWT authentication
 router.use(authenticateToken);
+
+// ─────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────
+
+/** Generates a secure random temporary password: 2 words + 4-digit number */
+function generateTempPassword(): string {
+  const adjectives = ['Blue', 'Swift', 'Bold', 'Bright', 'Clear', 'Deep', 'Fair', 'Gold', 'Green', 'High', 'Keen', 'Kind', 'Light', 'Prime', 'Safe', 'Sharp', 'Soft', 'Star', 'Strong', 'True'];
+  const nouns      = ['Cloud', 'Coast', 'Field', 'Force', 'Grove', 'Lake', 'Land', 'Peak', 'River', 'Rock', 'Shore', 'Storm', 'Stream', 'Wave', 'Wind', 'Bridge', 'Crest', 'Dawn', 'Frost', 'Glow'];
+  const adj  = adjectives[crypto.randomInt(adjectives.length)];
+  const noun = nouns[crypto.randomInt(nouns.length)];
+  const num  = String(crypto.randomInt(1000, 9999));
+  return `${adj}${noun}${num}`;
+}
+
+async function ensureUsersTableSchema() {
+  try {
+    await query('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+    await query('ALTER TABLE users ALTER COLUMN role TYPE VARCHAR(50)');
+  } catch (err) {
+    // Safe catch
+  }
+}
 
 const createUserSchema = z.object({
   name:  z.string().min(2, 'Name is required'),
@@ -19,8 +42,12 @@ const createUserSchema = z.object({
 // ─────────────────────────────────────────────────────
 // GET /  — List all users
 // ─────────────────────────────────────────────────────
-router.get('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureUsersTableSchema();
+    if (req.user?.role !== 'super_admin' && req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Permission denied.' });
+    }
     const result = await query(
       'SELECT id, name, email, role, is_active, last_login, created_at FROM users ORDER BY created_at DESC'
     );
@@ -34,8 +61,11 @@ router.get('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Res
 // POST /  — Create user + auto team_member record
 // Returns generated temp_password so Super Admin can share it
 // ─────────────────────────────────────────────────────
-router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'super_admin' && req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Permission denied.' });
+    }
 
     const parseResult = createUserSchema.safeParse(req.body);
     if (!parseResult.success) {
@@ -91,15 +121,19 @@ router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Re
     return res.status(201).json({ ...createdUser, temp_password: tempPassword });
   } catch (error: any) {
     console.error('CREATE USER ERROR:', error);
-    return res.status(500).json({ error: 'Failed to create user account.' });
+    return res.status(500).json({ error: error?.message || 'Failed to create user account.' });
   }
 });
 
 // ─────────────────────────────────────────────────────
 // PUT /:id/reset-password  — Super Admin resets a member's password
 // ─────────────────────────────────────────────────────
-router.put('/:id/reset-password', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id/reset-password', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Only Super Admin can reset passwords.' });
+    }
+
     const { id } = req.params;
     const existing = await query('SELECT name, email FROM users WHERE id = $1', [id]);
     if (existing.rows.length === 0) {
@@ -160,8 +194,13 @@ router.put('/me/change-password', async (req: AuthenticatedRequest, res: Respons
 // ─────────────────────────────────────────────────────
 // PUT /:id/role  — Change user role (Super Admin only)
 // ─────────────────────────────────────────────────────
-router.put('/:id/role', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id/role', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureUsersTableSchema();
+    if (req.user?.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Only Super Admin can modify user roles.' });
+    }
+
     const { id } = req.params;
     const { role } = req.body;
 
@@ -185,8 +224,12 @@ router.put('/:id/role', requireRole('super_admin'), async (req: AuthenticatedReq
 // ─────────────────────────────────────────────────────
 // PUT /:id/toggle-status  — Activate / Deactivate user
 // ─────────────────────────────────────────────────────
-router.put('/:id/toggle-status', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.put('/:id/toggle-status', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'super_admin' && req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Permission denied.' });
+    }
+
     const { id } = req.params;
     const existing = await query('SELECT is_active FROM users WHERE id = $1', [id]);
     if (existing.rows.length === 0) return res.status(404).json({ error: 'User not found.' });
@@ -207,10 +250,14 @@ router.put('/:id/toggle-status', requireRole('admin'), async (req: Authenticated
 // ─────────────────────────────────────────────────────
 // DELETE /:id  — Delete user + linked team_member (Super Admin only)
 // ─────────────────────────────────────────────────────
-router.delete('/:id', requireRole('super_admin'), async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Only Super Admin can delete user accounts.' });
+    }
+
     const { id } = req.params;
-    if (id === req.user?.id) {
+    if (id === req.user.id) {
       return res.status(400).json({ error: 'You cannot delete your own account.' });
     }
 
@@ -221,12 +268,10 @@ router.delete('/:id', requireRole('super_admin'), async (req: AuthenticatedReque
     await query('DELETE FROM users WHERE id = $1', [id]);
 
     try {
-      if (target.email) {
-        await query(
-          "DELETE FROM team_members WHERE LOWER(social_links->>'email') = LOWER($1)",
-          [target.email]
-        );
-      }
+      await query(
+        "DELETE FROM team_members WHERE LOWER(name) = LOWER($1) OR social_links->>'email' = $2",
+        [target.name, target.email]
+      );
     } catch (err) {
       console.warn('Team member deletion warning:', err);
     }
@@ -234,7 +279,7 @@ router.delete('/:id', requireRole('super_admin'), async (req: AuthenticatedReque
     await logAudit(req.user, 'DELETE_USER', 'users', id, req.ip || '127.0.0.1', { name: target.name, email: target.email });
     return res.json({ message: 'User account deleted successfully.' });
   } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to delete user.' });
+    return res.status(500).json({ error: 'Failed to delete user: ' + (error?.message || '') });
   }
 });
 

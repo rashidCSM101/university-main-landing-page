@@ -22,10 +22,8 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
       text += ` AND action = $${params.length}`;
     }
 
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 50, 1), 200);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
     text += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(parsedLimit, parsedOffset);
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
 
     const result = await query(text, params);
     return res.json(result.rows);

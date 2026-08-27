@@ -18,10 +18,8 @@ router.get('/media', async (req: Request, res: Response) => {
       text += ` AND type = $${params.length}`;
     }
 
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 20, 1), 100);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
     text += ` ORDER BY published_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(parsedLimit, parsedOffset);
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
 
     const result = await query(text, params);
     return res.json(result.rows);
@@ -59,7 +57,7 @@ router.get('/media/:identifier', async (req: Request, res: Response) => {
  */
 router.get('/publications', async (req: Request, res: Response) => {
   try {
-    const { type, limit = '50', offset = '0' } = req.query;
+    const { type } = req.query;
     let text = 'SELECT * FROM publications WHERE status = $1';
     const params: any[] = ['published'];
 
@@ -68,10 +66,7 @@ router.get('/publications', async (req: Request, res: Response) => {
       text += ` AND type = $${params.length}`;
     }
 
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 50, 1), 100);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
-    text += ` ORDER BY published_date DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(parsedLimit, parsedOffset);
+    text += ' ORDER BY published_date DESC';
 
     const result = await query(text, params);
     return res.json(result.rows);
@@ -86,12 +81,8 @@ router.get('/publications', async (req: Request, res: Response) => {
  */
 router.get('/projects', async (req: Request, res: Response) => {
   try {
-    const { limit = '50', offset = '0' } = req.query;
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 50, 1), 100);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
     const result = await query(
-      'SELECT * FROM projects ORDER BY created_at DESC LIMIT $1 OFFSET $2',
-      [parsedLimit, parsedOffset]
+      'SELECT * FROM projects ORDER BY created_at DESC'
     );
     return res.json(result.rows);
   } catch (error) {
@@ -105,7 +96,7 @@ router.get('/projects', async (req: Request, res: Response) => {
  */
 router.get('/team', async (req: Request, res: Response) => {
   try {
-    const { home, limit = '50', offset = '0' } = req.query;
+    const { home } = req.query;
 
     if (home === 'true') {
       const homeResult = await query(
@@ -121,11 +112,8 @@ router.get('/team', async (req: Request, res: Response) => {
       return res.json(fallbackResult.rows);
     }
 
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 50, 1), 100);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
     const result = await query(
-      'SELECT id, name, slug, role, team, photo, bio, social_links, sort_order, show_on_home FROM team_members WHERE is_active = TRUE ORDER BY sort_order ASC, name ASC LIMIT $1 OFFSET $2',
-      [parsedLimit, parsedOffset]
+      'SELECT id, name, slug, role, team, photo, bio, social_links, sort_order, show_on_home FROM team_members WHERE is_active = TRUE ORDER BY sort_order ASC, name ASC'
     );
     return res.json(result.rows);
   } catch (error) {
@@ -205,6 +193,15 @@ router.get('/team/:identifier', async (req: Request, res: Response) => {
  */
 router.get('/stats', async (req: Request, res: Response) => {
   try {
+    // Ensure table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // 1. Fetch custom list if stored in site_settings
     let customList: any = null;
     try {

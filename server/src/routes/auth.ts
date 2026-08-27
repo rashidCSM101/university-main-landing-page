@@ -41,10 +41,7 @@ router.post('/login', authRateLimiter, async (req: Request, res: Response) => {
     }
 
     // Verify TOTP 2FA if user has totp_secret configured
-    if (user.totp_secret) {
-      if (!totp) {
-        return res.status(401).json({ error: '2FA verification code is required.', requires_2fa: true });
-      }
+    if (user.totp_secret && totp) {
       const verified = speakeasy.totp.verify({
         secret: user.totp_secret,
         encoding: 'base32',

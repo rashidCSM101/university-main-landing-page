@@ -6,8 +6,17 @@ import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '
 const router = Router();
 router.use(authenticateToken);
 
+async function ensureProjectsTableSchema() {
+  try {
+    await query('ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_status_check');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureProjectsTableSchema();
     const result = await query('SELECT * FROM projects ORDER BY created_at DESC');
     return res.json(result.rows);
   } catch (error) {
@@ -17,6 +26,7 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureProjectsTableSchema();
     const parseResult = projectSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });

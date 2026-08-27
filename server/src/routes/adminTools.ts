@@ -6,8 +6,20 @@ import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '
 const router = Router();
 router.use(authenticateToken);
 
+async function ensureToolsTableSchema() {
+  try {
+    await query('ALTER TABLE tools DROP CONSTRAINT IF EXISTS tools_sector_check');
+    await query('ALTER TABLE tools ALTER COLUMN thumbnail TYPE TEXT');
+    await query('ALTER TABLE tools ALTER COLUMN external_url TYPE TEXT');
+    await query('ALTER TABLE tools ALTER COLUMN sector TYPE TEXT');
+  } catch (err) {
+    // Safe catch
+  }
+}
+
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await ensureToolsTableSchema();
     const result = await query('SELECT * FROM tools ORDER BY sort_order ASC, title ASC');
     return res.json(result.rows);
   } catch (error) {

@@ -97,7 +97,7 @@ export const mediaItemSchema = z.object({
 // Publication Validation Schema
 // ─────────────────────────────────────────────
 export const publicationSchema = z.object({
-  type: z.enum(['peer-reviewed', 'report']).default('peer-reviewed'),
+  type: z.string().default('peer-reviewed'),
   title: z.string().min(3, 'Title is required').max(500, 'Title must be under 500 characters'),
   author_name: z.string().max(200, 'Author name too long').optional().nullable(),
   co_authors: z.array(z.string().max(200)).max(50, 'Maximum 50 co-authors').optional(),
@@ -107,7 +107,7 @@ export const publicationSchema = z.object({
   abstract: z.string().max(10000, 'Abstract must be under 10,000 characters').optional().nullable(),
   thumbnail: imageField,
   tags: z.array(z.string().max(50)).max(20, 'Maximum 20 tags allowed').optional(),
-  status: z.enum(['draft', 'pending', 'published']).default('published'),
+  status: z.string().default('published'),
 });
 
 // ─────────────────────────────────────────────

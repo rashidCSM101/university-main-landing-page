@@ -57,10 +57,8 @@ router.get('/audit', requireRole('super_admin'), async (req: AuthenticatedReques
       text += ` AND action ILIKE '%' || $${params.length} || '%'`;
     }
 
-    const parsedLimit = Math.min(Math.max(parseInt(limit as string, 10) || 100, 1), 200);
-    const parsedOffset = Math.max(parseInt(offset as string, 10) || 0, 0);
     text += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(parsedLimit, parsedOffset);
+    params.push(parseInt(limit as string, 10), parseInt(offset as string, 10));
 
     const result = await query(text, params);
     return res.json(result.rows);
@@ -155,6 +153,15 @@ router.put('/banner', requireRole('admin'), async (req: AuthenticatedRequest, re
       button_text: button_text || 'Read Full Report',
     };
 
+    // Ensure system_settings table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key VARCHAR(255) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Safely update or insert
     const existing = await query("SELECT key FROM system_settings WHERE key = 'emergency_banner'");
     if (existing.rows.length > 0) {
@@ -174,7 +181,7 @@ router.put('/banner', requireRole('admin'), async (req: AuthenticatedRequest, re
     return res.json(payload);
   } catch (error: any) {
     console.error('Failed to update emergency banner settings:', error);
-    return res.status(500).json({ error: 'Failed to update emergency banner settings.' });
+    return res.status(500).json({ error: 'Failed to update emergency banner settings: ' + (error?.message || 'DB error') });
   }
 });
 
@@ -184,6 +191,14 @@ router.put('/banner', requireRole('admin'), async (req: AuthenticatedRequest, re
  */
 router.get('/settings', async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     const result = await query("SELECT setting_key, setting_value FROM site_settings");
     const settingsMap: Record<string, any> = {};
     result.rows.forEach(r => {
@@ -203,6 +218,14 @@ router.get('/settings', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.put('/settings', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        setting_key VARCHAR(255) PRIMARY KEY,
+        setting_value JSONB NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     const { hero_stats, hero_stats_list, general_settings } = req.body;
 
     if (hero_stats_list) {
@@ -235,7 +258,7 @@ router.put('/settings', requireRole('admin'), async (req: AuthenticatedRequest, 
     await logAudit(req.user, 'UPDATE_SITE_SETTINGS', 'system', 'site_settings', req.ip || '127.0.0.1');
     return res.json({ message: 'Site settings saved successfully.' });
   } catch (error: any) {
-    return res.status(500).json({ error: 'Failed to save site settings.' });
+    return res.status(500).json({ error: 'Failed to save site settings: ' + (error?.message || '') });
   }
 });
 

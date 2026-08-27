@@ -5,6 +5,22 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 export async function fetchFromAPI<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
+  // Try relative endpoint first if running in Vite proxy dev mode
+  try {
+    const res = await fetch(`/api/v1${cleanEndpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      ...options,
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (_e) {
+    // Silently proceed to absolute fallback
+  }
+
+  // Fallback to absolute API_BASE_URL
   try {
     const res = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
       headers: {
