@@ -8,26 +8,12 @@ const router = Router();
 // Protect all routes with JWT authentication
 router.use(authenticateToken);
 
-async function ensureMediaTableSchema() {
-  try {
-    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_type_check');
-    await query('ALTER TABLE media_items DROP CONSTRAINT IF EXISTS media_items_status_check');
-    await query('ALTER TABLE media_items ADD COLUMN IF NOT EXISTS author_id UUID');
-    await query('ALTER TABLE media_items ADD COLUMN IF NOT EXISTS co_authors TEXT[]');
-    // Ensure case-insensitive trimmed unique index on title
-    await query('CREATE UNIQUE INDEX IF NOT EXISTS idx_media_unique_title_ci ON media_items (LOWER(TRIM(title)))');
-  } catch (err) {
-    // Safe catch
-  }
-}
-
 /**
  * GET /api/v1/admin/media
  * List all media items (drafts + published)
  */
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureMediaTableSchema();
     const { type, status } = req.query;
     let text = 'SELECT * FROM media_items WHERE 1=1';
     const params: any[] = [];
@@ -57,7 +43,6 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureMediaTableSchema();
     const parseResult = mediaItemSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -123,7 +108,7 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     return res.status(201).json(created);
   } catch (error: any) {
     console.error('Create media error:', error);
-    return res.status(500).json({ error: 'Failed to create media item: ' + (error.message || 'Server error') });
+    return res.status(500).json({ error: 'Failed to create media item.' });
   }
 });
 
@@ -133,7 +118,6 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureMediaTableSchema();
     const { id } = req.params;
     const parseResult = mediaItemSchema.safeParse(req.body);
     if (!parseResult.success) {
@@ -236,7 +220,6 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureMediaTableSchema();
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
       return res.status(403).json({ error: 'Permission denied. Members cannot delete posts. Only Admin or Super Admin can delete content.' });

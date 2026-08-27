@@ -108,8 +108,11 @@ app.use((err: any, req: Request, res: Response, next: any) => {
 
 export default app;
 
+import { initDbSchema } from './db/index';
+
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`🚀 WenClims Express Server running on http://localhost:${PORT}`);
+    await initDbSchema();
   });
 }

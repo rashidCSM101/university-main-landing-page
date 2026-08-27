@@ -1,39 +1,15 @@
 import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 import { query } from '../db/index';
 import { teamMemberSchema } from '../utils/validation';
 import { authenticateToken, requireRole, logAudit, AuthenticatedRequest } from '../middleware/auth';
+import { generateTempPassword } from '../utils/password';
 
 const router = Router();
 router.use(authenticateToken);
 
-/** Generates a secure random temporary password */
-function generateTempPassword(): string {
-  const adjectives = ['Blue', 'Swift', 'Bold', 'Bright', 'Clear', 'Deep', 'Fair', 'Gold', 'Green', 'High', 'Keen', 'Kind', 'Light', 'Prime', 'Safe', 'Sharp', 'Soft', 'Star', 'Strong', 'True'];
-  const nouns      = ['Cloud', 'Coast', 'Field', 'Force', 'Grove', 'Lake', 'Land', 'Peak', 'River', 'Rock', 'Shore', 'Storm', 'Stream', 'Wave', 'Wind', 'Bridge', 'Crest', 'Dawn', 'Frost', 'Glow'];
-  const adj  = adjectives[crypto.randomInt(adjectives.length)];
-  const noun = nouns[crypto.randomInt(nouns.length)];
-  const num  = String(crypto.randomInt(1000, 9999));
-  return `${adj}${noun}${num}`;
-}
-
-async function ensureTeamTableSchema() {
-  try {
-    await query('ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT FALSE');
-    await query('ALTER TABLE team_members DROP CONSTRAINT IF EXISTS team_members_team_check');
-    await query('ALTER TABLE team_members ALTER COLUMN photo TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN role TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN team TYPE TEXT');
-    await query('ALTER TABLE team_members ALTER COLUMN bio TYPE TEXT');
-  } catch (err) {
-    // Column type alter safe catch
-  }
-}
-
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const result = await query('SELECT * FROM team_members ORDER BY sort_order ASC, name ASC');
     return res.json(result.rows);
   } catch (error) {
@@ -43,7 +19,6 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -104,13 +79,12 @@ router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Re
     if (error.code === '23505') {
       return res.status(400).json({ error: 'Team member with this slug already exists.' });
     }
-    return res.status(500).json({ error: 'Failed to create team member: ' + (error.message || 'Server error') });
+    return res.status(500).json({ error: 'Failed to create team member.' });
   }
 });
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensureTeamTableSchema();
     const { id } = req.params;
 
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
@@ -190,12 +164,14 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
     const deletedRow = result.rows[0];
     const memberEmail = deletedRow.social_links?.email || '';
 
-    // Also delete matching user account from users table
+    // Also delete matching user account from users table by email (never by name)
     try {
-      await query(
-        "DELETE FROM users WHERE LOWER(name) = LOWER($1) OR (LOWER(email) = LOWER($2) AND $2 != '')",
-        [deletedRow.name, memberEmail]
-      );
+      if (memberEmail) {
+        await query(
+          "DELETE FROM users WHERE LOWER(email) = LOWER($1)",
+          [memberEmail]
+        );
+      }
     } catch (err) {
       console.warn('Matching user account deletion warning:', err);
     }

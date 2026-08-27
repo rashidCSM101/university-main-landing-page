@@ -9,6 +9,8 @@ export default defineConfig({
   },
   base: '/admin/',
   build: {
+    // Security: source maps off in production (no code exposure)
+    sourcemap: false,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
