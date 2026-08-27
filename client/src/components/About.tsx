@@ -197,51 +197,52 @@ const About = () => {
           </div>
         </section>
 
-        {/* ═══ MAIN CONTENT AREA (2-Column Executive Layout) ═══ */}
+        {/* ═══ MAIN CONTENT AREA (Executive 2-Column Split Flow) ═══ */}
         <div className="anim-content-area max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            
-            {/* ── LEFT COLUMN: Core Services & Technical Frameworks (8 Cols) ── */}
-            <div className="lg:col-span-8 space-y-16">
+          
+          {/* Top Section 1: Scope of Advisory & Capabilities */}
+          <section id="capabilities" className="anim-block space-y-8 mb-16">
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-8 bg-[#0B1E3D] rounded-full" />
+              <div>
+                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Scope of Advisory</span>
+                <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
+                  Our capabilities include / We deliver:
+                </h2>
+              </div>
+            </div>
 
-              {/* ── SECTION 1: OUR CAPABILITIES INCLUDE / WE DELIVER ── */}
-              <section id="capabilities" className="anim-block space-y-8">
-                <div className="flex items-center gap-3">
-                  <span className="w-1.5 h-8 bg-[#0B1E3D] rounded-full" />
-                  <div>
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Scope of Advisory</span>
-                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
-                      Our capabilities include / We deliver:
-                    </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {capabilitiesList.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="capability-sparkle-card group p-5 bg-white border border-gray-200/90 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-start gap-3.5 cursor-pointer"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[#48b302]/15 text-[#48b302] font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
+                    0{idx + 1}
                   </div>
+                  <span className="text-xs md:text-sm font-bold text-gray-800 leading-relaxed group-hover:text-gray-950 transition-colors">
+                    {item}
+                  </span>
                 </div>
+              ))}
+            </div>
+          </section>
 
-                {/* Clean Grid directly on background with Animated Frame Borders */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {capabilitiesList.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="capability-sparkle-card group p-5 bg-white border border-gray-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-3.5 cursor-pointer rounded-xl"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-[#48b302]/15 text-[#48b302] font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
-                        0{idx + 1}
-                      </div>
-                      <span className="text-xs md:text-sm font-bold text-gray-800 leading-relaxed group-hover:text-gray-950 transition-colors">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* ── SECTION 2: CLIMATE RISK & ADAPTATION ASSESSMENT ── */}
-              <section id="climate-risk" className="anim-block space-y-8 pt-12 border-t border-gray-200">
+          {/* ── 2-COLUMN SPLIT: LEFT CONTENT & RIGHT STICKY LINKS SIDEBAR ── */}
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-8 border-t border-gray-200">
+            
+            {/* ── LEFT COLUMN: TECHNICAL FRAMEWORKS, GOVERNANCE & TELEMETRY (Col 8 of 12) ── */}
+            <div className="lg:col-span-8 space-y-16">
+              
+              {/* SECTION 2: CLIMATE RISK & ADAPTATION ASSESSMENT */}
+              <section id="climate-risk" className="anim-block space-y-6">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
                     <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Technical Framework</span>
                   </div>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-gray-950">
                     Climate Risk &amp; Adaptation Assessment
                   </h2>
                 </div>
@@ -251,63 +252,63 @@ const About = () => {
                 </p>
 
                 {/* Advisory Standard Callout */}
-                <div className="border-l-2 border-[#0B1E3D] pl-6 py-2 space-y-2 bg-slate-50/70 rounded-r-xl pr-4">
+                <div className="border-l-2 border-[#0B1E3D] pl-5 py-2 space-y-1.5 bg-slate-50/70 p-4 rounded-r-xl">
                   <span className="text-xs font-bold uppercase tracking-wider text-teal-800">Assessment Standard</span>
-                  <p className="text-gray-900 text-sm md:text-base font-semibold leading-relaxed">
+                  <p className="text-gray-900 text-xs md:text-sm font-semibold leading-relaxed">
                     Provision of technical assistance using the BB2 assessment criteria of Joint MDB Methodological Framework for the Assessment of Paris Alignment and ADB’s Climate Risk Assessment Framework.
                   </p>
                 </div>
 
                 {/* Editorial Step-by-Step Breakdown */}
-                <div className="space-y-6 pt-2">
-                  <h3 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-gray-500">
+                <div className="space-y-4 pt-2">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
                     Core Assessment Components Following IPCC &amp; ADB Frameworks:
                   </h3>
 
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">01</span>
-                      <div className="space-y-1 flex-1">
-                        <h4 className="text-sm md:text-base font-bold text-gray-950">Historic &amp; Projected Climate Hazard Analysis</h4>
-                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Detailed historic and projected climate hazard mapping using high-resolution spatial models and observational tools.</p>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3.5 pb-3.5 border-b border-gray-100">
+                      <span className="text-xs font-black text-teal-800 font-mono mt-0.5">01</span>
+                      <div className="space-y-0.5 flex-1">
+                        <h4 className="text-sm font-bold text-gray-950">Historic &amp; Projected Climate Hazard Analysis</h4>
+                        <p className="text-xs text-gray-600 leading-relaxed">Detailed historic and projected climate hazard mapping using high-resolution spatial models and observational tools.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">02</span>
-                      <div className="space-y-1 flex-1">
-                        <h4 className="text-sm md:text-base font-bold text-gray-950">Exposure &amp; Vulnerability Assessment</h4>
-                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Comprehensive exposure and vulnerability analysis of all physical and socioeconomic hazards for project components.</p>
+                    <div className="flex items-start gap-3.5 pb-3.5 border-b border-gray-100">
+                      <span className="text-xs font-black text-teal-800 font-mono mt-0.5">02</span>
+                      <div className="space-y-0.5 flex-1">
+                        <h4 className="text-sm font-bold text-gray-950">Exposure &amp; Vulnerability Assessment</h4>
+                        <p className="text-xs text-gray-600 leading-relaxed">Comprehensive exposure and vulnerability analysis of all physical and socioeconomic hazards for project components.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">03</span>
-                      <div className="space-y-1 flex-1">
-                        <h4 className="text-sm md:text-base font-bold text-gray-950">Component-Wise Climate Risk Classification Matrix</h4>
-                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Systematic classification of hazard risks as extreme, moderate, or low based on rigorous vulnerability matrices.</p>
+                    <div className="flex items-start gap-3.5 pb-3.5 border-b border-gray-100">
+                      <span className="text-xs font-black text-teal-800 font-mono mt-0.5">03</span>
+                      <div className="space-y-0.5 flex-1">
+                        <h4 className="text-sm font-bold text-gray-950">Component-Wise Climate Risk Classification Matrix</h4>
+                        <p className="text-xs text-gray-600 leading-relaxed">Systematic classification of hazard risks as extreme, moderate, or low based on rigorous vulnerability matrices.</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">04</span>
-                      <div className="space-y-1 flex-1">
-                        <h4 className="text-sm md:text-base font-bold text-gray-950">Tailored Adaptation Measures &amp; Implementation</h4>
-                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Actionable adaptation measures, policy alignment guidelines, and structured implementation roadmaps.</p>
+                    <div className="flex items-start gap-3.5 pb-3.5 border-b border-gray-100">
+                      <span className="text-xs font-black text-teal-800 font-mono mt-0.5">04</span>
+                      <div className="space-y-0.5 flex-1">
+                        <h4 className="text-sm font-bold text-gray-950">Tailored Adaptation Measures &amp; Implementation</h4>
+                        <p className="text-xs text-gray-600 leading-relaxed">Actionable adaptation measures, policy alignment guidelines, and structured implementation roadmaps.</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </section>
 
-              {/* ── SECTION 3: POLICY ANALYSIS AND CLIMATE GOVERNANCE ── */}
-              <section id="governance" className="anim-block space-y-8 pt-12 border-t border-gray-200">
+              {/* SECTION 3: POLICY ANALYSIS AND CLIMATE GOVERNANCE */}
+              <section id="governance" className="anim-block space-y-6 pt-10 border-t border-gray-200">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
                     <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Government Advisory</span>
                   </div>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-gray-950">
                     Policy Analysis &amp; Climate Governance
                   </h2>
                 </div>
@@ -316,7 +317,7 @@ const About = () => {
                   Supporting the Government of Pakistan in strengthening intergovernmental coordination and improving the implementation of national climate policies. The work focuses on identifying policy gaps, institutional inefficiencies, and opportunities to enhance climate governance for more effective national action:
                 </p>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {[
                     "Comprehensive review of Pakistan’s climate policies and governance frameworks across national and provincial levels.",
                     "Assessment of institutional roles, coordination mechanisms, and implementation challenges.",
@@ -324,9 +325,9 @@ const About = () => {
                     "Stakeholder consultations through workshops, interviews, and focus groups to gather insights and build consensus.",
                     "Development of clear, actionable recommendations to strengthen climate governance and improve policy coherence.",
                   ].map((text, i) => (
-                    <div key={i} className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">0{i + 1}</span>
-                      <p className="text-xs md:text-sm font-medium text-gray-900 leading-relaxed flex-1">
+                    <div key={i} className="flex items-start gap-3.5 pb-3 border-b border-gray-100">
+                      <span className="text-xs font-black text-teal-800 font-mono mt-0.5">0{i + 1}</span>
+                      <p className="text-xs md:text-sm font-medium text-gray-800 leading-relaxed flex-1">
                         {text}
                       </p>
                     </div>
@@ -334,14 +335,14 @@ const About = () => {
                 </div>
               </section>
 
-              {/* ── SECTION 4: WET-BULB TEMPERATURE & PHYSIOLOGICAL RISK ANALYSIS ── */}
-              <section id="wet-bulb" className="anim-block space-y-6 pt-12 border-t border-gray-200">
+              {/* SECTION 4: WET-BULB TEMPERATURE & PHYSIOLOGICAL RISK ANALYSIS */}
+              <section id="wet-bulb" className="anim-block space-y-5 pt-10 border-t border-gray-200">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
                     <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Thermal Telemetry</span>
                   </div>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                  <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-gray-950">
                     Wet-Bulb Temperature &amp; Physiological Risk Analysis
                   </h2>
                 </div>
@@ -351,10 +352,9 @@ const About = () => {
                 </p>
               </section>
 
-              {/* ── SECTION 5: SCIENTIFIC QUOTE CARD (Dr. Fahad Saeed) ── */}
-              <section id="quote" className="anim-block pt-12 border-t border-gray-200">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 lg:gap-8 bg-gradient-to-br from-slate-50 via-white to-teal-50/30 p-6 md:p-8 rounded-2xl border border-gray-200/90 shadow-sm">
-                  {/* Left Column: Round Photo + Badge */}
+              {/* SECTION 5: SCIENTIFIC QUOTE CARD */}
+              <section id="quote" className="anim-block pt-10 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-200">
                   <div className="flex flex-col items-center text-center flex-shrink-0">
                     <div className="relative w-28 h-28 mb-3">
                       <img
@@ -367,25 +367,24 @@ const About = () => {
                         }}
                         className="w-full h-full rounded-full object-cover filter grayscale contrast-125 shadow-md border-2 border-gray-200"
                       />
-                      <div className="absolute bottom-0 right-0 w-8 h-8 rounded-xl bg-[#d97706] text-white flex items-center justify-center shadow-lg border-2 border-white">
+                      <div className="absolute bottom-0 right-0 w-7 h-7 rounded-lg bg-[#d97706] text-white flex items-center justify-center shadow border-2 border-white">
                         <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
                       </div>
                     </div>
 
-                    <h4 className="text-base font-heading font-extrabold text-[#0B1E3D] italic tracking-tight mb-0.5">
+                    <h4 className="text-sm font-heading font-extrabold text-[#0B1E3D] tracking-tight">
                       Dr Fahad Saeed
                     </h4>
-                    <p className="text-xs font-medium text-gray-600 italic">
+                    <p className="text-[11px] font-medium text-gray-600">
                       Senior Climate Scientist
                     </p>
-                    <p className="text-xs font-medium text-gray-500 italic">
+                    <p className="text-[11px] font-medium text-gray-600">
                       Climate Analytics
                     </p>
                   </div>
 
-                  {/* Right Column: Quoted Text */}
-                  <div className="flex-1 border-l-2 border-teal-800 pl-6 py-2 self-center">
-                    <blockquote className="text-sm md:text-base text-gray-900 font-serif italic leading-relaxed font-normal">
+                  <div className="flex-1 self-center border-l-2 border-teal-800 pl-5 py-1">
+                    <blockquote className="text-xs md:text-sm text-gray-900 font-serif italic leading-relaxed font-normal">
                       “1.5 °C limit is not a symbolic benchmark. It is the enduring and legally significant goal of Paris Agreement. It is established to avoid the most dangerous impacts of climate change and in that sense is set as the ethical and moral limit. Exceeding it would significantly increase the likelihood of severe, widespread and in some cases irreversible impacts.”
                     </blockquote>
                   </div>
@@ -394,32 +393,34 @@ const About = () => {
 
             </div>
 
-            {/* ── RIGHT COLUMN: STICKY SCIENTIFIC DIRECTORY SIDEBAR (4 Cols) ── */}
-            <aside className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
+            {/* ── RIGHT COLUMN: STICKY SCIENTIFIC DIRECTORY & RECOGNIZED DATA SOURCES (Col 4 of 12) ── */}
+            <aside id="data-sources" className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
               
-              <div id="data-sources" className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-6">
+              {/* Directory Main Box */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-6">
+                
                 {/* Header */}
-                <div className="space-y-1 pb-4 border-b border-gray-100">
+                <div className="space-y-1.5 pb-4 border-b border-gray-100">
                   <div className="flex items-center gap-1.5 text-teal-800 font-extrabold text-[11px] uppercase tracking-wider">
                     <Database className="w-3.5 h-3.5 text-teal-700" />
                     <span>Insights Directory</span>
                   </div>
                   <h3 className="font-heading font-extrabold text-gray-950 text-base leading-snug">
-                    Recognized Data Sources &amp; Tools
+                    Recognized Data Sources, Models &amp; Scientific References
                   </h3>
-                  <p className="text-xs text-gray-500 font-normal leading-relaxed">
-                    Verified open-access repositories and interactive forecasting portals.
+                  <p className="text-[11px] text-gray-500 font-normal leading-relaxed">
+                    Verified open-access scientific repositories and forecasting tools.
                   </p>
                 </div>
 
                 {/* 1. Climate Data Sources */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between pb-1">
-                    <h4 className="font-bold text-gray-950 text-xs uppercase tracking-wider flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-teal-700" />
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-teal-600" />
                       Climate Data Sources
                     </h4>
-                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100/70">
+                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">
                       {climateDataSources.length}
                     </span>
                   </div>
@@ -430,7 +431,7 @@ const About = () => {
                         href={ds.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-800 hover:text-teal-800 transition-colors"
+                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-700 hover:text-teal-800 transition-colors"
                       >
                         <span className="truncate pr-2 group-hover:translate-x-0.5 transition-transform">{ds.name}</span>
                         <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
@@ -440,13 +441,13 @@ const About = () => {
                 </div>
 
                 {/* 2. Tools & Dashboards */}
-                <div className="space-y-2 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between pb-1">
-                    <h4 className="font-bold text-gray-950 text-xs uppercase tracking-wider flex items-center gap-2">
+                <div className="space-y-2.5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-[#48b302]" />
                       Tools &amp; Dashboards
                     </h4>
-                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100/70">
+                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100">
                       {toolsAndDashboards.length}
                     </span>
                   </div>
@@ -457,7 +458,7 @@ const About = () => {
                         href={tool.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-800 hover:text-teal-800 transition-colors"
+                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-700 hover:text-teal-800 transition-colors"
                       >
                         <span className="truncate pr-2 group-hover:translate-x-0.5 transition-transform">{tool.name}</span>
                         <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
@@ -466,17 +467,25 @@ const About = () => {
                   </div>
                 </div>
 
-                {/* Global Standards Callout Badge inside Sidebar */}
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-gray-600 leading-relaxed">
-                  <strong className="text-gray-900 block mb-1">✓ Global Interoperability</strong>
-                  Compliant with IPCC AR6 frameworks, WMO meteorology guidelines &amp; CMIP6 projections.
+              </div>
+
+              {/* Callout Info Card */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-teal-50/40 border border-slate-200/90 shadow-sm space-y-1.5">
+                <div className="flex items-center gap-1.5 text-teal-800 font-bold text-[11px] uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-700" />
+                  <span>IPCC &amp; WMO Standards</span>
                 </div>
+                <p className="text-[11px] text-gray-600 leading-relaxed font-normal">
+                  All models comply with IPCC AR6 guidelines and CMIP6 climate model projections for precision attribution.
+                </p>
               </div>
 
             </aside>
 
           </div>
-        </div>      </div>
+
+        </div>
+      </div>
     </>
   );
 };
