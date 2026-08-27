@@ -197,207 +197,232 @@ const About = () => {
           </div>
         </section>
 
-        {/* ═══ MAIN CONTENT AREA (Clean Light Page Flow) ═══ */}
-        <div className="anim-content-area max-w-[72rem] mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+        {/* ═══ MAIN CONTENT AREA (2-Column Executive Layout) ═══ */}
+        <div className="anim-content-area max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            
+            {/* ── LEFT COLUMN: Core Services & Technical Frameworks (8 Cols) ── */}
+            <div className="lg:col-span-8 space-y-16">
 
-          {/* ── SECTION 1: OUR CAPABILITIES INCLUDE / WE DELIVER ── */}
-          <section id="capabilities" className="anim-block space-y-8">
-            <div className="flex items-center gap-3">
-              <span className="w-1.5 h-8 bg-[#0B1E3D] rounded-full" />
-              <div>
-                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Scope of Advisory</span>
-                <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
-                  Our capabilities include / We deliver:
-                </h2>
-              </div>
-            </div>
-
-            {/* Clean Grid directly on background with Animated Frame Borders */}
-            <div className="grid md:grid-cols-2 gap-4">
-              {capabilitiesList.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="capability-sparkle-card group p-6  bg-white border border-gray-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4 cursor-pointer"
-                >
-                  <div className="w-9 h-9  bg-[#48b302]/15 text-[#48b302] font-black text-sm flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
-                    0{idx + 1}
-                  </div>
-                  <span className="text-xs md:text-sm font-bold text-gray-800 leading-relaxed group-hover:text-gray-950 transition-colors">
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── SECTION 2: CLIMATE RISK & ADAPTATION ASSESSMENT ── */}
-          <section id="climate-risk" className="anim-block space-y-8 pt-12 border-t border-gray-200">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
-                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Technical Framework</span>
-              </div>
-              <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
-                Climate Risk &amp; Adaptation Assessment
-              </h2>
-            </div>
-
-            <p className="text-gray-800 text-base md:text-lg leading-relaxed font-normal max-w-4xl">
-              We provide clear, actionable insights for climate-resilient infrastructure and development planning using state-of-the-art modelling tools and multi-scenario climate projections.
-            </p>
-
-            {/* Advisory Standard Callout */}
-            <div className="border-l-2 border-[#0B1E3D] pl-6 py-2 space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-800">Assessment Standard</span>
-              <p className="text-gray-900 text-base md:text-lg font-semibold leading-relaxed">
-                Provision of technical assistance using the BB2 assessment criteria of Joint MDB Methodological Framework for the Assessment of Paris Alignment and ADB’s Climate Risk Assessment Framework.
-              </p>
-            </div>
-
-            {/* Editorial Step-by-Step Breakdown */}
-            <div className="space-y-6 pt-4">
-              <h3 className="text-sm font-extrabold uppercase tracking-wider text-gray-500">
-                Core Assessment Components Following IPCC &amp; ADB Frameworks:
-              </h3>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                  <span className="text-sm font-black text-teal-800 font-mono mt-0.5">01</span>
-                  <div className="space-y-1 flex-1">
-                    <h4 className="text-base font-bold text-gray-950">Historic &amp; Projected Climate Hazard Analysis</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">Detailed historic and projected climate hazard mapping using high-resolution spatial models and observational tools.</p>
+              {/* ── SECTION 1: OUR CAPABILITIES INCLUDE / WE DELIVER ── */}
+              <section id="capabilities" className="anim-block space-y-8">
+                <div className="flex items-center gap-3">
+                  <span className="w-1.5 h-8 bg-[#0B1E3D] rounded-full" />
+                  <div>
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Scope of Advisory</span>
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                      Our capabilities include / We deliver:
+                    </h2>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                  <span className="text-sm font-black text-teal-800 font-mono mt-0.5">02</span>
-                  <div className="space-y-1 flex-1">
-                    <h4 className="text-base font-bold text-gray-950">Exposure &amp; Vulnerability Assessment</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">Comprehensive exposure and vulnerability analysis of all physical and socioeconomic hazards for project components.</p>
-                  </div>
+                {/* Clean Grid directly on background with Animated Frame Borders */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {capabilitiesList.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="capability-sparkle-card group p-5 bg-white border border-gray-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-3.5 cursor-pointer rounded-xl"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-[#48b302]/15 text-[#48b302] font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
+                        0{idx + 1}
+                      </div>
+                      <span className="text-xs md:text-sm font-bold text-gray-800 leading-relaxed group-hover:text-gray-950 transition-colors">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
                 </div>
+              </section>
 
-                <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                  <span className="text-sm font-black text-teal-800 font-mono mt-0.5">03</span>
-                  <div className="space-y-1 flex-1">
-                    <h4 className="text-base font-bold text-gray-950">Component-Wise Climate Risk Classification Matrix</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">Systematic classification of hazard risks as extreme, moderate, or low based on rigorous vulnerability matrices.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                  <span className="text-sm font-black text-teal-800 font-mono mt-0.5">04</span>
-                  <div className="space-y-1 flex-1">
-                    <h4 className="text-base font-bold text-gray-950">Tailored Adaptation Measures &amp; Implementation</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">Actionable adaptation measures, policy alignment guidelines, and structured implementation roadmaps.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── SECTION 3: POLICY ANALYSIS AND CLIMATE GOVERNANCE ── */}
-          <section id="governance" className="anim-block space-y-8 pt-12 border-t border-gray-200">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
-                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Government Advisory</span>
-              </div>
-              <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
-                Policy Analysis &amp; Climate Governance
-              </h2>
-            </div>
-
-            <p className="text-gray-800 text-base md:text-lg leading-relaxed font-normal max-w-4xl">
-              Supporting the Government of Pakistan in strengthening intergovernmental coordination and improving the implementation of national climate policies. The work focuses on identifying policy gaps, institutional inefficiencies, and opportunities to enhance climate governance for more effective national action:
-            </p>
-
-            <div className="space-y-4">
-              {[
-                "Comprehensive review of Pakistan’s climate policies and governance frameworks across national and provincial levels.",
-                "Assessment of institutional roles, coordination mechanisms, and implementation challenges.",
-                "Comparative analysis of Pakistan’s climate governance structure against international best practices.",
-                "Stakeholder consultations through workshops, interviews, and focus groups to gather insights and build consensus.",
-                "Development of clear, actionable recommendations to strengthen climate governance and improve policy coherence.",
-              ].map((text, i) => (
-                <div key={i} className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                  <span className="text-sm font-black text-teal-800 font-mono mt-0.5">0{i + 1}</span>
-                  <p className="text-sm md:text-base font-medium text-gray-900 leading-relaxed flex-1">
-                    {text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── SECTION 4: WET-BULB TEMPERATURE & PHYSIOLOGICAL RISK ANALYSIS ── */}
-          <section id="wet-bulb" className="anim-block space-y-6 pt-12 border-t border-gray-200">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
-                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Thermal Telemetry</span>
-              </div>
-              <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
-                Wet-Bulb Temperature &amp; Physiological Risk Analysis
-              </h2>
-            </div>
-
-            <p className="text-gray-800 text-base md:text-lg leading-relaxed font-normal max-w-4xl">
-              We assess human survivability thresholds using wet-bulb temperature (Tw), identifying regions and time periods where heat exposure becomes dangerous or life-threatening. In order to assess how temperature, humidity, and wet-bulb temperature influence human activity, we integrate meteorological data with human thermophysiological models. This enables actionable monitoring among climatic attributes and safe activity limits.
-            </p>
-          </section>
-
-          {/* ── SECTION 5: RECOGNIZED DATA SOURCES & TOOLS (INSIGHTS) ── */}
-          <section id="data-sources" className="anim-block pt-12 border-t border-gray-200">
-            <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-              
-              {/* Left Column: Heading, Context narrative & Authority Card */}
-              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
-                <div className="space-y-3">
+              {/* ── SECTION 2: CLIMATE RISK & ADAPTATION ASSESSMENT ── */}
+              <section id="climate-risk" className="anim-block space-y-8 pt-12 border-t border-gray-200">
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Insights Directory</span>
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Technical Framework</span>
                   </div>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950 leading-tight">
-                    Recognized Data Sources, Models &amp; Scientific References
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                    Climate Risk &amp; Adaptation Assessment
                   </h2>
                 </div>
 
-                <p className="text-gray-700 text-sm md:text-base leading-relaxed font-normal">
-                  Verified scientific repositories, international climate frameworks, and interactive forecasting portals powering our multi-hazard attribution and risk analysis models.
+                <p className="text-gray-800 text-sm md:text-base leading-relaxed font-normal">
+                  We provide clear, actionable insights for climate-resilient infrastructure and development planning using state-of-the-art modelling tools and multi-scenario climate projections.
                 </p>
 
-                {/* Authority & Interoperability Callout Card */}
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-teal-50/40 border border-slate-200/90 shadow-sm space-y-2.5">
-                  <div className="flex items-center gap-2 text-teal-800 font-bold text-xs uppercase tracking-wider">
-                    <Database className="w-4 h-4 text-teal-700" />
-                    <span>Global Standards &amp; Interoperability</span>
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed font-normal">
-                    All datasets comply with IPCC AR6 guidelines, WMO meteorological standards, and CMIP6 climate model projections for precision attribution and climate-proofing.
+                {/* Advisory Standard Callout */}
+                <div className="border-l-2 border-[#0B1E3D] pl-6 py-2 space-y-2 bg-slate-50/70 rounded-r-xl pr-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-teal-800">Assessment Standard</span>
+                  <p className="text-gray-900 text-sm md:text-base font-semibold leading-relaxed">
+                    Provision of technical assistance using the BB2 assessment criteria of Joint MDB Methodological Framework for the Assessment of Paris Alignment and ADB’s Climate Risk Assessment Framework.
                   </p>
                 </div>
-              </div>
 
-              {/* Right Column: Structured Scientific Link Directories */}
-              <div className="lg:col-span-7 space-y-6">
-                
-                {/* 1. Climate Data Sources Card */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between pb-3.5 mb-2 border-b-2 border-teal-800">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-800">
-                        <Database className="w-4 h-4 text-teal-700" />
+                {/* Editorial Step-by-Step Breakdown */}
+                <div className="space-y-6 pt-2">
+                  <h3 className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-gray-500">
+                    Core Assessment Components Following IPCC &amp; ADB Frameworks:
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">01</span>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-sm md:text-base font-bold text-gray-950">Historic &amp; Projected Climate Hazard Analysis</h4>
+                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Detailed historic and projected climate hazard mapping using high-resolution spatial models and observational tools.</p>
                       </div>
-                      <h3 className="font-bold text-gray-950 text-xs md:text-sm uppercase tracking-wider">
-                        Climate Data Sources
-                      </h3>
                     </div>
-                    <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-100/80 px-2.5 py-0.5 rounded-full">
-                      {climateDataSources.length} Verified Sources
-                    </span>
+
+                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">02</span>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-sm md:text-base font-bold text-gray-950">Exposure &amp; Vulnerability Assessment</h4>
+                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Comprehensive exposure and vulnerability analysis of all physical and socioeconomic hazards for project components.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">03</span>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-sm md:text-base font-bold text-gray-950">Component-Wise Climate Risk Classification Matrix</h4>
+                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Systematic classification of hazard risks as extreme, moderate, or low based on rigorous vulnerability matrices.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">04</span>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-sm md:text-base font-bold text-gray-950">Tailored Adaptation Measures &amp; Implementation</h4>
+                        <p className="text-xs md:text-sm text-gray-700 leading-relaxed">Actionable adaptation measures, policy alignment guidelines, and structured implementation roadmaps.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* ── SECTION 3: POLICY ANALYSIS AND CLIMATE GOVERNANCE ── */}
+              <section id="governance" className="anim-block space-y-8 pt-12 border-t border-gray-200">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Government Advisory</span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                    Policy Analysis &amp; Climate Governance
+                  </h2>
+                </div>
+
+                <p className="text-gray-800 text-sm md:text-base leading-relaxed font-normal">
+                  Supporting the Government of Pakistan in strengthening intergovernmental coordination and improving the implementation of national climate policies. The work focuses on identifying policy gaps, institutional inefficiencies, and opportunities to enhance climate governance for more effective national action:
+                </p>
+
+                <div className="space-y-4">
+                  {[
+                    "Comprehensive review of Pakistan’s climate policies and governance frameworks across national and provincial levels.",
+                    "Assessment of institutional roles, coordination mechanisms, and implementation challenges.",
+                    "Comparative analysis of Pakistan’s climate governance structure against international best practices.",
+                    "Stakeholder consultations through workshops, interviews, and focus groups to gather insights and build consensus.",
+                    "Development of clear, actionable recommendations to strengthen climate governance and improve policy coherence.",
+                  ].map((text, i) => (
+                    <div key={i} className="flex items-start gap-4 pb-4 border-b border-gray-200">
+                      <span className="text-sm font-black text-teal-800 font-mono mt-0.5">0{i + 1}</span>
+                      <p className="text-xs md:text-sm font-medium text-gray-900 leading-relaxed flex-1">
+                        {text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* ── SECTION 4: WET-BULB TEMPERATURE & PHYSIOLOGICAL RISK ANALYSIS ── */}
+              <section id="wet-bulb" className="anim-block space-y-6 pt-12 border-t border-gray-200">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Thermal Telemetry</span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950">
+                    Wet-Bulb Temperature &amp; Physiological Risk Analysis
+                  </h2>
+                </div>
+
+                <p className="text-gray-800 text-sm md:text-base leading-relaxed font-normal">
+                  We assess human survivability thresholds using wet-bulb temperature (Tw), identifying regions and time periods where heat exposure becomes dangerous or life-threatening. In order to assess how temperature, humidity, and wet-bulb temperature influence human activity, we integrate meteorological data with human thermophysiological models. This enables actionable monitoring among climatic attributes and safe activity limits.
+                </p>
+              </section>
+
+              {/* ── SECTION 5: SCIENTIFIC QUOTE CARD (Dr. Fahad Saeed) ── */}
+              <section id="quote" className="anim-block pt-12 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 lg:gap-8 bg-gradient-to-br from-slate-50 via-white to-teal-50/30 p-6 md:p-8 rounded-2xl border border-gray-200/90 shadow-sm">
+                  {/* Left Column: Round Photo + Badge */}
+                  <div className="flex flex-col items-center text-center flex-shrink-0">
+                    <div className="relative w-28 h-28 mb-3">
+                      <img
+                        src={drFahadImg}
+                        alt="Dr Fahad Saeed"
+                        onError={() => {
+                          if (drFahadImg !== '/assets/images/dr-fahad-saeed.png') {
+                            setDrFahadImg('/assets/images/dr-fahad-saeed.png');
+                          }
+                        }}
+                        className="w-full h-full rounded-full object-cover filter grayscale contrast-125 shadow-md border-2 border-gray-200"
+                      />
+                      <div className="absolute bottom-0 right-0 w-8 h-8 rounded-xl bg-[#d97706] text-white flex items-center justify-center shadow-lg border-2 border-white">
+                        <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                      </div>
+                    </div>
+
+                    <h4 className="text-base font-heading font-extrabold text-[#0B1E3D] italic tracking-tight mb-0.5">
+                      Dr Fahad Saeed
+                    </h4>
+                    <p className="text-xs font-medium text-gray-600 italic">
+                      Senior Climate Scientist
+                    </p>
+                    <p className="text-xs font-medium text-gray-500 italic">
+                      Climate Analytics
+                    </p>
                   </div>
 
+                  {/* Right Column: Quoted Text */}
+                  <div className="flex-1 border-l-2 border-teal-800 pl-6 py-2 self-center">
+                    <blockquote className="text-sm md:text-base text-gray-900 font-serif italic leading-relaxed font-normal">
+                      “1.5 °C limit is not a symbolic benchmark. It is the enduring and legally significant goal of Paris Agreement. It is established to avoid the most dangerous impacts of climate change and in that sense is set as the ethical and moral limit. Exceeding it would significantly increase the likelihood of severe, widespread and in some cases irreversible impacts.”
+                    </blockquote>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+
+            {/* ── RIGHT COLUMN: STICKY SCIENTIFIC DIRECTORY SIDEBAR (4 Cols) ── */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
+              
+              <div id="data-sources" className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-6">
+                {/* Header */}
+                <div className="space-y-1 pb-4 border-b border-gray-100">
+                  <div className="flex items-center gap-1.5 text-teal-800 font-extrabold text-[11px] uppercase tracking-wider">
+                    <Database className="w-3.5 h-3.5 text-teal-700" />
+                    <span>Insights Directory</span>
+                  </div>
+                  <h3 className="font-heading font-extrabold text-gray-950 text-base leading-snug">
+                    Recognized Data Sources &amp; Tools
+                  </h3>
+                  <p className="text-xs text-gray-500 font-normal leading-relaxed">
+                    Verified open-access repositories and interactive forecasting portals.
+                  </p>
+                </div>
+
+                {/* 1. Climate Data Sources */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between pb-1">
+                    <h4 className="font-bold text-gray-950 text-xs uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-teal-700" />
+                      Climate Data Sources
+                    </h4>
+                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100/70">
+                      {climateDataSources.length}
+                    </span>
+                  </div>
                   <div className="divide-y divide-gray-100">
                     {climateDataSources.map((ds, idx) => (
                       <a
@@ -405,31 +430,26 @@ const About = () => {
                         href={ds.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center justify-between py-3 hover:text-teal-800 transition-colors text-xs md:text-sm font-semibold text-gray-800"
+                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-800 hover:text-teal-800 transition-colors"
                       >
-                        <span className="pr-3 group-hover:translate-x-1 transition-transform">{ds.name}</span>
-                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-teal-800 group-hover:scale-110 flex-shrink-0 transition-all" />
+                        <span className="truncate pr-2 group-hover:translate-x-0.5 transition-transform">{ds.name}</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
                       </a>
                     ))}
                   </div>
                 </div>
 
-                {/* 2. Tools & Dashboards Card */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between pb-3.5 mb-2 border-b-2 border-teal-800">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-800">
-                        <Sparkles className="w-4 h-4 text-teal-700" />
-                      </div>
-                      <h3 className="font-bold text-gray-950 text-xs md:text-sm uppercase tracking-wider">
-                        Tools &amp; Dashboards
-                      </h3>
-                    </div>
-                    <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-100/80 px-2.5 py-0.5 rounded-full">
-                      {toolsAndDashboards.length} Interactive Portals
+                {/* 2. Tools & Dashboards */}
+                <div className="space-y-2 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between pb-1">
+                    <h4 className="font-bold text-gray-950 text-xs uppercase tracking-wider flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#48b302]" />
+                      Tools &amp; Dashboards
+                    </h4>
+                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-100/70">
+                      {toolsAndDashboards.length}
                     </span>
                   </div>
-
                   <div className="divide-y divide-gray-100">
                     {toolsAndDashboards.map((tool, idx) => (
                       <a
@@ -437,61 +457,26 @@ const About = () => {
                         href={tool.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center justify-between py-3 hover:text-teal-800 transition-colors text-xs md:text-sm font-semibold text-gray-800"
+                        className="group flex items-center justify-between py-2 text-xs font-semibold text-gray-800 hover:text-teal-800 transition-colors"
                       >
-                        <span className="pr-3 group-hover:translate-x-1 transition-transform">{tool.name}</span>
-                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-teal-800 group-hover:scale-110 flex-shrink-0 transition-all" />
+                        <span className="truncate pr-2 group-hover:translate-x-0.5 transition-transform">{tool.name}</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
                       </a>
                     ))}
                   </div>
                 </div>
 
-              </div>
-
-            </div>
-          </section>
-
-          {/* ── SECTION 6: SCIENTIFIC QUOTE CARD (Exact Design Replica) ── */}
-          <section id="quote" className="anim-block pt-12 border-t border-gray-200">
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-8 lg:gap-12">
-              {/* Left Column: Round Photo + Video Play Icon Badge + Name & Title */}
-              <div className="flex flex-col items-center text-center flex-shrink-0">
-                <div className="relative w-36 h-36 mb-4">
-                  <img
-                    src={drFahadImg}
-                    alt="Dr Fahad Saeed"
-                    onError={() => {
-                      if (drFahadImg !== '/assets/images/dr-fahad-saeed.png') {
-                        setDrFahadImg('/assets/images/dr-fahad-saeed.png');
-                      }
-                    }}
-                    className="w-full h-full rounded-full object-cover filter grayscale contrast-125 shadow-md border-2 border-gray-200"
-                  />
-                  {/* Video Play Badge */}
-                  <div className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-[#d97706] text-white flex items-center justify-center shadow-lg border-2 border-white">
-                    <Play className="w-4 h-4 fill-white ml-0.5" />
-                  </div>
+                {/* Global Standards Callout Badge inside Sidebar */}
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-gray-600 leading-relaxed">
+                  <strong className="text-gray-900 block mb-1">✓ Global Interoperability</strong>
+                  Compliant with IPCC AR6 frameworks, WMO meteorology guidelines &amp; CMIP6 projections.
                 </div>
-
-                <h4 className="text-lg font-heading font-extrabold text-[#0B1E3D] italic tracking-tight mb-0.5">
-                  Dr Fahad Saeed
-                </h4>
-                <p className="text-xs font-medium text-gray-600 italic">
-                  Senior Climate Scientist
-                </p>
-                <p className="text-xs font-medium text-gray-600 italic">
-                  Climate Analytics
-                </p>
               </div>
 
-              {/* Right Column: Exact Quoted Text */}
-              <div className="flex-1 self-center border-l-2 border-teal-800 pl-6 py-2">
-                <blockquote className="text-base md:text-lg text-gray-900 font-serif italic leading-relaxed font-normal">
-                  “1.5 °C limit is not a symbolic benchmark. It is the enduring and legally significant goal of Paris Agreement. It is established to avoid the most dangerous impacts of climate change and in that sense is set as the ethical and moral limit. Exceeding it would significantly increase the likelihood of severe, widespread and in some cases irreversible impacts.”
-                </blockquote>
-              </div>
-            </div>
-          </section>
+            </aside>
+
+          </div>
+        </div>
 
         </div>
       </div>
