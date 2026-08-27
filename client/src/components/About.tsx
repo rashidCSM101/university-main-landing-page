@@ -348,69 +348,106 @@ const About = () => {
           </section>
 
           {/* ── SECTION 5: RECOGNIZED DATA SOURCES & TOOLS (INSIGHTS) ── */}
-          <section id="data-sources" className="anim-block space-y-8 pt-12 border-t border-gray-200">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
-                <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Insights Directory</span>
-              </div>
-              <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-gray-950">
-                Recognized Data Sources, Models &amp; Scientific References
-              </h2>
-            </div>
-
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed font-normal">
-              Below are verified links to scientific data sources, international climate frameworks, and interactive forecasting dashboards:
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-10 pt-2">
-              {/* Climate Data Sources List */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-800">
-                  <Database className="w-4 h-4 text-teal-800" />
-                  <h3 className="font-bold text-gray-950 text-xs uppercase tracking-wider">
-                    Climate Data Sources
-                  </h3>
+          <section id="data-sources" className="anim-block pt-12 border-t border-gray-200">
+            <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+              
+              {/* Left Column: Heading, Context narrative & Authority Card */}
+              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-5 bg-[#0B1E3D] rounded-full" />
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-teal-800">Insights Directory</span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-extrabold text-gray-950 leading-tight">
+                    Recognized Data Sources, Models &amp; Scientific References
+                  </h2>
                 </div>
-                <div className="space-y-2">
-                  {climateDataSources.map((ds, idx) => (
-                    <a
-                      key={idx}
-                      href={ds.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-between py-2 border-b border-gray-100 hover:border-teal-700 transition-colors text-xs md:text-sm font-semibold text-gray-800 hover:text-teal-800"
-                    >
-                      <span className="truncate pr-2">{ds.name}</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
-                    </a>
-                  ))}
+
+                <p className="text-gray-700 text-sm md:text-base leading-relaxed font-normal">
+                  Verified scientific repositories, international climate frameworks, and interactive forecasting portals powering our multi-hazard attribution and risk analysis models.
+                </p>
+
+                {/* Authority & Interoperability Callout Card */}
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-teal-50/40 border border-slate-200/90 shadow-sm space-y-2.5">
+                  <div className="flex items-center gap-2 text-teal-800 font-bold text-xs uppercase tracking-wider">
+                    <Database className="w-4 h-4 text-teal-700" />
+                    <span>Global Standards &amp; Interoperability</span>
+                  </div>
+                  <p className="text-xs text-gray-600 leading-relaxed font-normal">
+                    All datasets comply with IPCC AR6 guidelines, WMO meteorological standards, and CMIP6 climate model projections for precision attribution and climate-proofing.
+                  </p>
                 </div>
               </div>
 
-              {/* Tools & Dashboards List */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-800">
-                  <Sparkles className="w-4 h-4 text-teal-800" />
-                  <h3 className="font-bold text-gray-950 text-xs uppercase tracking-wider">
-                    Tools &amp; Dashboards
-                  </h3>
+              {/* Right Column: Structured Scientific Link Directories */}
+              <div className="lg:col-span-7 space-y-6">
+                
+                {/* 1. Climate Data Sources Card */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between pb-3.5 mb-2 border-b-2 border-teal-800">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-800">
+                        <Database className="w-4 h-4 text-teal-700" />
+                      </div>
+                      <h3 className="font-bold text-gray-950 text-xs md:text-sm uppercase tracking-wider">
+                        Climate Data Sources
+                      </h3>
+                    </div>
+                    <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-100/80 px-2.5 py-0.5 rounded-full">
+                      {climateDataSources.length} Verified Sources
+                    </span>
+                  </div>
+
+                  <div className="divide-y divide-gray-100">
+                    {climateDataSources.map((ds, idx) => (
+                      <a
+                        key={idx}
+                        href={ds.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between py-3 hover:text-teal-800 transition-colors text-xs md:text-sm font-semibold text-gray-800"
+                      >
+                        <span className="pr-3 group-hover:translate-x-1 transition-transform">{ds.name}</span>
+                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-teal-800 group-hover:scale-110 flex-shrink-0 transition-all" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {toolsAndDashboards.map((tool, idx) => (
-                    <a
-                      key={idx}
-                      href={tool.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-between py-2 border-b border-gray-100 hover:border-teal-700 transition-colors text-xs md:text-sm font-semibold text-gray-800 hover:text-teal-800"
-                    >
-                      <span className="truncate pr-2">{tool.name}</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-800 flex-shrink-0 transition-colors" />
-                    </a>
-                  ))}
+
+                {/* 2. Tools & Dashboards Card */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between pb-3.5 mb-2 border-b-2 border-teal-800">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-800">
+                        <Sparkles className="w-4 h-4 text-teal-700" />
+                      </div>
+                      <h3 className="font-bold text-gray-950 text-xs md:text-sm uppercase tracking-wider">
+                        Tools &amp; Dashboards
+                      </h3>
+                    </div>
+                    <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-100/80 px-2.5 py-0.5 rounded-full">
+                      {toolsAndDashboards.length} Interactive Portals
+                    </span>
+                  </div>
+
+                  <div className="divide-y divide-gray-100">
+                    {toolsAndDashboards.map((tool, idx) => (
+                      <a
+                        key={idx}
+                        href={tool.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between py-3 hover:text-teal-800 transition-colors text-xs md:text-sm font-semibold text-gray-800"
+                      >
+                        <span className="pr-3 group-hover:translate-x-1 transition-transform">{tool.name}</span>
+                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-teal-800 group-hover:scale-110 flex-shrink-0 transition-all" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
+
               </div>
+
             </div>
           </section>
 
