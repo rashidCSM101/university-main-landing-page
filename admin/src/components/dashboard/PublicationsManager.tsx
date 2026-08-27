@@ -14,10 +14,13 @@ import {
   X,
   Star,
   UserPlus,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
+import { compressImage, formatBytes } from '../../utils/imageCompressor';
 
 export const PublicationsManager: React.FC = () => {
   const { user } = useAuth();
@@ -41,6 +44,7 @@ export const PublicationsManager: React.FC = () => {
     author_name: '',
     outlet_name: '',
     external_url: '',
+    thumbnail: '',
     published_date: new Date().toISOString().split('T')[0],
     abstract: '',
     status: 'published',
@@ -128,6 +132,7 @@ export const PublicationsManager: React.FC = () => {
       author_name: defaultAuthor,
       outlet_name: '',
       external_url: '',
+      thumbnail: '',
       published_date: new Date().toISOString().split('T')[0],
       abstract: '',
       status: 'published',
@@ -144,7 +149,7 @@ export const PublicationsManager: React.FC = () => {
     const all = [item.author_name, ...co].filter(Boolean);
     setSelectedAuthors(all.length > 0 ? all : [user?.name || 'Dr. Rashid Hussain']);
     setCustomAuthorInput('');
-    setFormData({ ...item });
+    setFormData({ ...item, thumbnail: item.thumbnail || '' });
     setIsEditing(true);
   };
 
@@ -416,6 +421,83 @@ export const PublicationsManager: React.FC = () => {
                 style={{ paddingLeft: '1rem' }}
                 placeholder="https://doi.org/10.1007/..."
               />
+            </div>
+
+            {/* Cover / Report Thumbnail URL & Device File Upload */}
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F4' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <ImageIcon size={16} color="#00C8C8" /> Report / Publication Cover Thumbnail
+              </label>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                <label className="btn-teal" style={{ cursor: 'pointer', fontSize: '0.8rem', padding: '0.45rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Upload size={15} /> Upload Cover from Device
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        // Auto-compress report thumbnail (max 800x1000 WebP < 60 KB)
+                        const result = await compressImage(file, {
+                          maxWidth: 800,
+                          maxHeight: 1000,
+                          quality: 0.82,
+                          format: 'image/webp',
+                        });
+                        setFormData({ ...formData, thumbnail: result.dataUrl });
+                        const savedPercent = Math.round(((result.originalSize - result.compressedSize) / result.originalSize) * 100);
+                        if (savedPercent > 20) {
+                          toast.success(`Cover auto-optimized: ${formatBytes(result.originalSize)} ➔ ${formatBytes(result.compressedSize)} (${savedPercent}% saved)`);
+                        } else {
+                          toast.success('Cover loaded successfully!');
+                        }
+                      } catch (err: any) {
+                        toast.error('Failed to process image', err?.message);
+                      }
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: '0.8rem', color: '#9AA5BC', fontStyle: 'italic' }}>or paste web image link:</span>
+              </div>
+
+              <input
+                type="text"
+                value={
+                  formData.thumbnail && formData.thumbnail.startsWith('data:image')
+                    ? '[Device Image File Loaded Successfully]'
+                    : formData.thumbnail || ''
+                }
+                onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem', marginTop: '0.5rem', background: '#fff' }}
+                placeholder="https://... or upload report cover above"
+              />
+
+              {formData.thumbnail && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#fff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #00C8C8' }}>
+                  <img
+                    src={formData.thumbnail}
+                    alt="Preview"
+                    style={{ width: '50px', height: '65px', objectFit: 'cover', borderRadius: '6px' }}
+                  />
+                  <div style={{ flexGrow: 1 }}>
+                    <span style={{ fontSize: '0.8rem', color: '#0B1E3D', fontWeight: 700, display: 'block' }}>
+                      {formData.thumbnail.startsWith('data:image') ? '✓ Local Report Cover Loaded' : '✓ Web Image URL Set'}
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: '#6B7A95' }}>Auto-optimized WebP thumbnail</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, thumbnail: '' })}
+                    style={{ fontSize: '0.75rem', color: '#dc2626', background: '#FEE2E2', border: 'none', padding: '0.3rem 0.6rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>

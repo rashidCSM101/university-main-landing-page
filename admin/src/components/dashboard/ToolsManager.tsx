@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, Wrench } from 'lucide-react';
+import { Plus, Edit2, Trash2, Wrench, Upload, Image as ImageIcon } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useToast } from '../../context/ToastContext';
+import { compressImage, formatBytes } from '../../utils/imageCompressor';
 
 export const ToolsManager: React.FC = () => {
   const toast = useToast();
@@ -17,6 +18,7 @@ export const ToolsManager: React.FC = () => {
     sector: 'Climate',
     description: '',
     external_url: 'https://pakclimtool.com',
+    thumbnail: '',
     sort_order: 1,
     is_active: true,
   });
@@ -76,6 +78,7 @@ export const ToolsManager: React.FC = () => {
       sector: 'Climate',
       description: '',
       external_url: 'https://pakclimtool.com',
+      thumbnail: '',
       sort_order: 1,
       is_active: true,
     });
@@ -142,6 +145,81 @@ export const ToolsManager: React.FC = () => {
                 className="input-field"
                 style={{ paddingLeft: '1rem' }}
               />
+            </div>
+
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F4' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <ImageIcon size={16} color="#00C8C8" /> Tool Thumbnail / Icon
+              </label>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                <label className="btn-teal" style={{ cursor: 'pointer', fontSize: '0.8rem', padding: '0.45rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Upload size={15} /> Upload Tool Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        const result = await compressImage(file, {
+                          maxWidth: 600,
+                          maxHeight: 600,
+                          quality: 0.85,
+                          format: 'image/webp',
+                        });
+                        setFormData({ ...formData, thumbnail: result.dataUrl });
+                        const savedPercent = Math.round(((result.originalSize - result.compressedSize) / result.originalSize) * 100);
+                        if (savedPercent > 20) {
+                          toast.success(`Tool icon auto-optimized: ${formatBytes(result.originalSize)} ➔ ${formatBytes(result.compressedSize)} (${savedPercent}% saved)`);
+                        } else {
+                          toast.success('Tool icon loaded successfully!');
+                        }
+                      } catch (err: any) {
+                        toast.error('Failed to process image', err?.message);
+                      }
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: '0.8rem', color: '#9AA5BC', fontStyle: 'italic' }}>or paste web image link:</span>
+              </div>
+
+              <input
+                type="text"
+                value={
+                  formData.thumbnail && formData.thumbnail.startsWith('data:image')
+                    ? '[Device Image File Loaded Successfully]'
+                    : formData.thumbnail || ''
+                }
+                onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                className="input-field"
+                style={{ paddingLeft: '1rem', marginTop: '0.5rem', background: '#fff' }}
+                placeholder="https://... or upload tool image from device"
+              />
+
+              {formData.thumbnail && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#fff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #00C8C8' }}>
+                  <img
+                    src={formData.thumbnail}
+                    alt="Preview"
+                    style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px' }}
+                  />
+                  <div style={{ flexGrow: 1 }}>
+                    <span style={{ fontSize: '0.8rem', color: '#0B1E3D', fontWeight: 700, display: 'block' }}>
+                      {formData.thumbnail.startsWith('data:image') ? '✓ Local Tool Image Loaded' : '✓ Web Image URL Set'}
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: '#6B7A95' }}>Auto-optimized WebP</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, thumbnail: '' })}
+                    style={{ fontSize: '0.75rem', color: '#dc2626', background: '#FEE2E2', border: 'none', padding: '0.3rem 0.6rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>

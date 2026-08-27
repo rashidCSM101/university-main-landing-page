@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Plus, Edit2, Trash2, FolderKanban } from 'lucide-react';
+import { Plus, Edit2, Trash2, FolderKanban, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useToast } from '../../context/ToastContext';
+import { compressImage, formatBytes } from '../../utils/imageCompressor';
 
 export const ProjectsManager: React.FC = () => {
   const toast = useToast();
@@ -20,6 +21,7 @@ export const ProjectsManager: React.FC = () => {
     region: 'South Asia / Pakistan',
     objectives: 'Climate Resilience, Weather Early Warning',
     activities: 'Attribution Modeling, Capacity Building',
+    images: [],
     status: 'active',
   });
 
@@ -96,6 +98,7 @@ export const ProjectsManager: React.FC = () => {
       region: '',
       objectives: '',
       activities: '',
+      images: [],
       status: 'active',
     });
     setIsEditing(true);
@@ -106,6 +109,7 @@ export const ProjectsManager: React.FC = () => {
       ...item,
       objectives: Array.isArray(item.objectives) ? item.objectives.join(', ') : item.objectives || '',
       activities: Array.isArray(item.activities) ? item.activities.join(', ') : item.activities || '',
+      images: Array.isArray(item.images) ? item.images : (item.images ? [item.images] : []),
     });
     setIsEditing(true);
   };
@@ -188,6 +192,95 @@ export const ProjectsManager: React.FC = () => {
                 <option value="completed">Completed</option>
                 <option value="upcoming">Upcoming</option>
               </select>
+            </div>
+
+            {/* Project Gallery Images (Auto-compressed WebP) */}
+            <div style={{ gridColumn: '1 / -1', background: '#F8FAFC', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F4' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                <ImageIcon size={16} color="#00C8C8" /> Project Gallery & Banner Images
+              </label>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                <label className="btn-teal" style={{ cursor: 'pointer', fontSize: '0.8rem', padding: '0.45rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Upload size={15} /> Upload Image(s) from Device
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (files.length === 0) return;
+                      try {
+                        let totalOriginal = 0;
+                        let totalCompressed = 0;
+                        const newImages: string[] = [];
+
+                        for (const file of files) {
+                          const res = await compressImage(file, {
+                            maxWidth: 1200,
+                            maxHeight: 800,
+                            quality: 0.82,
+                            format: 'image/webp',
+                          });
+                          newImages.push(res.dataUrl);
+                          totalOriginal += res.originalSize;
+                          totalCompressed += res.compressedSize;
+                        }
+
+                        const current = Array.isArray(formData.images) ? formData.images : [];
+                        setFormData({ ...formData, images: [...current, ...newImages] });
+
+                        const savedPercent = Math.round(((totalOriginal - totalCompressed) / (totalOriginal || 1)) * 100);
+                        if (savedPercent > 20) {
+                          toast.success(`${files.length} photo(s) auto-compressed: ${formatBytes(totalOriginal)} ➔ ${formatBytes(totalCompressed)} (${savedPercent}% saved)`);
+                        } else {
+                          toast.success(`${files.length} photo(s) loaded successfully!`);
+                        }
+                      } catch (err: any) {
+                        toast.error('Failed to process image(s)', err?.message);
+                      }
+                    }}
+                  />
+                </label>
+                <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Multiple files supported • Auto-compressed to WebP (&lt; 80 KB)</span>
+              </div>
+
+              {/* Display loaded image thumbnails */}
+              {Array.isArray(formData.images) && formData.images.length > 0 && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                  {formData.images.map((img: string, idx: number) => (
+                    <div key={idx} style={{ position: 'relative', width: '80px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1.5px solid #00C8C8', background: '#fff' }}>
+                      <img src={img} alt={`Preview ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const filtered = formData.images.filter((_: any, i: number) => i !== idx);
+                          setFormData({ ...formData, images: filtered });
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: '2px',
+                          right: '2px',
+                          background: 'rgba(220, 38, 38, 0.9)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '999px',
+                          width: '18px',
+                          height: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                        }}
+                        title="Remove image"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div style={{ gridColumn: '1 / -1' }}>
