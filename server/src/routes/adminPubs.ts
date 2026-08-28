@@ -6,25 +6,8 @@ import { authenticateToken, logAudit, AuthenticatedRequest } from '../middleware
 const router = Router();
 router.use(authenticateToken);
 
-async function ensurePubsTableSchema() {
-  try {
-    await query('ALTER TABLE publications ADD COLUMN IF NOT EXISTS author_id VARCHAR(255)');
-    await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_type_check');
-    await query('ALTER TABLE publications DROP CONSTRAINT IF EXISTS publications_status_check');
-    await query('ALTER TABLE publications ALTER COLUMN thumbnail TYPE TEXT');
-    await query('ALTER TABLE publications ALTER COLUMN external_url TYPE TEXT');
-    await query('ALTER TABLE publications ALTER COLUMN outlet_name TYPE TEXT');
-    await query('ALTER TABLE publications ALTER COLUMN author_name TYPE TEXT');
-    // Ensure case-insensitive trimmed unique index on title
-    await query('CREATE UNIQUE INDEX IF NOT EXISTS idx_pubs_unique_title_ci ON publications (LOWER(TRIM(title)))');
-  } catch (err) {
-    // Safe catch
-  }
-}
-
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensurePubsTableSchema();
     const result = await query('SELECT * FROM publications ORDER BY created_at DESC');
     return res.json(result.rows);
   } catch (error) {
@@ -34,7 +17,6 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensurePubsTableSchema();
     const parseResult = publicationSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Validation failed', details: parseResult.error.issues });
@@ -97,13 +79,12 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
     return res.status(201).json(created);
   } catch (error: any) {
     console.error('Create publication error:', error);
-    return res.status(500).json({ error: 'Failed to create publication: ' + (error.message || 'Server error') });
+    return res.status(500).json({ error: 'Failed to create publication.' });
   }
 });
 
 router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    await ensurePubsTableSchema();
     const { id } = req.params;
 
     // Fetch existing publication

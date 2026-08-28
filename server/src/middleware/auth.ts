@@ -44,21 +44,30 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
 }
 
 /**
- * Server-Side Role Enforcement Middleware
- * Ensures user has required role before accessing route.
+ * Role Hierarchy — higher number = more permissions
  */
-export function requireRole(allowedRole: 'super_admin' | 'admin' | 'member' | 'editor') {
+const ROLE_HIERARCHY: Record<string, number> = {
+  super_admin: 4,
+  admin: 3,
+  editor: 2,
+  member: 1,
+};
+
+/**
+ * Server-Side Role Enforcement Middleware
+ * Ensures user has the minimum required role level before accessing route.
+ */
+export function requireRole(minimumRole: 'super_admin' | 'admin' | 'member' | 'editor') {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized.' });
     }
 
-    if (allowedRole === 'super_admin' && req.user.role !== 'super_admin') {
-      return res.status(403).json({ error: 'Forbidden. Super Admin permissions required.' });
-    }
+    const userLevel = ROLE_HIERARCHY[req.user.role] ?? 0;
+    const requiredLevel = ROLE_HIERARCHY[minimumRole] ?? 99;
 
-    if (allowedRole === 'admin' && req.user.role !== 'super_admin' && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden. Admin permissions required.' });
+    if (userLevel < requiredLevel) {
+      return res.status(403).json({ error: `Forbidden. ${minimumRole.replace('_', ' ')} permissions or higher required.` });
     }
 
     next();

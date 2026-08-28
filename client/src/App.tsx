@@ -109,7 +109,7 @@ const PublicationsHubPage = () => (
     <Helmet>
       <title>Publications | WenClims — Weather and Climate Services</title>
       <meta name="description" content="Explore WenClims publications — peer-reviewed research, policy reports, and technical briefs on climate change in South Asia." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/publications" />
     </Helmet>
     <PublicationsHub />
@@ -121,7 +121,7 @@ const ResearchPageWrapped = () => (
     <Helmet>
       <title>Peer-Reviewed Research | WenClims</title>
       <meta name="description" content="WenClims peer-reviewed climate research papers on South Asian weather, attribution science, and climate impact." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/publications/research" />
     </Helmet>
     <PublicationsHub />
@@ -133,7 +133,7 @@ const ReportsPageWrapped = () => (
     <Helmet>
       <title>Reports | WenClims</title>
       <meta name="description" content="WenClims technical and policy reports on climate resilience, disaster risk, and environmental governance in Pakistan." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/publications/reports" />
     </Helmet>
     <PublicationsHub />
@@ -145,7 +145,7 @@ const MediaHubPage = () => (
     <Helmet>
       <title>Media Hub | WenClims</title>
       <meta name="description" content="WenClims media — documentaries, podcasts, talkshows, blogs, and print media on climate science in South Asia." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media" />
     </Helmet>
     <MediaHub />
@@ -157,7 +157,7 @@ const BlogsPageWrapped = () => (
     <Helmet>
       <title>Blogs | WenClims</title>
       <meta name="description" content="WenClims blog — expert insights, climate analysis, and policy commentary from the WenClims team." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media/blogs" />
     </Helmet>
     <BlogsPage />
@@ -169,7 +169,7 @@ const DocumentariesPageWrapped = () => (
     <Helmet>
       <title>Documentaries | WenClims</title>
       <meta name="description" content="Climate documentaries and visual media by WenClims covering South Asian weather events and climate change." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media/documentaries" />
     </Helmet>
     <DocumentariesPage />
@@ -181,7 +181,7 @@ const PodcastsPageWrapped = () => (
     <Helmet>
       <title>Podcasts & Radioshows | WenClims</title>
       <meta name="description" content="Listen to WenClims podcasts and radio broadcasts on climate change, weather science, and environmental policy." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media/podcasts" />
     </Helmet>
     <PodcastsPage />
@@ -193,7 +193,7 @@ const TalksPageWrapped = () => (
     <Helmet>
       <title>Talkshows | WenClims</title>
       <meta name="description" content="WenClims talkshow appearances and panel discussions on climate policy, disaster risk reduction, and South Asian weather." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media/talkshows" />
     </Helmet>
     <TalksPage />
@@ -205,7 +205,7 @@ const PrintMediaPageWrapped = () => (
     <Helmet>
       <title>Print Media | WenClims</title>
       <meta name="description" content="WenClims in print — newspaper features, magazine articles, and op-eds on climate change and weather science." />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://wenclims.org/media/print" />
     </Helmet>
     <PrintMediaPage />

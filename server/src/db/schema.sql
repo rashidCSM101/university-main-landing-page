@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 -- Initial Seed Data
 -- =============================================================================
 
--- Seed Default Super Admin Account: admin@wenclims.org
--- Password: "AdminPassword123!" hashed with bcrypt (cost factor 12)
+-- Seed Default Super Admin Account
+-- NOTE: Change the default password immediately after first deployment
 INSERT INTO users (id, name, email, password_hash, role, is_active)
 VALUES (
   'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
