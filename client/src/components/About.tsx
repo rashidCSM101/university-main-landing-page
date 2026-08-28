@@ -216,9 +216,9 @@ const About = () => {
               {capabilitiesList.map((item, idx) => (
                 <div
                   key={idx}
-                  className="capability-sparkle-card group p-5 bg-white border border-gray-200/90 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-start gap-3.5 cursor-pointer"
+                  className="capability-sparkle-card group p-5 bg-white border border-gray-200/90  shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-start gap-3.5 cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-[#48b302]/15 text-[#48b302] font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
+                  <div className="w-8 h-8  bg-[#48b302]/15 text-[#48b302] font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#48b302] group-hover:text-gray-950 transition-colors shadow-inner">
                     0{idx + 1}
                   </div>
                   <span className="text-xs md:text-sm font-bold text-gray-800 leading-relaxed group-hover:text-gray-950 transition-colors">
@@ -394,7 +394,7 @@ const About = () => {
             </div>
 
             {/* ── RIGHT COLUMN: STICKY SCIENTIFIC DIRECTORY & RECOGNIZED DATA SOURCES (Col 4 of 12) ── */}
-            <aside id="data-sources" className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
+            <aside id="data-sources" className="lg:col-span-4 lg:top-24 space-y-6">
               
               {/* Directory Main Box */}
               <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-6">

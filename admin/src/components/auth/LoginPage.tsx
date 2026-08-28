@@ -178,7 +178,7 @@ export const LoginPage: React.FC = () => {
                   marginBottom: '0.75rem',
                 }}
               >
-                <Sparkles size={14} color="#00C8C8" /> Institutional Access
+                <Sparkles size={14} color="#00C8C8" /> Only Members Can Access
               </div>
               <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.85rem', fontWeight: 800, color: '#0B1E3D', margin: 0, letterSpacing: '-0.02em' }}>
                 Sign In
@@ -296,13 +296,13 @@ export const LoginPage: React.FC = () => {
                   <span>Authenticating...</span>
                 ) : (
                   <>
-                    <span>Enter Console</span>
+                    <span>Login</span>
                     <ArrowRight size={18} />
                   </>
                 )}
               </button>
             </form>
-
+                
             {/* Footer */}
             <div style={{ marginTop: '2.25rem', paddingTop: '1.25rem', borderTop: '1px solid #F1F5F9', textAlign: 'center', fontSize: '0.775rem', color: '#94A3B8' }}>
               &copy; {new Date().getFullYear()} WenClims &middot; Authorized Access Only

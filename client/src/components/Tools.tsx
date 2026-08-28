@@ -16,7 +16,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
-import toolsHeroImg from '../../assets/images/tools-hero.png?url';
+import toolsHeroImg from '../../assets/images/tools-hero.jpg?url';
 
 gsap.registerPlugin(ScrollTrigger);
 

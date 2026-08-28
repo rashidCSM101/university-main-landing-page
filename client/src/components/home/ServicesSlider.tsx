@@ -13,7 +13,7 @@ const servicesData = [
     category: 'Risk Science & Modeling',
     tagNumber: '01',
     icon: ShieldCheck,
-    image: '/assets/images/service-climate-risk.png',
+    image: '/assets/images/service-climate-risk.jpg',
     description:
       'Quantitative climate vulnerability mapping, flood hydrographs, atmospheric WRF simulations, and extreme event attribution across South Asian river basins.',
     pills: ['WRF Modeling', 'Indus Hydrographs'],
@@ -25,7 +25,7 @@ const servicesData = [
     category: 'Urban & Thermal Telemetry',
     tagNumber: '02',
     icon: ThermometerSun,
-    image: '/assets/images/service-heat-stress.png',
+    image: '/assets/images/service-heat-stress.jpg',
     description:
       'Wet-bulb temperature (TW > 35°C) threshold tracking, urban heat island monitoring, thermal infrared satellite analysis, and municipal cooling protocols.',
     pills: ['Wet-Bulb TW > 35°C', 'Thermal Infrared'],
@@ -37,7 +37,7 @@ const servicesData = [
     category: 'Evidence-Based Policy',
     tagNumber: '03',
     icon: FileSpreadsheet,
-    image: '/assets/images/service-policy-governance.png',
+    image: '/assets/images/service-policy-governance.jpg',
     description:
       'Formulating evidence-based climate policy, national adaptation plans, loss and damage frameworks, and environmental governance guidance for governments.',
     pills: ['Adaptation Plans', 'Loss & Damage'],
@@ -49,7 +49,7 @@ const servicesData = [
     category: 'Capacity Building',
     tagNumber: '04',
     icon: Users,
-    image: '/assets/images/service-stakeholder-engagement.png',
+    image: '/assets/images/service-stakeholder-engagement.jpg',
     description:
       'Fostering collaborative climate workshops, multi-sectoral stakeholder consultations, local community resilience building, and technical training.',
     pills: ['Consultations', 'Resilience Training'],
