@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CloudRain, BarChart2, FileText, Globe } from 'lucide-react';
-import introImage from '../../assets/images/introduction.avif';
+import introImage from '../../assets/images/introduction.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
