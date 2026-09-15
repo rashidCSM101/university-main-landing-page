@@ -4,7 +4,6 @@ import {
   Bell,
   Search,
   ShieldCheck,
-  Sparkles,
   UserCheck,
   ShieldAlert,
   KeyRound,
@@ -186,11 +185,6 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
         <h1 className="topbar-title" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
           {title}
         </h1>
-
-        <div className="topbar-status-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: 'rgba(0,200,200,0.1)', border: '1px solid rgba(0,200,200,0.25)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', color: '#00A3A3', fontWeight: 700, letterSpacing: '0.04em' }}>
-          <Sparkles size={11} color="#00C8C8" />
-          <span>SECURE NODE</span>
-        </div>
       </div>
 
       {/* ── RIGHT: SEARCH, NOTIFICATIONS & USER PROFILE DROPDOWN ── */}
