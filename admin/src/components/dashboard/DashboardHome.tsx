@@ -233,11 +233,11 @@ export const DashboardHome: React.FC = () => {
       change: 'Dynamic live items',
       isUp: true,
       icon: FileText,
-      iconBg: 'linear-gradient(135deg, #00C8C8 0%, #48b302 100%)',
+      iconBg: '#00A3A3',
       iconColor: '#FFFFFF',
-      accentColor: '#00C8C8',
-      badgeBg: 'rgba(0,200,200,0.12)',
-      badgeColor: '#48b302',
+      accentColor: '#00A3A3',
+      badgeBg: 'rgba(0,163,163,0.12)',
+      badgeColor: '#00A3A3',
       link: `${OBFUSCATED_ADMIN_PATH}/media`,
     },
     {
@@ -246,10 +246,10 @@ export const DashboardHome: React.FC = () => {
       change: 'Active research',
       isUp: true,
       icon: BookOpen,
-      iconBg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+      iconBg: '#2563EB',
       iconColor: '#FFFFFF',
-      accentColor: '#3B82F6',
-      badgeBg: 'rgba(59,130,246,0.12)',
+      accentColor: '#2563EB',
+      badgeBg: 'rgba(37,99,235,0.12)',
       badgeColor: '#1D4ED8',
       link: `${OBFUSCATED_ADMIN_PATH}/publications`,
     },
@@ -259,11 +259,11 @@ export const DashboardHome: React.FC = () => {
       change: 'Ongoing regional',
       isUp: true,
       icon: FolderKanban,
-      iconBg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+      iconBg: '#D97706',
       iconColor: '#FFFFFF',
-      accentColor: '#F59E0B',
-      badgeBg: 'rgba(245,158,11,0.15)',
-      badgeColor: '#D97706',
+      accentColor: '#D97706',
+      badgeBg: 'rgba(217,119,6,0.15)',
+      badgeColor: '#B45309',
       link: `${OBFUSCATED_ADMIN_PATH}/projects`,
     },
     {
@@ -272,10 +272,10 @@ export const DashboardHome: React.FC = () => {
       change: '100% operational',
       isUp: true,
       icon: Wrench,
-      iconBg: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
+      iconBg: '#059669',
       iconColor: '#FFFFFF',
-      accentColor: '#10B981',
-      badgeBg: 'rgba(16,185,129,0.12)',
+      accentColor: '#059669',
+      badgeBg: 'rgba(5,150,105,0.12)',
       badgeColor: '#047857',
       link: `${OBFUSCATED_ADMIN_PATH}/tools`,
     },
@@ -305,16 +305,14 @@ export const DashboardHome: React.FC = () => {
         style={{
           padding: '1.75rem 2rem',
           marginBottom: '2rem',
-          background: 'linear-gradient(135deg, #0B1E3D 0%, #1A3461 100%)',
+          background: '#0B1E3D',
           color: '#fff',
-          border: 'none',
+          border: '1px solid rgba(255,255,255,0.08)',
           position: 'relative',
           overflow: 'hidden',
           borderRadius: '16px',
         }}
       >
-        <div style={{ position: 'absolute', right: '-40px', top: '-40px', width: '220px', height: '220px', background: 'radial-gradient(circle, rgba(0,200,200,0.25) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
-
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', position: 'relative', zIndex: 2 }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#00C8C8', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.5rem' }}>

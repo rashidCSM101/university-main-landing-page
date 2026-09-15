@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       <div className="sidebar-footer">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.875rem' }}>
           <div
-            style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1A3461', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0 }}
             title={user?.name || 'User'}
           >
             {user?.name?.charAt(0) || 'U'}

@@ -82,12 +82,12 @@ const ResetConfirmModal: React.FC<ResetConfirmModalProps> = ({
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)',
+              background: '#4F46E5',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1rem',
-              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.35)',
+              boxShadow: '0 8px 24px rgba(79, 70, 229, 0.25)',
             }}
           >
             <KeyRound size={30} color="#ffffff" />
@@ -118,7 +118,7 @@ const ResetConfirmModal: React.FC<ResetConfirmModalProps> = ({
               width: '42px',
               height: '42px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #00C8C8, #1A3461)',
+              background: '#0B1E3D',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -189,12 +189,12 @@ const ResetConfirmModal: React.FC<ResetConfirmModalProps> = ({
               padding: '0.8rem 1.25rem',
               borderRadius: '12px',
               border: 'none',
-              background: 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)',
+              background: '#4F46E5',
               color: '#ffffff',
               fontWeight: 800,
               fontSize: '0.9rem',
               cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(124, 58, 237, 0.35)',
+              boxShadow: '0 4px 15px rgba(79, 70, 229, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -286,12 +286,12 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)',
+              background: '#0B1E3D',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1rem',
-              boxShadow: '0 8px 24px rgba(0, 200, 200, 0.35)',
+              boxShadow: '0 8px 24px rgba(11, 30, 61, 0.25)',
             }}
           >
             <KeyRound size={30} color="#ffffff" />
@@ -354,7 +354,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
               padding: '0.85rem',
               borderRadius: '12px',
               border: 'none',
-              background: 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)',
+              background: '#00A3A3',
               color: '#ffffff',
               fontWeight: 800,
               fontSize: '0.95rem',
@@ -363,7 +363,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(0, 200, 200, 0.3)',
+              boxShadow: '0 4px 15px rgba(0, 163, 163, 0.25)',
             }}
           >
             {copied ? <><CheckCheck size={18} /> Copied to Clipboard!</> : <><Copy size={18} /> Copy Credentials</>}

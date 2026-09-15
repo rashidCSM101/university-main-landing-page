@@ -164,7 +164,7 @@ export const MyProfileSettings: React.FC = () => {
                 style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3px solid #00C8C8', boxShadow: '0 6px 20px rgba(0, 200, 200, 0.25)' }}
               />
             ) : (
-              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2.5rem', fontWeight: 800, border: '3px solid #fff', boxShadow: '0 6px 20px rgba(0, 200, 200, 0.25)' }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2.5rem', fontWeight: 800, border: '3px solid #fff', boxShadow: '0 6px 20px rgba(11, 30, 61, 0.25)' }}>
                 {user?.name?.charAt(0) || 'U'}
               </div>
             )}
@@ -226,7 +226,7 @@ export const MyProfileSettings: React.FC = () => {
                 padding: '0.65rem 1.25rem',
                 borderRadius: '12px',
                 border: 'none',
-                background: activeTab === 'bio' ? 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)' : '#F1F5F9',
+                background: activeTab === 'bio' ? '#0B1E3D' : '#F1F5F9',
                 color: activeTab === 'bio' ? '#ffffff' : '#475569',
                 fontWeight: 700,
                 fontSize: '0.875rem',
@@ -247,7 +247,7 @@ export const MyProfileSettings: React.FC = () => {
                 padding: '0.65rem 1.25rem',
                 borderRadius: '12px',
                 border: 'none',
-                background: activeTab === 'links' ? 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)' : '#F1F5F9',
+                background: activeTab === 'links' ? '#0B1E3D' : '#F1F5F9',
                 color: activeTab === 'links' ? '#ffffff' : '#475569',
                 fontWeight: 700,
                 fontSize: '0.875rem',
@@ -268,7 +268,7 @@ export const MyProfileSettings: React.FC = () => {
                 padding: '0.65rem 1.25rem',
                 borderRadius: '12px',
                 border: 'none',
-                background: activeTab === 'security' ? 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)' : '#F1F5F9',
+                background: activeTab === 'security' ? '#4F46E5' : '#F1F5F9',
                 color: activeTab === 'security' ? '#ffffff' : '#475569',
                 fontWeight: 700,
                 fontSize: '0.875rem',
@@ -522,7 +522,7 @@ export const MyProfileSettings: React.FC = () => {
           {activeTab === 'security' && (
             <div className="glass-panel" style={{ padding: '2rem', background: '#ffffff', borderRadius: '20px', border: '1.5px solid rgba(124, 58, 237, 0.25)', boxShadow: '0 8px 30px rgba(124, 58, 237, 0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.3)' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 15px rgba(79, 70, 229, 0.25)' }}>
                   <KeyRound size={22} />
                 </div>
                 <div>
@@ -623,12 +623,12 @@ export const MyProfileSettings: React.FC = () => {
                       padding: '0.75rem 2rem',
                       borderRadius: '12px',
                       border: 'none',
-                      background: 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)',
+                      background: '#4F46E5',
                       color: '#ffffff',
                       fontWeight: 800,
                       fontSize: '0.95rem',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 15px rgba(124, 58, 237, 0.35)',
+                      boxShadow: '0 4px 15px rgba(79, 70, 229, 0.25)',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.5rem',

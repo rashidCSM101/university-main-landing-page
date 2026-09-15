@@ -97,7 +97,7 @@ export const LoginPage: React.FC = () => {
               width: '84px',
               height: '84px',
               borderRadius: '26px',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 100%)',
+              background: 'rgba(255, 255, 255, 0.08)',
               backdropFilter: 'blur(20px)',
               border: '1.5px solid rgba(255, 255, 255, 0.25)',
               display: 'flex',

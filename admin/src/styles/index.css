@@ -107,8 +107,8 @@ h1,h2,h3,h4,h5,h6 {
   top: 0; left: 0;
   width: var(--sidebar-w);
   height: 100vh;
-  background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 40%, var(--primary-light) 100%);
-  border-right: 1px solid rgba(0, 200, 200, 0.15);
+  background: var(--primary);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -147,10 +147,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .sidebar::before {
   content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 20% 50%, rgba(0,200,200,0.06) 0%, transparent 70%);
-  pointer-events: none;
+  display: none;
 }
 
 .sidebar-brand {
@@ -201,7 +198,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .sidebar-brand-icon {
   width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  background: var(--teal);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -334,7 +331,7 @@ h1,h2,h3,h4,h5,h6 {
 .topbar-avatar {
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--teal-dark));
+  background: var(--primary);
   display: flex; align-items: center; justify-content: center;
   color: #fff;
   font-size: 0.8rem;
@@ -401,7 +398,7 @@ h1,h2,h3,h4,h5,h6 {
   position: absolute;
   top: 0; left: 0;
   right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--teal), var(--primary-light));
+  background: var(--teal);
   border-radius: 16px 16px 0 0;
 }
 .stat-card:hover {
@@ -410,9 +407,9 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .stat-card-teal { border-top-color: var(--teal); }
-.stat-card-gold::before { background: linear-gradient(90deg, var(--accent-gold), #f59e0b); }
-.stat-card-sky::before  { background: linear-gradient(90deg, var(--accent-sky), var(--teal-light)); }
-.stat-card-green::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.stat-card-gold::before { background: var(--accent-gold); }
+.stat-card-sky::before  { background: #0284c7; }
+.stat-card-green::before { background: #16a34a; }
 
 .stat-icon-wrap {
   width: 48px; height: 48px;
@@ -567,7 +564,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .login-left {
   width: 48%;
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -618,13 +615,8 @@ h1,h2,h3,h4,h5,h6 {
   100% { transform: translate(20px, -20px) scale(1.08); }
 }
 
-/* Dot grid overlay */
 .dot-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events: none;
+  display: none;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -547,7 +547,7 @@ export const MediaManager: React.FC = () => {
                             gap: '0.5rem',
                             padding: '0.4rem 0.85rem',
                             borderRadius: '12px',
-                            background: isLead ? 'linear-gradient(135deg, #0B1E3D 0%, #1A3461 100%)' : '#ffffff',
+                            background: isLead ? '#0B1E3D' : '#ffffff',
                             color: isLead ? '#ffffff' : '#1E293B',
                             border: isLead ? '1.5px solid #00C8C8' : '1px solid #CBD5E1',
                             fontSize: '0.825rem',

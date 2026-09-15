@@ -49,7 +49,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({ isOpen, name, email
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(11,30,61,0.75)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{ background: '#fff', borderRadius: '20px', padding: '2rem', width: '100%', maxWidth: '460px', boxShadow: '0 25px 60px rgba(0,0,0,0.3)', border: '2px solid #00C8C8' }}>
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
             <KeyRound size={26} color="#fff" />
           </div>
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.3rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
@@ -454,7 +454,7 @@ export const TeamManager: React.FC = () => {
                 {formData.photo ? <img src={formData.photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={30} color="#94A3B8" />}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #00C8C8, #1A3461)', color: '#fff', fontWeight: 700, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 4px 12px rgba(0,200,200,0.2)' }}>
+                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#0B1E3D', color: '#fff', fontWeight: 700, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 4px 12px rgba(11,30,61,0.2)' }}>
                   <Upload size={15} />
                   <span>Choose Photo from Device</span>
                   <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />

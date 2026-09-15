@@ -68,28 +68,28 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {toasts.map((toast) => {
           const config = {
             success: {
-              bg: 'linear-gradient(135deg, rgba(13, 30, 25, 0.96) 0%, rgba(10, 24, 20, 0.98) 100%)',
+              bg: '#0d251d',
               border: 'rgba(34, 197, 94, 0.4)',
               glow: '0 8px 32px rgba(34, 197, 94, 0.15)',
               icon: <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />,
               titleColor: '#34d399',
             },
             error: {
-              bg: 'linear-gradient(135deg, rgba(35, 15, 18, 0.96) 0%, rgba(26, 10, 12, 0.98) 100%)',
+              bg: '#2e1215',
               border: 'rgba(239, 68, 68, 0.4)',
               glow: '0 8px 32px rgba(239, 68, 68, 0.15)',
               icon: <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />,
               titleColor: '#f87171',
             },
             warning: {
-              bg: 'linear-gradient(135deg, rgba(35, 28, 12, 0.96) 0%, rgba(26, 20, 8, 0.98) 100%)',
+              bg: '#2b210d',
               border: 'rgba(245, 158, 11, 0.4)',
               glow: '0 8px 32px rgba(245, 158, 11, 0.15)',
               icon: <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />,
               titleColor: '#fbbf24',
             },
             info: {
-              bg: 'linear-gradient(135deg, rgba(14, 28, 42, 0.96) 0%, rgba(10, 20, 32, 0.98) 100%)',
+              bg: '#0f2438',
               border: 'rgba(56, 189, 248, 0.4)',
               glow: '0 8px 32px rgba(56, 189, 248, 0.15)',
               icon: <Info className="w-5 h-5 text-sky-400 flex-shrink-0" />,

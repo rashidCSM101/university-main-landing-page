@@ -446,7 +446,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
             </div>
 
             {/* Avatar Pill */}
-            <div className="topbar-avatar" style={{ background: 'linear-gradient(135deg, #00C8C8, #0B1E3D)', color: '#fff', fontWeight: 800, fontSize: '0.85rem' }}>
+            <div className="topbar-avatar" style={{ background: '#0B1E3D', color: '#fff', fontWeight: 800, fontSize: '0.85rem' }}>
               {user?.name?.charAt(0) || 'R'}
             </div>
 
@@ -473,7 +473,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
               <div
                 style={{
                   padding: '1.25rem',
-                  background: 'linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%)',
+                  background: '#F8FAFC',
                   borderBottom: '1px solid #E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
@@ -485,14 +485,14 @@ export const TopBar: React.FC<TopBarProps> = ({ title = 'Dashboard Overview' }) 
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #00C8C8 0%, #0B1E3D 100%)',
+                    background: '#0B1E3D',
                     color: '#fff',
                     fontWeight: 800,
                     fontSize: '1.1rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 12px rgba(0,200,200,0.3)',
+                    boxShadow: '0 4px 12px rgba(11,30,61,0.2)',
                     flexShrink: 0,
                   }}
                 >

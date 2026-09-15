@@ -130,7 +130,7 @@ export const SiteSettingsManager: React.FC = () => {
         <div className="card" style={{ padding: '1.75rem', background: '#fff', border: '2px solid #00C8C8', borderRadius: '20px', gridColumn: '1 / -1', boxShadow: '0 8px 30px rgba(0,200,200,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #00C8C8 0%, #1A3461 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,200,200,0.3)' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(11,30,61,0.2)' }}>
                 <BarChart2 size={22} color="#fff" />
               </div>
               <div>
