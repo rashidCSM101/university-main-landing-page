@@ -532,12 +532,11 @@ export const PublicationsPage = () => {
 
                       {/* Metadata Rows (Authors, Date, Publisher) */}
                       <div className="space-y-2 mb-4 text-xs sm:text-[13px] text-gray-600">
-                        {/* Authors */}
-                        <div className="flex items-center gap-2 font-medium text-gray-700">
-                          <Users className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
-                          <span className="line-clamp-1" title={pub.authors.join(', ')}>
-                            <strong className="text-gray-900 font-semibold">{pub.authors[0]}</strong>
-                            {pub.authors.length > 1 ? ` +${pub.authors.length - 1} more` : ''}
+                        {/* Authors (All authors displayed) */}
+                        <div className="flex items-start gap-2 font-medium text-gray-700">
+                          <Users className="w-4 h-4 text-[#00C8C8] flex-shrink-0 mt-0.5" />
+                          <span className="text-xs sm:text-[13px] text-gray-700 leading-relaxed" title={pub.authors.join(', ')}>
+                            {pub.authors.join(', ')}
                           </span>
                         </div>
 
