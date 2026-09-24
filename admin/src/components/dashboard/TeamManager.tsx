@@ -20,6 +20,7 @@ import {
   BookOpen,
   User,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { DeleteConfirmModal } from '../common/DeleteConfirmModal';
 import { useAuth } from '../../hooks/useAuth';
@@ -103,6 +104,7 @@ export const TeamManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -297,12 +299,18 @@ export const TeamManager: React.FC = () => {
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
+      setIsModalOpen(false);
       loadData();
     } catch (err: any) {
       toast.error('Failed to save profile bio', err?.message);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditMember = (item: any) => {
+    populateForm(item);
+    setIsModalOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -344,7 +352,7 @@ export const TeamManager: React.FC = () => {
       show_on_home: false,
       is_active: true,
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsModalOpen(true);
   };
 
   return (
@@ -359,13 +367,28 @@ export const TeamManager: React.FC = () => {
           <p className="page-subtitle" style={{ marginTop: '0.35rem' }}>
             {isPowerUser
               ? 'Team & Faculty Directory: Add new scientists/members — auto-generates login account and temporary password!'
-              : 'Editor Profile Mode: Update your scientist biography and credentials'}
+              : 'Scientist Directory: View team members and manage your profile in the popup modal'}
           </p>
         </div>
 
-        {isPowerUser && (
+        {isPowerUser ? (
           <button onClick={openNewBlankMember} className="btn-teal" style={{ padding: '0.75rem 1.5rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(0,200,200,0.3)' }}>
             <Plus size={18} /> Add New Team Member
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              const myProfile = items.find((m) => m.name?.toLowerCase().trim() === user?.name?.toLowerCase().trim() || m.social_links?.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim());
+              if (myProfile) {
+                handleEditMember(myProfile);
+              } else {
+                setIsModalOpen(true);
+              }
+            }}
+            className="btn-teal"
+            style={{ padding: '0.75rem 1.5rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(0,200,200,0.3)' }}
+          >
+            <Edit2 size={18} /> Edit My Profile &amp; Bio
           </button>
         )}
       </div>
@@ -378,262 +401,347 @@ export const TeamManager: React.FC = () => {
         </div>
       )}
 
-      {/* FORM CARD */}
-      <div className="glass-panel" style={{ padding: '2.25rem', marginBottom: '2.5rem', background: '#ffffff', border: '2px solid #00C8C8', borderRadius: '22px', boxShadow: '0 10px 35px rgba(0,200,200,0.09)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', borderBottom: '1.5px solid #E2E8F4', paddingBottom: '1.25rem' }}>
+      {/* FACULTY DIRECTORY TABLE */}
+      <div className="card" style={{ background: '#ffffff', borderRadius: '20px', border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(11, 30, 61, 0.05)', overflow: 'hidden' }}>
+        <div style={{ padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F4', background: '#F8FAFC' }}>
           <div>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.45rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
-              {formData.id ? `Edit Member: ${formData.name}` : 'Add New Team Member'}
-            </h2>
-            <span style={{ fontSize: '0.825rem', color: '#009A9A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.35rem' }}>
-              <ShieldCheck size={15} /> Logged in as: {user?.name} ({isSuperAdmin ? 'Super Admin' : isAdmin ? 'Executive Admin' : 'Editor Profile'})
-            </span>
-          </div>
-
-          <button type="button" onClick={handleSave} disabled={saving} className="btn-teal" style={{ padding: '0.7rem 1.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800 }}>
-            <Save size={16} />
-            <span>{saving ? 'Saving...' : 'Save Profile & Bio'}</span>
-          </button>
-        </div>
-
-        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          {/* Section 1: Basic Identity Information */}
-          <div>
-            <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0B1E3D', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <User size={16} color="#00C8C8" />
-              <span>1. Scientist &amp; Staff Identity</span>
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-              {/* Full Name */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Full Name *</label>
-                <input type="text" required placeholder="e.g. Dr. Ayesha Khan" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* Official Email */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Official Email Address *</span>
-                  <span style={{ color: '#00A3A3', fontWeight: 700, fontSize: '0.7rem', background: 'rgba(0,200,200,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>Auto-Login</span>
-                </label>
-                <input type="email" required placeholder="ayesha@wenclims.org" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* Post Designation */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Post / Designation *</label>
-                <select value={formData.role || 'Research Associate'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
-                  <option value="Chief Executive Officer">Chief Executive Officer</option>
-                  <option value="Chief Operating Officer">Chief Operating Officer</option>
-                  <option value="Team Lead">Team Lead</option>
-                  <option value="Co-Lead">Co-Lead</option>
-                  <option value="Research Associate">Research Associate</option>
-                  <option value="Research Assistant">Research Assistant</option>
-                  <option value="Intern">Intern</option>
-                </select>
-              </div>
-
-              {/* Division */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Division / Department</label>
-                <select value={formData.team} onChange={(e) => setFormData({ ...formData, team: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
-                  <option value="Leadership">Leadership &amp; Directorate</option>
-                  <option value="Atmospheric & Attribution Science">Atmospheric &amp; Attribution Science</option>
-                  <option value="Hydrology & Indus Basin Risk">Hydrology &amp; Indus Basin Risk</option>
-                  <option value="Climate Policy & Advisory">Climate Policy &amp; Advisory</option>
-                  <option value="Satellite Telemetry & Remote Sensing">Satellite Telemetry &amp; Remote Sensing</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Academic Qualification */}
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Degrees (Optional)</label>
-            <input type="text" placeholder="e.g. M.Phil / Ph.D. Atmospheric Physics &amp; Climate Informatics, Quaid-i-Azam University" value={formData.qualification} onChange={(e) => setFormData({ ...formData, qualification: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-          </div>
-
-          {/* Section 3: Profile Photo */}
-          <div style={{ background: '#F8FAFC', padding: '1.25rem 1.5rem', borderRadius: '1.1rem', border: '1px solid #E2E8F4' }}>
-            <label style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0B1E3D', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Upload size={18} color="#00C8C8" />
-              <span>Profile Portrait Photo (Device Upload or Image Link)</span>
-            </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1.5rem', alignItems: 'center' }}>
-              <div style={{ width: '84px', height: '84px', borderRadius: '1.2rem', overflow: 'hidden', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2.5px solid #00C8C8', flexShrink: 0 }}>
-                {formData.photo ? <img src={formData.photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={30} color="#94A3B8" />}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#0B1E3D', color: '#fff', fontWeight: 700, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 4px 12px rgba(11,30,61,0.2)' }}>
-                  <Upload size={15} />
-                  <span>Choose Photo from Device</span>
-                  <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
-                </label>
-                <input type="text" placeholder="Or paste direct image URL (https://...)" value={formData.photo} onChange={(e) => setFormData({ ...formData, photo: e.target.value })} className="input-field" style={{ paddingLeft: '0.85rem', fontSize: '0.825rem' }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 4: Academic & Social Profile Links Card */}
-          <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '1.1rem', border: '1.5px solid #E2E8F4' }}>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0B1E3D', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Globe size={18} color="#00C8C8" />
-                <span>Academic &amp; Social Profile Links</span>
-              </h3>
-              <p style={{ fontSize: '0.775rem', color: '#6B7A95', margin: '0.25rem 0 0 0' }}>
-                These buttons will automatically show on the public scientist bio page (e.g. <code>https://hex-byte.tech/team/{formData.slug || 'member'}</code>).
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
-              {/* LinkedIn */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0077b5' }} />
-                  <span>LinkedIn Profile URL</span>
-                </label>
-                <input type="text" placeholder="https://linkedin.com/in/username" value={formData.linkedin} onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* Google Scholar */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <GraduationCap size={15} color="#4285F4" />
-                  <span>Google Scholar Citations URL</span>
-                </label>
-                <input type="text" placeholder="https://scholar.google.com/citations?user=..." value={formData.google_scholar} onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* GitHub */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Github size={15} color="#24292e" />
-                  <span>GitHub Profile URL</span>
-                </label>
-                <input type="text" placeholder="https://github.com/username" value={formData.github} onChange={(e) => setFormData({ ...formData, github: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* X / Twitter */}
-              <div>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#000000' }} />
-                  <span>X / Twitter Profile URL</span>
-                </label>
-                <input type="text" placeholder="https://x.com/username" value={formData.x_twitter} onChange={(e) => setFormData({ ...formData, x_twitter: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-
-              {/* ORCID */}
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#A6CE39', color: '#000', fontSize: '9px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>iD</span>
-                  <span>ORCID Researcher iD</span>
-                </label>
-                <input type="text" placeholder="https://orcid.org/0000-0002-..." value={formData.orcid} onChange={(e) => setFormData({ ...formData, orcid: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 5: Scientific Biography */}
-          <div>
-            <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Bio Text)</label>
-            <textarea rows={4} placeholder="Write academic background, research contributions, and meteorological modeling experience..." value={formData.bio || ''} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} className="input-field" style={{ paddingLeft: '1rem', height: 'auto', lineHeight: '1.6' }} />
-          </div>
-
-          {/* Section 6: Home Page Card Feature */}
-          {isSuperAdmin && (
-            <div style={{ padding: '1.25rem', background: '#F0FDFA', border: '2px dashed #00C8C8', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <input type="checkbox" id="show_on_home" checked={formData.show_on_home || false} onChange={(e) => setFormData({ ...formData, show_on_home: e.target.checked })} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#00C8C8' }} />
-              <div>
-                <label htmlFor="show_on_home" style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F766E', cursor: 'pointer', display: 'block' }}>
-                  ⭐ Feature Card on Home Page ("Meet Our Lead Climate Scientists")
-                </label>
-                <span style={{ fontSize: '0.775rem', color: '#6B7A95' }}>Check this box to include this scientist on the featured cards on the main website homepage.</span>
-              </div>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid #E2E8F4' }}>
-            <button type="submit" disabled={saving} className="btn-teal" style={{ padding: '0.85rem 2.5rem', fontSize: '0.95rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 6px 20px rgba(0,200,200,0.35)' }}>
-              <Save size={18} />
-              <span>{saving ? 'Saving...' : formData.id ? 'Update Team Member' : 'Add Team Member & Auto-Generate Password'}</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* SUPER ADMIN TABLE */}
-      {isSuperAdmin && (
-        <div className="card">
-          <div style={{ padding: '1.25rem 1rem 0.5rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.1rem', fontWeight: 700, color: '#0B1E3D', margin: 0 }}>
-              Scientific Faculty Directory (Super Admin View)
+            <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', fontWeight: 800, color: '#0B1E3D', margin: 0 }}>
+              Scientific Faculty Directory {isSuperAdmin ? '(Super Admin View)' : ''}
             </h3>
             <span style={{ fontSize: '0.8rem', color: '#6B7A95' }}>
-              {items.length} Active Member{items.length !== 1 ? 's' : ''}
+              Click the Edit pencil icon to update researcher profile details, photo, and bio in a popup modal
             </span>
           </div>
+          <span className="badge badge-teal" style={{ fontWeight: 700 }}>
+            {items.length} Active Member{items.length !== 1 ? 's' : ''}
+          </span>
+        </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead>
-              <tr style={{ background: '#F0F4FA', borderBottom: '1px solid #E2E8F4', color: '#0B1E3D', fontWeight: 600 }}>
-                <th style={{ padding: '0.875rem 1rem' }}>Scientist</th>
-                <th style={{ padding: '0.875rem 1rem' }}>Post / Role</th>
-                <th style={{ padding: '0.875rem 1rem' }}>Division</th>
-                <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>Loading directory...</td></tr>
-              ) : items.length === 0 ? (
-                <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>No team members found.</td></tr>
-              ) : (
-                items.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #E8ECF2' }}>
-                    <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', background: '#00C8C8', flexShrink: 0 }}>
-                          {item.photo ? (
-                            <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>
-                              {item.name?.substring(0, 1)}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <div>{item.name}</div>
-                          <div style={{ fontSize: '0.75rem', color: '#9AA5BC' }}>{item.social_links?.email || item.email || ''}</div>
-                        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+          <thead>
+            <tr style={{ background: '#F0F4FA', borderBottom: '1px solid #E2E8F4', color: '#0B1E3D', fontWeight: 600 }}>
+              <th style={{ padding: '0.875rem 1rem' }}>Scientist</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Post / Role</th>
+              <th style={{ padding: '0.875rem 1rem' }}>Division</th>
+              <th style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>Loading directory...</td></tr>
+            ) : items.length === 0 ? (
+              <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#6B7A95' }}>No team members found.</td></tr>
+            ) : (
+              items.map((item) => (
+                <tr key={item.id} style={{ borderBottom: '1px solid #E8ECF2' }}>
+                  <td style={{ padding: '0.875rem 1rem', fontWeight: 600, color: '#1E2A3B' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ width: '38px', height: '38px', borderRadius: '50%', overflow: 'hidden', background: '#00C8C8', flexShrink: 0 }}>
+                        {item.photo ? (
+                          <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>
+                            {item.name?.substring(0, 1)}
+                          </div>
+                        )}
                       </div>
-                    </td>
-                    <td style={{ padding: '0.875rem 1rem', color: '#4D5D78', fontWeight: 500 }}>{item.role}</td>
-                    <td style={{ padding: '0.875rem 1rem' }}>
-                      <span className="badge badge-teal" style={{ textTransform: 'capitalize', marginRight: '0.5rem' }}>{item.team}</span>
-                      {item.show_on_home && (
-                        <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '12px', background: '#FEF3C7', color: '#B45309', border: '1px solid #FCD34D' }}>
-                          ⭐ Home Card
-                        </span>
-                      )}
-                    </td>
-                    <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                      {(isPowerUser || item.name?.toLowerCase().trim() === user?.name?.toLowerCase().trim() || item.social_links?.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim()) && (
-                        <button onClick={() => populateForm(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Edit Profile">
-                          <Edit2 size={15} />
-                        </button>
-                      )}
-                      {isSuperAdmin && (
-                        <button onClick={() => setDeleteTarget({ id: item.id, title: item.name })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete Member">
-                          <Trash2 size={15} />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <div>
+                        <div>{item.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#9AA5BC' }}>{item.social_links?.email || item.email || ''}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem', color: '#4D5D78', fontWeight: 500 }}>{item.role}</td>
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    <span className="badge badge-teal" style={{ textTransform: 'capitalize', marginRight: '0.5rem' }}>{item.team}</span>
+                    {item.show_on_home && (
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: '12px', background: '#FEF3C7', color: '#B45309', border: '1px solid #FCD34D' }}>
+                        ⭐ Home Card
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
+                    {(isPowerUser || item.name?.toLowerCase().trim() === user?.name?.toLowerCase().trim() || item.social_links?.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim()) && (
+                      <button onClick={() => handleEditMember(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Edit Profile in Modal">
+                        <Edit2 size={15} />
+                      </button>
+                    )}
+                    {isSuperAdmin && (
+                      <button onClick={() => setDeleteTarget({ id: item.id, title: item.name })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete Member">
+                        <Trash2 size={15} />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ─── POPUP EDIT / ADD MODAL ──────────────────────────────────────────────── */}
+      {isModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(11, 30, 61, 0.75)',
+            backdropFilter: 'blur(5px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.25rem',
+          }}
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '24px',
+              width: '100%',
+              maxWidth: '860px',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
+              border: '2px solid #00C8C8',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: '1.25rem 2rem',
+                borderBottom: '1.5px solid #E2E8F4',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: '#F8FAFC',
+              }}
+            >
+              <div>
+                <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#0B1E3D', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserCheck size={22} color="#00C8C8" />
+                  <span>{formData.id ? `Edit Member: ${formData.name}` : 'Add New Team Member'}</span>
+                </h2>
+                <span style={{ fontSize: '0.8rem', color: '#009A9A', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
+                  <ShieldCheck size={14} /> Logged in as: {user?.name} ({isSuperAdmin ? 'Super Admin' : isAdmin ? 'Executive Admin' : 'Editor Profile'})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="topbar-btn"
+                style={{ width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body (Scrollable) */}
+            <div style={{ padding: '1.75rem 2rem', overflowY: 'auto', flex: 1 }}>
+              <form id="team-member-modal-form" onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {/* Section 1: Basic Identity Information */}
+                <div>
+                  <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0B1E3D', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <User size={16} color="#00C8C8" />
+                    <span>1. Scientist &amp; Staff Identity</span>
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+                    {/* Full Name */}
+                    <div>
+                      <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Full Name *</label>
+                      <input type="text" required placeholder="e.g. Dr. Ayesha Khan" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* Official Email */}
+                    <div>
+                      <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>Official Email Address *</span>
+                        <span style={{ color: '#00A3A3', fontWeight: 700, fontSize: '0.7rem', background: 'rgba(0,200,200,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>Auto-Login</span>
+                      </label>
+                      <input type="email" required placeholder="ayesha@wenclims.org" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* Post Designation */}
+                    <div>
+                      <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Post / Designation *</label>
+                      <select value={formData.role || 'Research Associate'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
+                        <option value="Chief Executive Officer">Chief Executive Officer</option>
+                        <option value="Chief Operating Officer">Chief Operating Officer</option>
+                        <option value="Team Lead">Team Lead</option>
+                        <option value="Co-Lead">Co-Lead</option>
+                        <option value="Research Associate">Research Associate</option>
+                        <option value="Research Assistant">Research Assistant</option>
+                        <option value="Intern">Intern</option>
+                      </select>
+                    </div>
+
+                    {/* Division */}
+                    <div>
+                      <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Division / Department</label>
+                      <select value={formData.team} onChange={(e) => setFormData({ ...formData, team: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }}>
+                        <option value="Leadership">Leadership &amp; Directorate</option>
+                        <option value="Atmospheric & Attribution Science">Atmospheric &amp; Attribution Science</option>
+                        <option value="Hydrology & Indus Basin Risk">Hydrology &amp; Indus Basin Risk</option>
+                        <option value="Climate Policy & Advisory">Climate Policy &amp; Advisory</option>
+                        <option value="Satellite Telemetry & Remote Sensing">Satellite Telemetry &amp; Remote Sensing</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Academic Qualification */}
+                <div>
+                  <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Academic Qualification &amp; Degrees (Optional)</label>
+                  <input type="text" placeholder="e.g. M.Phil / Ph.D. Atmospheric Physics &amp; Climate Informatics, Quaid-i-Azam University" value={formData.qualification} onChange={(e) => setFormData({ ...formData, qualification: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                </div>
+
+                {/* Section 3: Profile Photo */}
+                <div style={{ background: '#F8FAFC', padding: '1.25rem 1.5rem', borderRadius: '1.1rem', border: '1px solid #E2E8F4' }}>
+                  <label style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0B1E3D', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Upload size={18} color="#00C8C8" />
+                    <span>Profile Portrait Photo (Device Upload or Image Link)</span>
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '1.5rem', alignItems: 'center' }}>
+                    <div style={{ width: '84px', height: '84px', borderRadius: '1.2rem', overflow: 'hidden', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2.5px solid #00C8C8', flexShrink: 0 }}>
+                      {formData.photo ? <img src={formData.photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={30} color="#94A3B8" />}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#0B1E3D', color: '#fff', fontWeight: 700, padding: '0.6rem 1.2rem', borderRadius: '0.75rem', cursor: 'pointer', fontSize: '0.825rem', width: 'fit-content', boxShadow: '0 4px 12px rgba(11,30,61,0.2)' }}>
+                          <Upload size={15} />
+                          <span>Choose Photo from Device</span>
+                          <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                        </label>
+                        {formData.photo && (
+                          <button
+                            type="button"
+                            onClick={() => setFormData((prev: any) => ({ ...prev, photo: '' }))}
+                            style={{ padding: '0.55rem 0.9rem', fontSize: '0.825rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#fff', color: '#64748B', cursor: 'pointer', fontWeight: 600 }}
+                          >
+                            Remove Photo
+                          </button>
+                        )}
+                      </div>
+                      <input type="text" placeholder="Or paste direct image URL (https://...)" value={formData.photo} onChange={(e) => setFormData({ ...formData, photo: e.target.value })} className="input-field" style={{ paddingLeft: '0.85rem', fontSize: '0.825rem' }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4: Academic & Social Profile Links Card */}
+                <div style={{ background: '#F8FAFC', padding: '1.25rem 1.5rem', borderRadius: '1.1rem', border: '1.5px solid #E2E8F4' }}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0B1E3D', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Globe size={18} color="#00C8C8" />
+                      <span>Academic &amp; Social Profile Links</span>
+                    </h3>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                    {/* LinkedIn */}
+                    <div>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0077b5' }} />
+                        <span>LinkedIn Profile URL</span>
+                      </label>
+                      <input type="text" placeholder="https://linkedin.com/in/username" value={formData.linkedin} onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* Google Scholar */}
+                    <div>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <GraduationCap size={15} color="#4285F4" />
+                        <span>Google Scholar Citations URL</span>
+                      </label>
+                      <input type="text" placeholder="https://scholar.google.com/citations?user=..." value={formData.google_scholar} onChange={(e) => setFormData({ ...formData, google_scholar: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* GitHub */}
+                    <div>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Github size={15} color="#24292e" />
+                        <span>GitHub Profile URL</span>
+                      </label>
+                      <input type="text" placeholder="https://github.com/username" value={formData.github} onChange={(e) => setFormData({ ...formData, github: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* X / Twitter */}
+                    <div>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#000000' }} />
+                        <span>X / Twitter Profile URL</span>
+                      </label>
+                      <input type="text" placeholder="https://x.com/username" value={formData.x_twitter} onChange={(e) => setFormData({ ...formData, x_twitter: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+
+                    {/* ORCID */}
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#A6CE39', color: '#000', fontSize: '9px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>iD</span>
+                        <span>ORCID Researcher iD</span>
+                      </label>
+                      <input type="text" placeholder="https://orcid.org/0000-0002-..." value={formData.orcid} onChange={(e) => setFormData({ ...formData, orcid: e.target.value })} className="input-field" style={{ paddingLeft: '1rem' }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 5: Scientific Biography */}
+                <div>
+                  <label style={{ fontSize: '0.825rem', fontWeight: 700, color: '#0B1E3D', marginBottom: '0.35rem', display: 'block' }}>Scientific Biography (Bio Text)</label>
+                  <textarea rows={4} placeholder="Write academic background, research contributions, and meteorological modeling experience..." value={formData.bio || ''} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} className="input-field" style={{ paddingLeft: '1rem', height: 'auto', lineHeight: '1.6' }} />
+                </div>
+
+                {/* Section 6: Home Page Card Feature */}
+                {isSuperAdmin && (
+                  <div style={{ padding: '1.25rem', background: '#F0FDFA', border: '2px dashed #00C8C8', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <input type="checkbox" id="show_on_home" checked={formData.show_on_home || false} onChange={(e) => setFormData({ ...formData, show_on_home: e.target.checked })} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#00C8C8' }} />
+                    <div>
+                      <label htmlFor="show_on_home" style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F766E', cursor: 'pointer', display: 'block' }}>
+                        ⭐ Feature Card on Home Page ("Meet Our Lead Climate Scientists")
+                      </label>
+                      <span style={{ fontSize: '0.775rem', color: '#6B7A95' }}>Check this box to include this scientist on the featured cards on the main website homepage.</span>
+                    </div>
+                  </div>
+                )}
+              </form>
+            </div>
+
+            {/* Modal Footer */}
+            <div
+              style={{
+                padding: '1.25rem 2rem',
+                borderTop: '1.5px solid #E2E8F4',
+                background: '#F8FAFC',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '0.85rem',
+                alignItems: 'center',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="btn-ghost"
+                style={{ padding: '0.75rem 1.5rem', fontWeight: 700 }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="team-member-modal-form"
+                disabled={saving}
+                className="btn-teal"
+                style={{ padding: '0.75rem 2rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(0,200,200,0.35)' }}
+              >
+                <Save size={18} />
+                <span>{saving ? 'Saving...' : formData.id ? 'Save Changes' : 'Create Member'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
