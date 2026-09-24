@@ -38,12 +38,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
     { label: 'Overview',       path: OBFUSCATED_ADMIN_PATH,             icon: LayoutDashboard, exact: true },
     { label: 'Blogs & Media',  path: `${OBFUSCATED_ADMIN_PATH}/media`,  icon: FileText },
     { label: 'Publications',   path: `${OBFUSCATED_ADMIN_PATH}/publications`, icon: BookOpen },
+    { label: isPowerUser ? 'Our Team' : 'My Profile & Bio', path: `${OBFUSCATED_ADMIN_PATH}/team`, icon: isPowerUser ? Users : UserCheck },
+    { label: 'Account Settings', path: `${OBFUSCATED_ADMIN_PATH}/my-profile`, icon: Sliders },
   ];
 
   // ── Extra items visible only to Super Admin / Admin ───────────────────────
   const powerItems = [
     { label: 'Projects',       path: `${OBFUSCATED_ADMIN_PATH}/projects`, icon: FolderKanban },
-    { label: 'Our Team',       path: `${OBFUSCATED_ADMIN_PATH}/team`,   icon: Users },
     { label: 'Sector Tools',   path: `${OBFUSCATED_ADMIN_PATH}/tools`,  icon: Wrench },
   ];
 

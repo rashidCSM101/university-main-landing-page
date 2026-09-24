@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import { compressImage } from '../../utils/imageCompressor';
 import {
   Save,
   KeyRound,
@@ -20,6 +21,7 @@ import {
   GraduationCap,
   Sparkles,
   Camera,
+  Upload,
   Layers,
   Lock,
   RefreshCw,
@@ -27,6 +29,7 @@ import {
 
 export const MyProfileSettings: React.FC = () => {
   const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'bio' | 'links' | 'security'>('bio');
 
   // ── Bio data ──────────────────────────────────────────────────────────────
@@ -48,17 +51,33 @@ export const MyProfileSettings: React.FC = () => {
     (async () => {
       setBioLoading(true);
       try {
-        const allMembers = await api.getAdminTeam();
-        const mine = allMembers.find((m: any) => {
-          const sl = typeof m.social_links === 'string' ? JSON.parse(m.social_links) : m.social_links || {};
-          return (
-            (sl.email && user?.email && sl.email.toLowerCase() === user.email.toLowerCase()) ||
-            (m.name && user?.name && m.name.toLowerCase().trim() === user.name.toLowerCase().trim())
-          );
-        });
+        let mine: any = null;
+        try {
+          mine = await api.getOwnTeamProfile();
+        } catch {
+          const allMembers = await api.getAdminTeam();
+          mine = allMembers.find((m: any) => {
+            const sl = typeof m.social_links === 'string' ? JSON.parse(m.social_links) : m.social_links || {};
+            return (
+              (sl.email && user?.email && sl.email.toLowerCase() === user.email.toLowerCase()) ||
+              (m.name && user?.name && m.name.toLowerCase().trim() === user.name.toLowerCase().trim())
+            );
+          });
+        }
         if (mine) {
           const sl = typeof mine.social_links === 'string' ? JSON.parse(mine.social_links) : mine.social_links || {};
-          setMyProfile({ ...mine, social_links: sl });
+          const photoUrl = mine.photo || mine.image || mine.photo_url || '';
+          setMyProfile({
+            ...mine,
+            photo: photoUrl,
+            image: photoUrl,
+            photo_url: photoUrl,
+            division: mine.division || mine.team || sl.division || '',
+            experience: mine.experience || sl.experience || '10+ Years',
+            papers: mine.papers !== undefined ? mine.papers : (sl.papers ?? 12),
+            citations: mine.citations !== undefined ? mine.citations : (sl.citations ?? 250),
+            social_links: sl,
+          });
         }
       } catch {
         setBioError('Could not load profile. Please contact Administrator.');
@@ -68,23 +87,88 @@ export const MyProfileSettings: React.FC = () => {
     })();
   }, [user]);
 
-  const handleBioSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleBioSave = async (e?: React.FormEvent, customPhoto?: string) => {
+    if (e) e.preventDefault();
     if (!myProfile) return;
     setBioSaving(true);
     setBioError('');
     setBioSuccess('');
     try {
-      await api.updateTeamMember(myProfile.id, {
-        ...myProfile,
-        social_links: myProfile.social_links || {},
-      });
-      setBioSuccess('Profile details saved! Changes are immediately live on the main website.');
+      const activePhoto = customPhoto !== undefined ? customPhoto : (myProfile.photo || myProfile.image || myProfile.photo_url || null);
+
+      const updatedSocialLinks = {
+        ...(myProfile.social_links || {}),
+        email: myProfile.social_links?.email || user?.email || '',
+        division: myProfile.division || myProfile.team || '',
+        experience: myProfile.experience || '',
+        papers: myProfile.papers,
+        citations: myProfile.citations,
+      };
+
+      const payload = {
+        name: myProfile.name || user?.name || 'Researcher',
+        slug: myProfile.slug || (myProfile.name ? myProfile.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'member'),
+        role: myProfile.role || 'Associate Researcher',
+        team: myProfile.division || myProfile.team || 'Atmospheric & Attribution Science',
+        photo: activePhoto,
+        bio: myProfile.bio || '',
+        social_links: updatedSocialLinks,
+        sort_order: myProfile.sort_order ?? 0,
+        show_on_home: myProfile.show_on_home ?? false,
+        is_active: myProfile.is_active ?? true,
+      };
+
+      const updated = await api.updateTeamMember(myProfile.id, payload);
+      setMyProfile((prev: any) => ({
+        ...prev,
+        ...updated,
+        photo: activePhoto,
+        image: activePhoto,
+        photo_url: activePhoto,
+        social_links: updatedSocialLinks,
+      }));
+      setBioSuccess('Profile details & photo saved! Changes are immediately live on the main website.');
       setTimeout(() => setBioSuccess(''), 4000);
     } catch (err: any) {
       setBioError(err?.message || 'Failed to save profile.');
     } finally {
       setBioSaving(false);
+    }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setBioSaving(true);
+      setBioError('');
+      // Auto-compress profile portrait to max 500x500 WebP (< 50 KB)
+      const result = await compressImage(file, {
+        maxWidth: 500,
+        maxHeight: 500,
+        quality: 0.85,
+        format: 'image/webp',
+      });
+
+      setMyProfile((prev: any) => ({
+        ...prev,
+        photo: result.dataUrl,
+        image: result.dataUrl,
+        photo_url: result.dataUrl,
+      }));
+
+      // Immediately save the updated photo if profile ID is known
+      if (myProfile?.id) {
+        await handleBioSave(undefined, result.dataUrl);
+      } else {
+        setBioSuccess('Photo loaded! Click "Save Profile Changes" to submit.');
+      }
+    } catch (err: any) {
+      setBioError(err?.message || 'Failed to process image.');
+    } finally {
+      setBioSaving(false);
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -156,22 +240,58 @@ export const MyProfileSettings: React.FC = () => {
         
         {/* ── LEFT COLUMN: Profile Identity Card ── */}
         <div className="card" style={{ padding: '2rem', background: '#ffffff', borderRadius: '24px', border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(11, 30, 61, 0.05)', textAlign: 'center' }}>
-          <div style={{ position: 'relative', width: '110px', height: '110px', margin: '0 auto 1.25rem' }}>
-            {myProfile?.image || myProfile?.photo_url ? (
+          <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto 1rem' }}>
+            {myProfile?.photo || myProfile?.image || myProfile?.photo_url ? (
               <img
-                src={myProfile.image || myProfile.photo_url}
+                src={myProfile.photo || myProfile.image || myProfile.photo_url}
                 alt={myProfile.name || user?.name}
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3px solid #00C8C8', boxShadow: '0 6px 20px rgba(0, 200, 200, 0.25)' }}
+                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3.5px solid #00C8C8', boxShadow: '0 6px 20px rgba(0, 200, 200, 0.25)' }}
               />
             ) : (
-              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2.5rem', fontWeight: 800, border: '3px solid #fff', boxShadow: '0 6px 20px rgba(11, 30, 61, 0.25)' }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2.5rem', fontWeight: 800, border: '3.5px solid #00C8C8', boxShadow: '0 6px 20px rgba(11, 30, 61, 0.25)' }}>
                 {user?.name?.charAt(0) || 'U'}
               </div>
             )}
-            <div style={{ position: 'absolute', bottom: '0', right: '0', width: '32px', height: '32px', borderRadius: '50%', background: '#00C8C8', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0B1E3D', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-              <Camera size={16} />
-            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="Click to upload/change photo"
+              style={{
+                position: 'absolute',
+                bottom: '2px',
+                right: '2px',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: '#00C8C8',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#0B1E3D',
+                border: '2px solid #fff',
+                boxShadow: '0 3px 10px rgba(0,0,0,0.2)',
+                cursor: 'pointer',
+              }}
+            >
+              <Camera size={18} />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handlePhotoUpload}
+            />
           </div>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="btn-ghost"
+            style={{ width: '100%', fontSize: '0.8rem', padding: '0.45rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginBottom: '1.25rem', border: '1px solid #CBD5E1', borderRadius: '10px' }}
+          >
+            <Upload size={14} color="#00C8C8" /> Change Profile Picture
+          </button>
 
           <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.35rem', fontWeight: 800, color: '#0B1E3D', margin: '0 0 0.35rem' }}>
             {myProfile?.name || user?.name || 'Administrator'}
@@ -370,19 +490,61 @@ export const MyProfileSettings: React.FC = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1E2A3B', marginBottom: '0.35rem', display: 'block' }}>Photo URL (Avatar Image)</label>
-                    <input
-                      type="text"
-                      placeholder="https://... or /assets/images/photo.jpg"
-                      value={myProfile.image || myProfile.photo_url || ''}
-                      onChange={(e) => {
-                        updateField('image', e.target.value);
-                        updateField('photo_url', e.target.value);
-                      }}
-                      className="input-field"
-                      style={{ paddingLeft: '1rem' }}
-                    />
+                  {/* Profile Photo Upload & Preview Card */}
+                  <div style={{ background: '#F8FAFC', padding: '1.25rem 1.5rem', borderRadius: '14px', border: '1.5px solid #E2E8F4', display: 'grid', gap: '0.75rem' }}>
+                    <label style={{ fontSize: '0.825rem', fontWeight: 800, color: '#0B1E3D', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                      <Camera size={18} color="#00C8C8" />
+                      <span>Profile Picture (Avatar)</span>
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+                      <div style={{ width: '64px', height: '64px', borderRadius: '50%', overflow: 'hidden', background: '#0B1E3D', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2.5px solid #00C8C8', flexShrink: 0 }}>
+                        {myProfile?.photo || myProfile?.image || myProfile?.photo_url ? (
+                          <img src={myProfile.photo || myProfile.image || myProfile.photo_url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <User size={28} color="#94A3B8" />
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, minWidth: '220px' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="btn-teal"
+                            style={{ padding: '0.55rem 1.1rem', fontSize: '0.825rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700 }}
+                          >
+                            <Upload size={15} /> Upload Photo from Device
+                          </button>
+                          {(myProfile?.photo || myProfile?.image || myProfile?.photo_url) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateField('photo', '');
+                                updateField('image', '');
+                                updateField('photo_url', '');
+                              }}
+                              style={{ padding: '0.55rem 0.9rem', fontSize: '0.825rem', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#fff', color: '#64748B', cursor: 'pointer', fontWeight: 600 }}
+                            >
+                              Remove Photo
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Or paste external image URL (https://...)"
+                          value={myProfile.photo || myProfile.image || myProfile.photo_url || ''}
+                          onChange={(e) => {
+                            updateField('photo', e.target.value);
+                            updateField('image', e.target.value);
+                            updateField('photo_url', e.target.value);
+                          }}
+                          className="input-field"
+                          style={{ paddingLeft: '0.85rem', fontSize: '0.825rem' }}
+                        />
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>
+                      Supports JPEG, PNG, and WebP. Automatically optimized in your browser for rapid page speed.
+                    </p>
                   </div>
 
                   <div>

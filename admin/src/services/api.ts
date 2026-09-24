@@ -98,6 +98,8 @@ export const api = {
   // Team
   getAdminTeam: () =>
     apiFetch<any[]>('/admin/team'),
+  getOwnTeamProfile: () =>
+    apiFetch<any>('/admin/team/me'),
   createTeamMember: (member: any) =>
     apiFetch<any>('/admin/team', { method: 'POST', body: JSON.stringify(member) }),
   updateTeamMember: (id: string, member: any) =>

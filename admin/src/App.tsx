@@ -102,12 +102,12 @@ export function App() {
             }
           />
 
-          {/* Team Members Manager — Super Admin & Executive Admin */}
+          {/* Team Members & Profile — Accessible to all authorized roles */}
           <Route
             path={`${OBFUSCATED_ADMIN_PATH}/team`}
             element={
-              <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
-                <AdminLayout title="Team Members Manager">
+              <ProtectedRoute allowedRoles={['super_admin', 'admin', 'member', 'editor']}>
+                <AdminLayout title="Our Team & Profile">
                   <TeamManager />
                 </AdminLayout>
               </ProtectedRoute>

@@ -140,13 +140,23 @@ export const TeamManager: React.FC = () => {
       const data = await api.getAdminTeam();
       setItems(data);
 
-      if (user && Array.isArray(data)) {
-        const myProfile = data.find(
-          (m: any) =>
-            m.name?.toLowerCase().trim() === user.name?.toLowerCase().trim() ||
-            m.social_links?.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() ||
-            m.email?.toLowerCase().trim() === user.email?.toLowerCase().trim()
-        );
+      if (user) {
+        let myProfile = Array.isArray(data)
+          ? data.find(
+              (m: any) =>
+                m.name?.toLowerCase().trim() === user.name?.toLowerCase().trim() ||
+                m.social_links?.email?.toLowerCase().trim() === user.email?.toLowerCase().trim() ||
+                m.email?.toLowerCase().trim() === user.email?.toLowerCase().trim()
+            )
+          : null;
+
+        if (!myProfile && !isPowerUser) {
+          try {
+            myProfile = await api.getOwnTeamProfile();
+          } catch {
+            // ignore fallback
+          }
+        }
 
         if (myProfile) {
           populateForm(myProfile);
@@ -608,12 +618,16 @@ export const TeamManager: React.FC = () => {
                       )}
                     </td>
                     <td style={{ padding: '0.875rem 1rem', textAlign: 'right' }}>
-                      <button onClick={() => populateForm(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Load into Form">
-                        <Edit2 size={15} />
-                      </button>
-                      <button onClick={() => setDeleteTarget({ id: item.id, title: item.name })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete Member">
-                        <Trash2 size={15} />
-                      </button>
+                      {(isPowerUser || item.name?.toLowerCase().trim() === user?.name?.toLowerCase().trim() || item.social_links?.email?.toLowerCase().trim() === user?.email?.toLowerCase().trim()) && (
+                        <button onClick={() => populateForm(item)} className="topbar-btn" style={{ display: 'inline-flex', marginRight: '0.4rem' }} title="Edit Profile">
+                          <Edit2 size={15} />
+                        </button>
+                      )}
+                      {isSuperAdmin && (
+                        <button onClick={() => setDeleteTarget({ id: item.id, title: item.name })} className="topbar-btn" style={{ display: 'inline-flex', color: '#dc2626' }} title="Delete Member">
+                          <Trash2 size={15} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))

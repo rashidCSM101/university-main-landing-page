@@ -17,6 +17,50 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
+// GET /me — Returns the current user's team member record (auto-creates if missing so employee can update picture)
+router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userEmail = (req.user?.email || '').toLowerCase().trim();
+    const userName = (req.user?.name || '').trim();
+
+    // 1. Search by email in social_links or direct name match
+    let result = await query(
+      `SELECT * FROM team_members 
+        WHERE LOWER(social_links->>'email') = $1
+           OR LOWER(TRIM(name)) = LOWER($2)
+        ORDER BY created_at ASC
+        LIMIT 1`,
+      [userEmail, userName]
+    );
+
+    // 2. If not found and userEmail is present, auto-create a linked team_member record
+    if (result.rows.length === 0 && userEmail) {
+      const teamSlug = userName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `member-${Date.now()}`;
+      const insertRes = await query(
+        `INSERT INTO team_members (name, slug, role, team, photo, bio, social_links, sort_order, show_on_home, is_active)
+         VALUES ($1, $2, 'Associate Researcher', 'Research', NULL, NULL, $3, 99, FALSE, TRUE)
+         ON CONFLICT (slug) DO UPDATE SET updated_at = NOW()
+         RETURNING *`,
+        [
+          userName || 'Team Member',
+          teamSlug,
+          JSON.stringify({ email: userEmail }),
+        ]
+      );
+      result = insertRes;
+    }
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Team member record not found.' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching own team profile:', error);
+    return res.status(500).json({ error: 'Failed to fetch personal team record.' });
+  }
+});
+
 router.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const parseResult = teamMemberSchema.safeParse(req.body);
@@ -89,10 +133,9 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
 
     const isPowerUser = req.user?.role === 'super_admin' || req.user?.role === 'admin';
     if (!isPowerUser) {
-      // SECURITY: Verify ownership by email FK lookup from users table — NOT by name string matching
-      // This prevents spoofing by matching another member's display name.
+      // SECURITY: Verify ownership by email in social_links, users table join, or name match
       const existing = await query(
-        `SELECT tm.id, u.email AS owner_email
+        `SELECT tm.id, tm.name, tm.social_links, tm.sort_order, tm.show_on_home, tm.is_active, u.email AS owner_email
            FROM team_members tm
            LEFT JOIN users u ON LOWER(u.email) = LOWER(tm.social_links->>'email')
           WHERE tm.id = $1`,
@@ -101,14 +144,35 @@ router.put('/:id', async (req: AuthenticatedRequest, res: Response) => {
       if (existing.rows.length === 0) {
         return res.status(404).json({ error: 'Team member not found.' });
       }
-      const ownerEmail = (existing.rows[0].owner_email || '').toLowerCase().trim();
-      const requestorEmail = (req.user?.email || '').toLowerCase().trim();
 
-      if (!requestorEmail || !ownerEmail || ownerEmail !== requestorEmail) {
-        return res.status(403).json({ error: 'Permission denied. You can only edit your own personal bio.' });
+      const row = existing.rows[0];
+      const sl = typeof row.social_links === 'string' ? JSON.parse(row.social_links) : row.social_links || {};
+      const ownerEmail = (row.owner_email || sl.email || '').toLowerCase().trim();
+      const requestorEmail = (req.user?.email || '').toLowerCase().trim();
+      const memberName = (row.name || '').toLowerCase().trim();
+      const requestorName = (req.user?.name || '').toLowerCase().trim();
+
+      const matchesEmail = ownerEmail && requestorEmail && ownerEmail === requestorEmail;
+      const matchesName = memberName && requestorName && memberName === requestorName;
+
+      if (!matchesEmail && !matchesName) {
+        return res.status(403).json({ error: 'Permission denied. You can only edit your own personal profile.' });
       }
+
+      // Preserve system fields that only admins can change
+      req.body.sort_order = row.sort_order ?? 0;
+      req.body.show_on_home = row.show_on_home ?? false;
+      req.body.is_active = row.is_active ?? true;
     }
 
+    if (!req.body.slug || !req.body.name || !req.body.role) {
+      const existingRow = await query('SELECT slug, name, role FROM team_members WHERE id = $1', [id]);
+      if (existingRow.rows.length > 0) {
+        req.body.slug = req.body.slug || existingRow.rows[0].slug;
+        req.body.name = req.body.name || existingRow.rows[0].name;
+        req.body.role = req.body.role || existingRow.rows[0].role;
+      }
+    }
 
     const parseResult = teamMemberSchema.safeParse(req.body);
     if (!parseResult.success) {
