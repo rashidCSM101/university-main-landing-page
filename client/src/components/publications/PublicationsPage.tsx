@@ -34,9 +34,31 @@ export interface PublicationItem {
   doi?: string;
   abstract: string;
   pdf_url?: string;
+  external_url?: string;
   thumbnail?: string;
   is_open_access?: boolean;
 }
+
+const isDirectPdf = (url?: string): boolean => {
+  if (!url) return false;
+  const clean = url.trim().toLowerCase().split('?')[0];
+  return clean.endsWith('.pdf') || clean.includes('/assets/docs/') || clean.includes('/uploads/pdf/');
+};
+
+const getTargetExternalUrl = (pub: PublicationItem): string | null => {
+  if (pub.external_url && !isDirectPdf(pub.external_url)) {
+    let u = pub.external_url.trim();
+    if (u.startsWith('10.')) return `https://doi.org/${u}`;
+    if (u.startsWith('doi.org/')) return `https://${u}`;
+    return u;
+  }
+  if (pub.doi) {
+    let d = pub.doi.trim();
+    if (d.startsWith('http://') || d.startsWith('https://')) return d;
+    return `https://doi.org/${d}`;
+  }
+  return null;
+};
 
 const formatPublicationDate = (dateStr?: string, yearFallback?: string) => {
   if (!dateStr) return yearFallback || '2025';
@@ -59,6 +81,7 @@ const fallbackPublications: PublicationItem[] = [
     published_date: '2025-08-15',
     year: '2025',
     doi: '10.1038/s41558-025-0192',
+    external_url: 'https://doi.org/10.1038/s41558-025-0192',
     abstract:
       'Applying high-resolution WRF convective atmospheric simulations and 40+ years of ERA5 reanalysis to isolate greenhouse gas forcing from natural monsoon variability during the extreme 2022–2024 Indus floods.',
     pdf_url: '/assets/docs/indus-monsoon-attribution-2025.pdf',
@@ -74,6 +97,7 @@ const fallbackPublications: PublicationItem[] = [
     published_date: '2024-11-20',
     year: '2024',
     doi: '10.5194/tc-18-2024',
+    external_url: 'https://doi.org/10.5194/tc-18-2024',
     abstract:
       'Remote sensing satellite telemetry monitoring 3,000+ moraine-dammed glacial lakes in Gilgit-Baltistan to model Glacial Lake Outburst Flood (GLOF) outburst hydrographs for mountain valley hazard mapping.',
     pdf_url: '/assets/docs/hkh-glof-telemetry-2024.pdf',
@@ -89,6 +113,7 @@ const fallbackPublications: PublicationItem[] = [
     published_date: '2025-04-10',
     year: '2025',
     doi: '10.1016/j.lanplh.2024.09',
+    external_url: 'https://doi.org/10.1016/j.lanplh.2024.09',
     abstract:
       'Quantifying pre-monsoon humid heatwave mortality risk in urban Sindh, establishing wet-bulb temperature thresholds (TW > 35°C) and municipal emergency cooling protocols for informal settlements.',
     pdf_url: '/assets/docs/karachi-heat-action-plan.pdf',
@@ -104,6 +129,7 @@ const fallbackPublications: PublicationItem[] = [
     published_date: '2026-02-18',
     year: '2026',
     doi: '10.22617/WCS-RE-2026',
+    external_url: 'https://doi.org/10.22617/WCS-RE-2026',
     abstract:
       'A 1km-resolution GIS atlas modeling multi-decadal solar horizontal irradiance (GHI) and high-altitude wind velocity profiles across Balochistan & Punjab renewable energy corridors.',
     pdf_url: '/assets/docs/indus-renewable-atlas.pdf',
@@ -119,6 +145,7 @@ const fallbackPublications: PublicationItem[] = [
     published_date: '2023-09-05',
     year: '2023',
     doi: '10.1029/2023GL104812',
+    external_url: 'https://doi.org/10.1029/2023GL104812',
     abstract:
       'Disentangling atmospheric moisture convergence (Clausius-Clapeyron scaling) from large-scale circulation anomalies during extreme precipitation events in the Arabian Sea & Indus Delta.',
     pdf_url: '/assets/docs/thermodynamic-monsoon-drivers.pdf',
@@ -145,7 +172,7 @@ export const PublicationsPage = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [bgImage, setBgImage] = useState<string>('/assets/images/publications-hero.png');
   const [citationTarget, setCitationTarget] = useState<any>(null);
-  const [pdfTarget, setPdfTarget] = useState<{ title: string; url: string } | null>(null);
+  const [pdfTarget, setPdfTarget] = useState<{ title: string; url: string; externalUrl?: string } | null>(null);
 
   // Fetch dynamic publications data from Express backend
   const fetchPublicationsData = async () => {
@@ -153,24 +180,50 @@ export const PublicationsPage = () => {
     try {
       const data = await fetchPublications();
       if (Array.isArray(data) && data.length > 0) {
-        const mapped: PublicationItem[] = data.map((item: any) => ({
-          id: item.id?.toString() || Math.random().toString(),
-          title: item.title || 'Untitled Research Publication',
-          category: item.category || (item.type === 'report' ? 'Technical Report' : 'Peer-Reviewed Journal'),
-          authors: Array.isArray(item.co_authors) && item.co_authors.length > 0
-            ? [item.author_name || 'Dr. Rashid', ...item.co_authors]
-            : [item.author_name || 'Dr. Rashid'],
-          journal: item.outlet_name || 'WenClims Research Journal',
-          published_date: item.published_date || item.created_at || null,
-          year: item.published_date
-            ? new Date(item.published_date).getFullYear().toString()
-            : (item.created_at ? new Date(item.created_at).getFullYear().toString() : '2025'),
-          doi: item.doi || (item.id ? `10.1038/wenclims.${item.id.substring(0, 6)}` : '10.1038/wenclims.0192'),
-          abstract: item.abstract || 'Peer-reviewed climate attribution research monograph produced by the Weather and Climate Services (WenClims) research team.',
-          pdf_url: item.external_url || item.pdf_url || '/assets/docs/wenclims-publication.pdf',
-          thumbnail: item.thumbnail || '',
-          is_open_access: item.is_open_access ?? true,
-        }));
+        const mapped: PublicationItem[] = data.map((item: any) => {
+          const rawExt = item.external_url ? String(item.external_url).trim() : '';
+          const rawPdf = item.pdf_url ? String(item.pdf_url).trim() : '';
+          const rawDoi = item.doi ? String(item.doi).trim() : '';
+
+          const extIsPdf = isDirectPdf(rawExt);
+          const pdfIsPdf = isDirectPdf(rawPdf);
+
+          const resolvedPdfUrl = pdfIsPdf ? rawPdf : (extIsPdf ? rawExt : (rawPdf || ''));
+
+          let resolvedExtUrl = '';
+          if (rawExt && !extIsPdf) {
+            resolvedExtUrl = rawExt;
+          } else if (rawDoi) {
+            resolvedExtUrl = rawDoi.startsWith('http') ? rawDoi : `https://doi.org/${rawDoi}`;
+          }
+
+          let resolvedDoi = rawDoi;
+          if (!resolvedDoi && resolvedExtUrl && resolvedExtUrl.includes('doi.org/')) {
+            resolvedDoi = resolvedExtUrl.split('doi.org/')[1];
+          } else if (!resolvedDoi && item.id) {
+            resolvedDoi = `10.1038/wenclims.${String(item.id).substring(0, 6)}`;
+          }
+
+          return {
+            id: item.id?.toString() || Math.random().toString(),
+            title: item.title || 'Untitled Research Publication',
+            category: item.category || (item.type === 'report' ? 'Technical Report' : 'Peer-Reviewed Journal'),
+            authors: Array.isArray(item.co_authors) && item.co_authors.length > 0
+              ? [item.author_name || 'Dr. Rashid', ...item.co_authors]
+              : [item.author_name || 'Dr. Rashid'],
+            journal: item.outlet_name || 'WenClims Research Journal',
+            published_date: item.published_date || item.created_at || null,
+            year: item.published_date
+              ? new Date(item.published_date).getFullYear().toString()
+              : (item.created_at ? new Date(item.created_at).getFullYear().toString() : '2025'),
+            doi: resolvedDoi,
+            abstract: item.abstract || 'Peer-reviewed climate attribution research monograph produced by the Weather and Climate Services (WenClims) research team.',
+            pdf_url: resolvedPdfUrl,
+            external_url: resolvedExtUrl,
+            thumbnail: item.thumbnail || '',
+            is_open_access: item.is_open_access ?? true,
+          };
+        });
         setPublications(mapped);
       } else {
         setPublications(fallbackPublications);
@@ -181,6 +234,41 @@ export const PublicationsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewPublication = (pub: PublicationItem) => {
+    const extUrl = getTargetExternalUrl(pub);
+    const directPdf = pub.pdf_url && isDirectPdf(pub.pdf_url)
+      ? pub.pdf_url
+      : (pub.external_url && isDirectPdf(pub.external_url) ? pub.external_url : null);
+
+    // If publication has an external journal/DOI link, redirect directly to that external link in a new tab!
+    if (extUrl) {
+      window.open(extUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // If it's a direct PDF, open in PDFViewerModal
+    if (directPdf) {
+      setPdfTarget({
+        title: pub.title,
+        url: directPdf,
+        externalUrl: extUrl || undefined,
+      });
+      return;
+    }
+
+    // Fallback if external_url is present
+    if (pub.external_url) {
+      window.open(pub.external_url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // Fallback to sample PDF viewer modal
+    setPdfTarget({
+      title: pub.title,
+      url: '/assets/docs/wenclims-publication.pdf',
+    });
   };
 
   useEffect(() => {
@@ -390,124 +478,156 @@ export const PublicationsPage = () => {
             </div>
           ) : filteredPubs.length > 0 ? (
             <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-              {filteredPubs.map((pub) => (
-                <div
-                  key={pub.id}
-                  className="pub-card group bg-white rounded-3xl border border-gray-200/90 shadow-sm hover:shadow-xl transition-all duration-300 p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-1.5"
-                >
-                  <div>
-                    {/* Top Thumbnail Image */}
-                    <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden bg-[#0B1E3D] mb-4">
-                      {pub.thumbnail ? (
-                        <img
-                          src={pub.thumbnail}
-                          alt={pub.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = 'none';
-                            const fallback = (e.target as HTMLElement).parentElement?.querySelector('.fallback-cover');
-                            if (fallback) (fallback as HTMLElement).classList.remove('hidden');
-                          }}
-                        />
-                      ) : null}
+              {filteredPubs.map((pub) => {
+                const targetExtUrl = getTargetExternalUrl(pub);
+                const hasDirectPdf = pub.pdf_url && isDirectPdf(pub.pdf_url);
 
-                      {/* Clean Solid Fallback Cover (No Gradients) */}
-                      <div
-                        className={`fallback-cover w-full h-full ${pub.thumbnail ? 'hidden' : 'flex'} flex-col items-center justify-center p-6 text-center bg-[#0B1E3D] text-white`}
-                      >
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-2.5 text-[#00C8C8]">
-                          <BookOpen className="w-6 h-6" />
-                        </div>
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#00C8C8]">
-                          {pub.category || 'Research Publication'}
-                        </span>
-                        <span className="text-xs text-gray-300 line-clamp-1 mt-1 font-medium">
-                          {pub.journal || 'WenClims Research Journal'}
-                        </span>
-                      </div>
+                return (
+                  <div
+                    key={pub.id}
+                    className="pub-card group bg-white rounded-3xl border border-gray-200/90 shadow-sm hover:shadow-xl transition-all duration-300 p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-1.5"
+                  >
+                    <div>
+                      {/* Top Thumbnail Image */}
+                      <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden bg-[#0B1E3D] mb-4">
+                        {pub.thumbnail ? (
+                          <img
+                            src={pub.thumbnail}
+                            alt={pub.title}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                              const fallback = (e.target as HTMLElement).parentElement?.querySelector('.fallback-cover');
+                              if (fallback) (fallback as HTMLElement).classList.remove('hidden');
+                            }}
+                          />
+                        ) : null}
 
-                      {/* Top Floating Badge: Year */}
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-[#0B1E3D]/80 backdrop-blur-md text-white text-[11px] font-mono font-bold border border-white/10">
-                        {pub.year}
-                      </div>
-                    </div>
-
-                    {/* Badges Bar (Below Image, like in reference card) */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
-                          {pub.category}
-                        </span>
-                        {pub.is_open_access && (
-                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-teal-50 text-[#009A9A] border border-teal-200">
-                            Open Access PDF
+                        {/* Clean Solid Fallback Cover (No Gradients) */}
+                        <div
+                          className={`fallback-cover w-full h-full ${pub.thumbnail ? 'hidden' : 'flex'} flex-col items-center justify-center p-6 text-center bg-[#0B1E3D] text-white`}
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-2.5 text-[#00C8C8]">
+                            <BookOpen className="w-6 h-6" />
+                          </div>
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#00C8C8]">
+                            {pub.category || 'Research Publication'}
                           </span>
-                        )}
+                          <span className="text-xs text-gray-300 line-clamp-1 mt-1 font-medium">
+                            {pub.journal || 'WenClims Research Journal'}
+                          </span>
+                        </div>
+
+                        {/* Top Floating Badge: Year */}
+                        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-[#0B1E3D]/80 backdrop-blur-md text-white text-[11px] font-mono font-bold border border-white/10">
+                          {pub.year}
+                        </div>
                       </div>
 
-                      {/* Quick Cite Icon Button */}
-                      <button
-                        onClick={() => setCitationTarget({
-                          title: pub.title,
-                          author_name: pub.authors?.[0],
-                          co_authors: pub.authors?.slice(1),
-                          published_date: pub.published_date || pub.year,
-                          outlet_name: pub.journal,
-                        })}
-                        title="Cite Paper (APA / BibTeX / RIS)"
-                        className="p-1.5 text-gray-400 hover:text-[#0B1E3D] hover:bg-gray-100 rounded-lg transition-colors"
+                      {/* Badges Bar (Below Image, like in reference card) */}
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            {pub.category}
+                          </span>
+                          {pub.is_open_access && (
+                            <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-teal-50 text-[#009A9A] border border-teal-200">
+                              Open Access PDF
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Quick Cite Icon Button */}
+                        <button
+                          onClick={() => setCitationTarget({
+                            title: pub.title,
+                            author_name: pub.authors?.[0],
+                            co_authors: pub.authors?.slice(1),
+                            published_date: pub.published_date || pub.year,
+                            outlet_name: pub.journal,
+                            external_url: targetExtUrl || pub.pdf_url,
+                          })}
+                          title="Cite Paper (APA / BibTeX / RIS)"
+                          className="p-1.5 text-gray-400 hover:text-[#0B1E3D] hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Publication Title */}
+                      <h3
+                        className="text-lg sm:text-xl font-heading font-bold text-[#0B1E3D] mb-3 group-hover:text-[#009A9A] transition-colors leading-snug line-clamp-2"
+                        title={pub.title}
                       >
-                        <Copy className="w-4 h-4" />
+                        {pub.title}
+                      </h3>
+
+                      {/* Metadata Rows (Authors, Date, Publisher) */}
+                      <div className="space-y-2 mb-4 text-xs sm:text-[13px] text-gray-600">
+                        {/* Authors */}
+                        <div className="flex items-center gap-2 font-medium text-gray-700">
+                          <Users className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                          <span className="line-clamp-1" title={pub.authors.join(', ')}>
+                            <strong className="text-gray-900 font-semibold">{pub.authors[0]}</strong>
+                            {pub.authors.length > 1 ? ` +${pub.authors.length - 1} more` : ''}
+                          </span>
+                        </div>
+
+                        {/* Date of Publication */}
+                        <div className="flex items-center gap-2 font-medium text-gray-600">
+                          <Calendar className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                          <span>{formatPublicationDate(pub.published_date, pub.year)}</span>
+                        </div>
+
+                        {/* Outlet / Journal */}
+                        <div className="flex items-center gap-2 font-medium text-gray-500">
+                          <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <span className="line-clamp-1" title={pub.journal}>{pub.journal}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions: View Publication (External Link redirect) & PDF buttons */}
+                    <div className="pt-3 border-t border-gray-100 mt-auto flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewPublication(pub)}
+                        className="flex-1 py-2.5 px-4 bg-[#0B1E3D] hover:bg-[#1A3461] text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md group/btn"
+                      >
+                        {targetExtUrl ? (
+                          <>
+                            <ExternalLink className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                            <span className="truncate">View Publication</span>
+                            <ArrowUpRight className="w-4 h-4 ml-auto text-gray-300 group-hover/btn:text-white transition-colors flex-shrink-0" />
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                            <span className="truncate">View Publication</span>
+                            <ArrowUpRight className="w-4 h-4 ml-auto text-gray-300 group-hover/btn:text-white transition-colors flex-shrink-0" />
+                          </>
+                        )}
                       </button>
-                    </div>
 
-                    {/* Publication Title */}
-                    <h3
-                      className="text-lg sm:text-xl font-heading font-bold text-[#0B1E3D] mb-3 group-hover:text-[#009A9A] transition-colors leading-snug line-clamp-2"
-                      title={pub.title}
-                    >
-                      {pub.title}
-                    </h3>
-
-                    {/* Metadata Rows (Authors, Date, Publisher) */}
-                    <div className="space-y-2 mb-4 text-xs sm:text-[13px] text-gray-600">
-                      {/* Authors */}
-                      <div className="flex items-center gap-2 font-medium text-gray-700">
-                        <Users className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
-                        <span className="line-clamp-1" title={pub.authors.join(', ')}>
-                          <strong className="text-gray-900 font-semibold">{pub.authors[0]}</strong>
-                          {pub.authors.length > 1 ? ` +${pub.authors.length - 1} more` : ''}
-                        </span>
-                      </div>
-
-                      {/* Date of Publication */}
-                      <div className="flex items-center gap-2 font-medium text-gray-600">
-                        <Calendar className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
-                        <span>{formatPublicationDate(pub.published_date, pub.year)}</span>
-                      </div>
-
-                      {/* Outlet / Journal */}
-                      <div className="flex items-center gap-2 font-medium text-gray-500">
-                        <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <span className="line-clamp-1" title={pub.journal}>{pub.journal}</span>
-                      </div>
+                      {/* If there is also a direct PDF available alongside external link, show quick PDF button */}
+                      {targetExtUrl && hasDirectPdf && (
+                        <button
+                          onClick={() => setPdfTarget({
+                            title: pub.title,
+                            url: pub.pdf_url!,
+                            externalUrl: targetExtUrl || undefined,
+                          })}
+                          title="View / Download PDF Document"
+                          className="py-2.5 px-3 bg-gray-100 hover:bg-[#00C8C8] hover:text-gray-950 text-gray-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm border border-gray-200"
+                        >
+                          <FileText className="w-4 h-4 text-emerald-600" />
+                          <span>PDF</span>
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  {/* Actions: View Publication Button */}
-                  <div className="pt-3 border-t border-gray-100 mt-auto flex items-center gap-2">
-                    <button
-                      onClick={() => setPdfTarget({ title: pub.title, url: pub.pdf_url || '/assets/docs/wenclims-publication.pdf' })}
-                      className="w-full py-2.5 px-4 bg-[#0B1E3D] hover:bg-[#1A3461] text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
-                    >
-                      <FileText className="w-4 h-4 text-[#00C8C8]" />
-                      <span>View Publication</span>
-                      <ArrowUpRight className="w-4 h-4 ml-auto text-gray-300 group-hover:text-white transition-colors" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="bg-white rounded-3xl p-12 text-center border border-gray-200 max-w-lg mx-auto shadow-sm">
@@ -542,6 +662,7 @@ export const PublicationsPage = () => {
           onClose={() => setPdfTarget(null)}
           title={pdfTarget?.title || 'Research Report'}
           pdfUrl={pdfTarget?.url || '/assets/docs/wenclims-publication.pdf'}
+          externalUrl={pdfTarget?.externalUrl}
         />
       </div>
     </>
