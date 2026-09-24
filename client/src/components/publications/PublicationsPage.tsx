@@ -10,6 +10,10 @@ import {
   BookOpen,
   Award,
   Copy,
+  Calendar,
+  Users,
+  ArrowUpRight,
+  ExternalLink,
 } from 'lucide-react';
 
 import heroBgFallback from '../../../assets/images/1.webp?url';
@@ -26,11 +30,24 @@ export interface PublicationItem {
   authors: string[];
   journal: string;
   year: string;
+  published_date?: string;
   doi?: string;
   abstract: string;
   pdf_url?: string;
+  thumbnail?: string;
   is_open_access?: boolean;
 }
+
+const formatPublicationDate = (dateStr?: string, yearFallback?: string) => {
+  if (!dateStr) return yearFallback || '2025';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return yearFallback || '2025';
+    return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return yearFallback || '2025';
+  }
+};
 
 const fallbackPublications: PublicationItem[] = [
   {
@@ -39,11 +56,13 @@ const fallbackPublications: PublicationItem[] = [
     category: 'Peer-Reviewed Journal',
     authors: ['Dr. Rashid', 'Dr. Ayesha Malik', 'Prof. Tariq Ahmed'],
     journal: 'Nature Climate Change / AMS Journal of Climate',
+    published_date: '2025-08-15',
     year: '2025',
     doi: '10.1038/s41558-025-0192',
     abstract:
       'Applying high-resolution WRF convective atmospheric simulations and 40+ years of ERA5 reanalysis to isolate greenhouse gas forcing from natural monsoon variability during the extreme 2022–2024 Indus floods.',
     pdf_url: '/assets/docs/indus-monsoon-attribution-2025.pdf',
+    thumbnail: '/assets/images/1.webp',
     is_open_access: true,
   },
   {
@@ -52,11 +71,13 @@ const fallbackPublications: PublicationItem[] = [
     category: 'Peer-Reviewed Journal',
     authors: ['Prof. Tariq Ahmed', 'Dr. Rashid', 'ICIMOD Cryosphere Team'],
     journal: 'The Cryosphere (EGU / Copernicus)',
+    published_date: '2024-11-20',
     year: '2024',
     doi: '10.5194/tc-18-2024',
     abstract:
       'Remote sensing satellite telemetry monitoring 3,000+ moraine-dammed glacial lakes in Gilgit-Baltistan to model Glacial Lake Outburst Flood (GLOF) outburst hydrographs for mountain valley hazard mapping.',
     pdf_url: '/assets/docs/hkh-glof-telemetry-2024.pdf',
+    thumbnail: '/assets/images/2.webp',
     is_open_access: true,
   },
   {
@@ -65,11 +86,13 @@ const fallbackPublications: PublicationItem[] = [
     category: 'Policy Brief',
     authors: ['Dr. Sana Khan', 'National Disaster Management Authority (NDMA)', 'WenClims Urban Lab'],
     journal: 'NDMA-WenClims Technical Advisory Monograph',
+    published_date: '2025-04-10',
     year: '2025',
     doi: '10.1016/j.lanplh.2024.09',
     abstract:
       'Quantifying pre-monsoon humid heatwave mortality risk in urban Sindh, establishing wet-bulb temperature thresholds (TW > 35°C) and municipal emergency cooling protocols for informal settlements.',
     pdf_url: '/assets/docs/karachi-heat-action-plan.pdf',
+    thumbnail: '/assets/images/3.webp',
     is_open_access: true,
   },
   {
@@ -78,11 +101,13 @@ const fallbackPublications: PublicationItem[] = [
     category: 'Monograph',
     authors: ['WenClims Clean Energy Unit', 'Asian Development Bank Clean Energy Fund'],
     journal: 'ADB Technical Research Paper Series',
+    published_date: '2026-02-18',
     year: '2026',
     doi: '10.22617/WCS-RE-2026',
     abstract:
       'A 1km-resolution GIS atlas modeling multi-decadal solar horizontal irradiance (GHI) and high-altitude wind velocity profiles across Balochistan & Punjab renewable energy corridors.',
     pdf_url: '/assets/docs/indus-renewable-atlas.pdf',
+    thumbnail: '/assets/images/project-hero.avif',
     is_open_access: true,
   },
   {
@@ -91,11 +116,13 @@ const fallbackPublications: PublicationItem[] = [
     category: 'Peer-Reviewed Journal',
     authors: ['Dr. Rashid', 'UK Met Office Attribution Group'],
     journal: 'Geophysical Research Letters (AGU)',
+    published_date: '2023-09-05',
     year: '2023',
     doi: '10.1029/2023GL104812',
     abstract:
       'Disentangling atmospheric moisture convergence (Clausius-Clapeyron scaling) from large-scale circulation anomalies during extreme precipitation events in the Arabian Sea & Indus Delta.',
     pdf_url: '/assets/docs/thermodynamic-monsoon-drivers.pdf',
+    thumbnail: '/assets/images/4.webp',
     is_open_access: true,
   },
 ];
@@ -129,15 +156,19 @@ export const PublicationsPage = () => {
         const mapped: PublicationItem[] = data.map((item: any) => ({
           id: item.id?.toString() || Math.random().toString(),
           title: item.title || 'Untitled Research Publication',
-          category: item.category || item.type || 'Peer-Reviewed Journal',
+          category: item.category || (item.type === 'report' ? 'Technical Report' : 'Peer-Reviewed Journal'),
           authors: Array.isArray(item.co_authors) && item.co_authors.length > 0
             ? [item.author_name || 'Dr. Rashid', ...item.co_authors]
             : [item.author_name || 'Dr. Rashid'],
           journal: item.outlet_name || 'WenClims Research Journal',
-          year: item.published_date ? new Date(item.published_date).getFullYear().toString() : '2025',
-          doi: item.doi || `10.1038/wenclims.${item.id ? item.id.substring(0, 6) : '0192'}`,
+          published_date: item.published_date || item.created_at || null,
+          year: item.published_date
+            ? new Date(item.published_date).getFullYear().toString()
+            : (item.created_at ? new Date(item.created_at).getFullYear().toString() : '2025'),
+          doi: item.doi || (item.id ? `10.1038/wenclims.${item.id.substring(0, 6)}` : '10.1038/wenclims.0192'),
           abstract: item.abstract || 'Peer-reviewed climate attribution research monograph produced by the Weather and Climate Services (WenClims) research team.',
-          pdf_url: item.pdf_url || item.external_url || '/assets/docs/wenclims-publication.pdf',
+          pdf_url: item.external_url || item.pdf_url || '/assets/docs/wenclims-publication.pdf',
+          thumbnail: item.thumbnail || '',
           is_open_access: item.is_open_access ?? true,
         }));
         setPublications(mapped);
@@ -190,15 +221,26 @@ export const PublicationsPage = () => {
 
   const categories = ['All', 'Peer-Reviewed Journal', 'Technical Report', 'Policy Brief', 'Monograph'];
 
-  const filteredPubs = publications.filter((pub) => {
-    const matchesCategory = selectedCategory === 'All' || pub.category === selectedCategory;
-    const matchesSearch =
-      pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pub.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pub.journal.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pub.authors.some((a) => a.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  const filteredPubs = publications
+    .filter((pub) => {
+      const matchesCategory = selectedCategory === 'All' || pub.category === selectedCategory;
+      const matchesSearch =
+        pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pub.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pub.journal.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pub.authors.some((a) => a.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      // Sort newest publications on top, oldest on bottom
+      const timeA = a.published_date
+        ? new Date(a.published_date).getTime()
+        : ((parseInt(a.year, 10) || 2020) * 31536000000);
+      const timeB = b.published_date
+        ? new Date(b.published_date).getTime()
+        : ((parseInt(b.year, 10) || 2020) * 31536000000);
+      return timeB - timeA;
+    });
 
   return (
     <>
@@ -287,16 +329,16 @@ export const PublicationsPage = () => {
         </section>
 
         {/* ═══ PUBLICATIONS CATALOG SECTION ═══ */}
-        <div id="publications-catalog" className="w-full max-w-[68rem] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div id="publications-catalog" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           {/* Header Controls: Category Tabs & Search Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#48b302] mb-1">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#009A9A] mb-1">
                 <BookOpen className="w-4 h-4" />
                 <span>Open Access Academic &amp; Policy Literature</span>
               </div>
-              <h2 className="text-3xl font-heading font-bold text-gray-900">
-                Research <span className="text-[#48b302]">Library</span>
+              <h2 className="text-3xl font-heading font-bold text-[#0B1E3D]">
+                Research <span className="text-[#00C8C8]">Library</span>
               </h2>
             </div>
 
@@ -308,7 +350,7 @@ export const PublicationsPage = () => {
                 placeholder="Search title, author, or DOI..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-medium focus:outline-none focus:border-[#48b302] shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-medium focus:outline-none focus:border-[#00C8C8] shadow-sm"
               />
             </div>
           </div>
@@ -323,7 +365,7 @@ export const PublicationsPage = () => {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all ${
                     isActive
-                      ? 'bg-[#48b302] text-white shadow-md'
+                      ? 'bg-[#0B1E3D] text-white shadow-md'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
@@ -333,79 +375,135 @@ export const PublicationsPage = () => {
             })}
           </div>
 
-          {/* Publications Cards Grid */}
+          {/* Publications Cards Grid (Modern Multi-Column Grid) */}
           {loading ? (
-            <div className="space-y-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-pulse space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm animate-pulse space-y-4">
+                  <div className="h-52 bg-gray-200 rounded-2xl w-full" />
+                  <div className="h-4 bg-gray-100 rounded-md w-1/3" />
                   <div className="h-6 bg-gray-200 rounded-md w-3/4" />
                   <div className="h-4 bg-gray-100 rounded-md w-1/2" />
-                  <div className="h-16 bg-gray-100 rounded-md w-full" />
+                  <div className="h-10 bg-gray-200 rounded-xl w-full" />
                 </div>
               ))}
             </div>
           ) : filteredPubs.length > 0 ? (
-            <div ref={gridRef} className="space-y-6">
+            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
               {filteredPubs.map((pub) => (
                 <div
                   key={pub.id}
-                  className="pub-card group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 sm:p-8 flex flex-col justify-between opacity-100 hover:-translate-y-1"
+                  className="pub-card group bg-white rounded-3xl border border-gray-200/90 shadow-sm hover:shadow-xl transition-all duration-300 p-3.5 sm:p-4 flex flex-col justify-between hover:-translate-y-1.5"
                 >
                   <div>
-                    {/* Header Badges */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#48b302]/10 text-[#48b302] border border-[#48b302]/30">
+                    {/* Top Thumbnail Image */}
+                    <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden bg-[#0B1E3D] mb-4">
+                      {pub.thumbnail ? (
+                        <img
+                          src={pub.thumbnail}
+                          alt={pub.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = 'none';
+                            const fallback = (e.target as HTMLElement).parentElement?.querySelector('.fallback-cover');
+                            if (fallback) (fallback as HTMLElement).classList.remove('hidden');
+                          }}
+                        />
+                      ) : null}
+
+                      {/* Clean Solid Fallback Cover (No Gradients) */}
+                      <div
+                        className={`fallback-cover w-full h-full ${pub.thumbnail ? 'hidden' : 'flex'} flex-col items-center justify-center p-6 text-center bg-[#0B1E3D] text-white`}
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-2.5 text-[#00C8C8]">
+                          <BookOpen className="w-6 h-6" />
+                        </div>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#00C8C8]">
+                          {pub.category || 'Research Publication'}
+                        </span>
+                        <span className="text-xs text-gray-300 line-clamp-1 mt-1 font-medium">
+                          {pub.journal || 'WenClims Research Journal'}
+                        </span>
+                      </div>
+
+                      {/* Top Floating Badge: Year */}
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-[#0B1E3D]/80 backdrop-blur-md text-white text-[11px] font-mono font-bold border border-white/10">
+                        {pub.year}
+                      </div>
+                    </div>
+
+                    {/* Badges Bar (Below Image, like in reference card) */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
                           {pub.category}
                         </span>
                         {pub.is_open_access && (
-                          <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                            ● Open Access PDF
+                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-teal-50 text-[#009A9A] border border-teal-200">
+                            Open Access PDF
                           </span>
                         )}
                       </div>
-                      <span className="text-xs font-mono font-bold text-gray-500">{pub.year}</span>
+
+                      {/* Quick Cite Icon Button */}
+                      <button
+                        onClick={() => setCitationTarget({
+                          title: pub.title,
+                          author_name: pub.authors?.[0],
+                          co_authors: pub.authors?.slice(1),
+                          published_date: pub.published_date || pub.year,
+                          outlet_name: pub.journal,
+                        })}
+                        title="Cite Paper (APA / BibTeX / RIS)"
+                        className="p-1.5 text-gray-400 hover:text-[#0B1E3D] hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-xl md:text-2xl font-heading font-bold text-gray-900 mb-3 group-hover:text-[#48b302] transition-colors leading-snug">
+                    {/* Publication Title */}
+                    <h3
+                      className="text-lg sm:text-xl font-heading font-bold text-[#0B1E3D] mb-3 group-hover:text-[#009A9A] transition-colors leading-snug line-clamp-2"
+                      title={pub.title}
+                    >
                       {pub.title}
                     </h3>
 
-                    {/* Authors & Journal Info */}
-                    <div className="space-y-2 mb-4 pb-4 border-b border-gray-100 text-xs">
-                      <div className="text-gray-800 font-semibold flex flex-wrap items-center gap-1.5">
-                        <span className="text-gray-400">Authors:</span>
-                        <span>{pub.authors.join(', ')}</span>
+                    {/* Metadata Rows (Authors, Date, Publisher) */}
+                    <div className="space-y-2 mb-4 text-xs sm:text-[13px] text-gray-600">
+                      {/* Authors */}
+                      <div className="flex items-center gap-2 font-medium text-gray-700">
+                        <Users className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                        <span className="line-clamp-1" title={pub.authors.join(', ')}>
+                          <strong className="text-gray-900 font-semibold">{pub.authors[0]}</strong>
+                          {pub.authors.length > 1 ? ` +${pub.authors.length - 1} more` : ''}
+                        </span>
                       </div>
-                      <div className="text-gray-500 font-medium flex flex-wrap items-center justify-between gap-2">
-                        <span>Journal / Publisher: <strong className="text-gray-700">{pub.journal}</strong></span>
-                        {pub.doi && <span className="font-mono text-gray-400">DOI: {pub.doi}</span>}
+
+                      {/* Date of Publication */}
+                      <div className="flex items-center gap-2 font-medium text-gray-600">
+                        <Calendar className="w-4 h-4 text-[#00C8C8] flex-shrink-0" />
+                        <span>{formatPublicationDate(pub.published_date, pub.year)}</span>
+                      </div>
+
+                      {/* Outlet / Journal */}
+                      <div className="flex items-center gap-2 font-medium text-gray-500">
+                        <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <span className="line-clamp-1" title={pub.journal}>{pub.journal}</span>
                       </div>
                     </div>
-
-                    {/* Abstract */}
-                    <p className="text-gray-600 text-xs md:text-sm leading-relaxed mb-6">
-                      {pub.abstract}
-                    </p>
                   </div>
 
-                  {/* Actions Bar */}
-                  <div className="pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
-                    <button
-                      onClick={() => setCitationTarget({ title: pub.title, author_name: pub.authors?.[0], co_authors: pub.authors?.slice(1), published_date: pub.year, outlet_name: pub.journal })}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#48b302] hover:text-teal-700 bg-teal-50 px-3 py-2 rounded-xl transition-colors"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Cite Paper (APA / BibTeX / RIS)</span>
-                    </button>
-
+                  {/* Actions: View Publication Button */}
+                  <div className="pt-3 border-t border-gray-100 mt-auto flex items-center gap-2">
                     <button
                       onClick={() => setPdfTarget({ title: pub.title, url: pub.pdf_url || '/assets/docs/wenclims-publication.pdf' })}
-                      className="inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-[#48b302] text-white font-bold rounded-xl hover:bg-teal-700 transition-colors text-xs shadow-md"
+                      className="w-full py-2.5 px-4 bg-[#0B1E3D] hover:bg-[#1A3461] text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
                     >
-                      <FileText className="w-3.5 h-3.5" />
-                      <span>Preview PDF Report</span>
+                      <FileText className="w-4 h-4 text-[#00C8C8]" />
+                      <span>View Publication</span>
+                      <ArrowUpRight className="w-4 h-4 ml-auto text-gray-300 group-hover:text-white transition-colors" />
                     </button>
                   </div>
                 </div>
