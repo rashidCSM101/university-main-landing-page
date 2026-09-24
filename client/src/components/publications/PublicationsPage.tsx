@@ -9,7 +9,6 @@ import {
   Download,
   BookOpen,
   Award,
-  Copy,
   Calendar,
   Users,
   ArrowUpRight,
@@ -18,7 +17,6 @@ import {
 
 import heroBgFallback from '../../../assets/images/1.webp?url';
 
-import { CitationModal } from './CitationModal';
 import { PDFViewerModal } from '../shared/PDFViewerModal';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -171,7 +169,6 @@ export const PublicationsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [bgImage, setBgImage] = useState<string>('/assets/images/publications-hero.png');
-  const [citationTarget, setCitationTarget] = useState<any>(null);
   const [pdfTarget, setPdfTarget] = useState<{ title: string; url: string; externalUrl?: string } | null>(null);
 
   // Fetch dynamic publications data from Express backend
@@ -525,36 +522,6 @@ export const PublicationsPage = () => {
                         </div>
                       </div>
 
-                      {/* Badges Bar (Below Image, like in reference card) */}
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
-                            {pub.category}
-                          </span>
-                          {pub.is_open_access && (
-                            <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-teal-50 text-[#009A9A] border border-teal-200">
-                              Open Access PDF
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Quick Cite Icon Button */}
-                        <button
-                          onClick={() => setCitationTarget({
-                            title: pub.title,
-                            author_name: pub.authors?.[0],
-                            co_authors: pub.authors?.slice(1),
-                            published_date: pub.published_date || pub.year,
-                            outlet_name: pub.journal,
-                            external_url: targetExtUrl || pub.pdf_url,
-                          })}
-                          title="Cite Paper (APA / BibTeX / RIS)"
-                          className="p-1.5 text-gray-400 hover:text-[#0B1E3D] hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
-
                       {/* Publication Title */}
                       <h3
                         className="text-lg sm:text-xl font-heading font-bold text-[#0B1E3D] mb-3 group-hover:text-[#009A9A] transition-colors leading-snug line-clamp-2"
@@ -649,12 +616,6 @@ export const PublicationsPage = () => {
           )}
         </div>
 
-        {/* Academic Citation Modal */}
-        <CitationModal
-          isOpen={!!citationTarget}
-          onClose={() => setCitationTarget(null)}
-          publication={citationTarget}
-        />
 
         {/* Inline PDF Viewer Modal */}
         <PDFViewerModal
